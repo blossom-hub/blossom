@@ -56,6 +56,7 @@ account {account tree}        ; [0..] per file
 ```
 commodity {commodity}                     ; [0..] per file
   name {text}                             ; (optional) full name
+  measure {commodity}                     ; (optional) default measure [pricing] commodity
   class {Currency|Equity|Option|Future}   ; (optional) provides better treatment
   multiplier {factor}                     ; (optional) for leveraged instruments
   mtm                                     ; (optional) mark as mark-to-market treatment
@@ -84,9 +85,9 @@ split {date} {commodity} {old units} {new units}
 
 ### Assertions
 ```
-assert {date} {account tree} {amount}
+assert {date} {account tree}  {amount}
 ```
-
+- must have double space after account tree
 ## Example
 ```
 ; give overall metadata for file, set default currency
