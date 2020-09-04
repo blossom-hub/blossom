@@ -67,7 +67,7 @@ commodity {commodity}                     ; [0..] per file
 - there can only be one missing (elided) amount
 ```
 {date} {payee} | {narrative}      ; payee is optional, exclude | if not using
-  {account tree one} {amount}
+  {account tree one}  {amount}
   {account tree two}
 ```
 
