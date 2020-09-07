@@ -6,5 +6,5 @@ open ReplEngine
 [<EntryPoint>]
 let main argv =
     printfn "Blossom 0.1"
-    go ()
+    go State.Default
     0

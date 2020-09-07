@@ -1,29 +1,49 @@
 module ReplEngine
 
 open System
-
-open FParsec
+open System.IO
 
 open Types
 open ReplParser
+open ParserShared
+open JournalParser
 
+type State =
+  {
+    Journal: RJournal option
+  }
+  with
+    static member Default = {
+      Journal = None
+    }
+
+let load state filename =
+  try
+    let parsed = loadRJournal filename
+    printfn "%A" parsed
+    Some {state with Journal = Some parsed}
+  with
+    | :? FileNotFoundException as ex ->
+           printfn "Couldn't find file %A" filename
+           Some state
 
 let execute state input =
   let action = function
     | Quit          -> None
     | Clear         -> Console.Clear()
                        Some state
-    | Load filename -> Some state
+    | Load filename -> load state filename
     | Reload        -> Some state
     | Balances s    -> Some state
 
-  match run parse input with
-    | Success (result, _, _) ->
-        printfn "=> %A" result
-        action result
-    | Failure (errorMessage, _, _) ->
-        printfn "=> error detected %A" errorMessage
-        Some state
+  try
+    let result = runParser parse () (FromString input)
+    printfn "=> %A" result
+    action result
+  with
+    | :? InvalidOperationException as ex ->
+          printfn "=> error detected %A" ex.Message
+          Some state
 
 let rec go state =
   printf "] "

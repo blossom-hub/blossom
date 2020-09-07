@@ -1,0 +1,36 @@
+.indent 2
+
+import last_year.fledge
+
+journal Test      ; feg
+  note ABCs
+  cg A:B:C
+  commodity fdlg
+
+account Asset:Main      ; ugh
+  commodity HKD
+  cg A:B:C:D
+  note Not a real account.
+
+commodity 9984JP   ;haha comment
+  mtm
+  name Softbank
+  measure JPY
+  class Equity
+  multiplier 1
+
+; top comment
+
+2020-09-08 Narrative
+  A:B:C  12 GBP
+  D  -12 GBP
+
+
+prices 9984JP JPY   ; IBKR
+  2020-09-05 6302
+  2020-09-08 5881
+
+split 2020-05-01 9984JP 1 5.6   ;1-to-5.6 split
+
+
+assert 2020-06-07 AB:BC [UK]:CD  15.7 GBP ; def

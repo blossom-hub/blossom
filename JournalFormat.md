@@ -26,7 +26,14 @@
 ## Journal file elements
 A Journal file is a list of elements. The journal file is whitespace sensitive, and should not contain tabs.
 
-### Operational element
+### Operational elements
+#### Set indent size
+````
+.indent 4    ; default 2
+````
+- blossom is not an exercise in complex parser writing, so fix the indent size here
+- per file (it is possible to overwrite this in the same file)
+
 #### Link to another file
 ```
 import expenses_2019.dat
@@ -44,6 +51,7 @@ import expenses_2019.dat
 journal {name}                ;  [0..1] per file
   commodity {commodity}       ; (optional) default global commodity
   cg {account tree}           ; (optional) default capital gains account
+  note {text}                 ; (optional) free text
 ```
 
 ```
