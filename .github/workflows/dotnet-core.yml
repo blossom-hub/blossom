@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore ./blossom-cli
     - name: Build
       run: dotnet build --configuration Release --no-restore ./blossom-cli
    # - name: Test
