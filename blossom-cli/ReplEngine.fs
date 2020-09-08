@@ -35,14 +35,23 @@ let reload state =
     | None    -> printfn "Cannot reload if no file loaded"
                  Some state
 
+let prettyPrint state filename =
+  printfn "Not yet supported"
+  Some state
+
+let balances state query =
+  printfn "Not yet supported"
+  Some state
+
 let execute state input =
   let action = function
-    | Quit          -> None
-    | Clear         -> Console.Clear()
-                       Some state
-    | Load filename -> load state filename
-    | Reload        -> reload state
-    | Balances s    -> Some state
+    | Quit                 -> None
+    | Clear                -> Console.Clear()
+                              Some state
+    | Load filename        -> load state filename
+    | Reload               -> reload state
+    | PrettyPrint filename -> prettyPrint state filename
+    | Balances query       -> balances state query
 
   try
     let result = runParser parse () (FromString input)

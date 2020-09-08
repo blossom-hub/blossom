@@ -7,5 +7,6 @@ type Command =
   // File management
   | Load of string
   | Reload
+  | PrettyPrint of string
   // Accounting
   | Balances of string
