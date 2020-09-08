@@ -7,6 +7,7 @@ open Types
 open ReplParser
 open ParserShared
 open JournalParser
+open Journal
 
 type State =
   {
@@ -21,7 +22,7 @@ type State =
 
 let load state filename =
   try
-    let parsed = loadRJournal filename
+    let parsed = loadJournal true filename
     printfn "%A" parsed
     Some {state with Journal = Some parsed; Filename = Some filename}
   with
