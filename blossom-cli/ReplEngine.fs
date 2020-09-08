@@ -10,10 +10,12 @@ open JournalParser
 
 type State =
   {
+    Filename: string option
     Journal: RJournal option
   }
   with
     static member Default = {
+      Filename = None
       Journal = None
     }
 
@@ -21,11 +23,17 @@ let load state filename =
   try
     let parsed = loadRJournal filename
     printfn "%A" parsed
-    Some {state with Journal = Some parsed}
+    Some {state with Journal = Some parsed; Filename = Some filename}
   with
     | :? FileNotFoundException as ex ->
            printfn "Couldn't find file %A" filename
            Some state
+
+let reload state =
+  match state.Filename with
+    | Some fn -> load state fn
+    | None    -> printfn "Cannot reload if no file loaded"
+                 Some state
 
 let execute state input =
   let action = function
@@ -33,7 +41,7 @@ let execute state input =
     | Clear         -> Console.Clear()
                        Some state
     | Load filename -> load state filename
-    | Reload        -> Some state
+    | Reload        -> reload state
     | Balances s    -> Some state
 
   try
