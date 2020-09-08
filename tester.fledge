@@ -1,36 +1,52 @@
+; Example parsing file for basic testing for **RJournal**
+; Not all comment features are supported yet
+
 .indent 2
 
-import last_year.fledge
+import another_ledger.fledge
 
-journal Test      ; feg
-  note ABCs
-  cg A:B:C
-  commodity fdlg
+journal Example ledger    ; Comment supported here
+  note This is purely for parser testing
+  cg Income:Capital Gains
+  commodity USD
 
-account Asset:Main      ; ugh
-  commodity HKD
-  cg A:B:C:D
-  note Not a real account.
+account Asset:Main      ; Predefine an asset to set some defaults
+  note Set some default values
+  commodity GBP
+  cg Income:Capital Gains 2
 
-commodity 9984JP   ;haha comment
-  mtm
-  name Softbank
+commodity 9984JP   ; definitely not a hedge fund
+  name Softbank Group
   measure JPY
   class Equity
-  multiplier 1
 
-; top comment
+commodity NQZ20    ; Nasdaq futures
+  name Nasdaq Dec '20 futures
+  class Future
+  measure USD
+  multiplier 20
+  mtm
 
-2020-09-08 Narrative
-  A:B:C  12 GBP
-  D  -12 GBP
+; Top level comment half way through ledger
 
+; Comments are not supported on entry rows (yet)
 
-prices 9984JP JPY   ; IBKR
-  2020-09-05 6302
-  2020-09-08 5881
+2020-01-01 Basic Transfer 1   ; but comments ok here
+  Assets:Account 1   100 USD
+  Assets:Account 2  -100 USD
 
-split 2020-05-01 9984JP 1 5.6   ;1-to-5.6 split
+2020-01-02 Basic Transfer 2
+  Assets:Account 1  100 USD
+  Assets:Account 2
 
+2020-01-03 Basic Transfer 3
+  Assets:Account 1  100
+  Assets:Account 2
 
-assert 2020-06-07 AB:BC [UK]:CD  15.7 GBP ; def
+prices 9984JP JPY   ; From your favourite price source
+  2020-01-01 1000
+  2020-01-02 1001
+
+split 2020-02-01 9984JP 1 3   ; 1-to-3 split
+
+assert 2020-02-01 Assets:Account 2  -100 USD    ; actually correct

@@ -46,7 +46,7 @@ type RJournalElement =
   | Account of account:Account * commodity:Commodity option * note:string option * cg:Account option
   | Commodity of symbol:Commodity * measure:Commodity option * name:string option * klass:CommodityClass option * multiplier:int option * mtm:bool
   // Core entries
-  | Entry of date:DateTime * payee:string option * narrative:string * comment:string option * xs:(Account * RAmount * string option) list
+  | Entry of date:DateTime * payee:string option * narrative:string * comment:string option * xs:(Account * RAmount option) list
   | Prices of commodity:Commodity * measure:Commodity * xs:(DateTime * decimal) list
   | Split of date:DateTime * commodity:Commodity * pre:decimal * post:decimal
   | Assertion of date:DateTime * account:Account * amount:RAmount
@@ -62,7 +62,6 @@ type RSubElement =
   | Measure of Commodity
   | Multiplier of int
   | MTM
-
 
 // TODO Add line number to parser for the root items
 type RJournal = RJournal of (RJournalElement) list
@@ -89,11 +88,14 @@ let pCommodity =
   let first = letter <|> digit <|> anyOf "."
   many1Chars2 first (letter <|> digit <|> anyOf ".:-()_") |>> Types.Commodity
 
+let pValue =
+  pnumber .>> nSpaces1 .>>. pCommodity |>> Value
+
 let pRAmount =
-  pipe2 pnumber (opt (attempt (nSpaces1 >>. pCommodity)))
-        (fun n c -> match c with
-                      | Some m -> A (V (Value (n, m)))
-                      | None   -> U n)
+  let pp = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pValue |>> (P >> A)
+  let pa = pValue |>> (V >> A)
+  let pd = pnumber |>> U
+  choice [attempt pp; attempt pa; pd]
 
 let pCommodityClass : Parser<CommodityClass, UserState> =
   choice [stringReturn "Currency" Currency
@@ -170,9 +172,8 @@ let pCommodityDecl =
           |> wrapCommented c
 
 let pEntry =
-  let subitems = tuple3 (pAccountHierarchy .>> nSpaces1)
-                        (pRAmount .>> nSpaces0)
-                        (preturn (Some "S")) .>> nSpaces0 .>> skipNewline |> indented |> many
+  let subitems = tuple2 (pAccountHierarchy .>> nSpaces0) (opt (attempt (pRAmount .>> nSpaces0)))
+                        .>> nSpaces0 .>> skipNewline |> indented |> many
   pdate .>> nSpaces1 .>>. restOfLine true .>>. subitems
     |>> fun ((d, n), xs) -> Entry (date = d, payee = None, narrative = n, comment = None, xs=xs)
 
