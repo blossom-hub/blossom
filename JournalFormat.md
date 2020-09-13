@@ -9,14 +9,13 @@
 ```
 100
 100 USD
-100 MSFT @ 160 USD      ; a "priced" amount
+100 MSFT @ 160 USD      ; make a trade "buy 100 Microsft at 160 USD / share"
 -100 MSFT @ 180 USD     ; negative example
+100 GBP -> 134 USD      ; convert one commodity to another (no trade)
 ```
-- all commodities are textural,
+- all commodities are textural, following the value (some punctuation allowed, no spaces)
 - there is no symbolic ($) handling, e.g. `$100` is invalid
-- all symbols follow the numerical portion
-- the first works only if the account commodity or global commodity has been set
-- the final entry is per-unit price of one of the first commodity (_1 share of MSFT is 160 USD_)
+- an un-measured amount is an error if there is no global or account commodity in scope
 
 ### Dates
 ```
@@ -79,7 +78,6 @@ commodity {commodity}                     ; [0..] per file
   {account tree one}  {amount}
   {account tree two}
 ```
-
 
 ### Prices and splits
 ```

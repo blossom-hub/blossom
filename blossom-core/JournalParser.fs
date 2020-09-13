@@ -92,10 +92,11 @@ let pValue =
   pnumber .>> nSpaces1 .>>. pCommodity |>> Value
 
 let pRAmount =
-  let pp = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pValue |>> (P >> A)
-  let pa = pValue |>> (V >> A)
+  let px = pValue .>> nSpaces1 .>> skipString "->" .>> nSpaces1 .>>. pValue |>> (Xc >> A)
+  let pt = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pValue |>> (Tr >> A)
+  let pv = pValue |>> (Ve >> A)
   let pd = pnumber |>> U
-  choice [attempt pp; attempt pa; pd]
+  choice [attempt px; attempt pt; attempt pv; pd]
 
 let pCommodityClass : Parser<CommodityClass, UserState> =
   choice [stringReturn "Currency" Currency
