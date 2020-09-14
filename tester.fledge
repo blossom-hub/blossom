@@ -33,6 +33,7 @@ commodity NQZ20    ; Nasdaq futures
 
 2020-01-01 Basic Transfer 1   ; but comments ok here
   Assets:Account 1   100 USD
+    Assets:Settlement Alpha
   Assets:Account 2  -100 USD
 
 2020-01-02 Basic Transfer 2
@@ -44,12 +45,11 @@ commodity NQZ20    ; Nasdaq futures
   Assets:Account 2
 
 2020-01-04 Basic Trade 1
-  Assets:Account 1  2 NQZ20 @ 1135 USD
-  Assets:Account 2
+  Assets:Account 1  2 NQZ20 @ 1135
 
-2020-01-05 Basic Exchange 1
+2020-01-05 Basic Exchanges 1
   Assets:Account 1  100 GBP -> 135 USD
-  Assets:Account 2
+  Assets:Account 1  145 EUR <- 100 GBP
 
 prices 9984JP JPY   ; From your favourite price source
   2020-01-01 1000

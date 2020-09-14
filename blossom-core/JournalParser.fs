@@ -11,9 +11,11 @@ open ParserShared
 type UserState =
   {
     IndentSize : int
+    IndentCount : int
   }
   with
     static member Default = {
+      IndentCount = 0
       IndentSize = 2
     }
 
@@ -33,7 +35,11 @@ type UserState =
 
 type RAmount =
   | U of decimal
-  | A of Amount
+  | V of Value
+  | Tf of Value * Value
+  | Th of Value * decimal
+  | Cr of Value * Value
+  | Cl of Value * Value
 
 type RJournalElement =
   // Operational
@@ -46,7 +52,7 @@ type RJournalElement =
   | Account of account:Account * commodity:Commodity option * note:string option * cg:Account option
   | Commodity of symbol:Commodity * measure:Commodity option * name:string option * klass:CommodityClass option * multiplier:int option * mtm:bool
   // Core entries
-  | Entry of date:DateTime * payee:string option * narrative:string * comment:string option * xs:(Account * RAmount option) list
+  | Entry of date:DateTime * payee:string option * narrative:string * comment:string option * xs:(Account * RAmount option * Account option) list
   | Prices of commodity:Commodity * measure:Commodity * xs:(DateTime * decimal) list
   | Split of date:DateTime * commodity:Commodity * pre:decimal * post:decimal
   | Assertion of date:DateTime * account:Account * amount:RAmount
@@ -77,8 +83,12 @@ let sstr = skipString
 let sstr1 s = skipString s >>. nSpaces1
 
 let indented p =
-  let sp n = skipArray n (skipChar ' ') >>. p
-  getUserState >>= fun s -> sp s.IndentSize
+  let sp n m = skipArray (n*m) (skipChar ' ') >>. p
+  getUserState >>= fun s -> sp s.IndentCount s.IndentSize
+
+let increaseIndent p =
+  getUserState >>= fun st -> let st2 = {st with IndentCount = st.IndentCount+1}
+                             setUserState st2 >>. p .>> setUserState st
 
 // Sub parsers
 let pdate = tuple3 (pint32 .>> pchar '-') (pint32 .>> pchar '-') pint32 |>> DateTime
@@ -92,11 +102,13 @@ let pValue =
   pnumber .>> nSpaces1 .>>. pCommodity |>> Value
 
 let pRAmount =
-  let px = pValue .>> nSpaces1 .>> skipString "->" .>> nSpaces1 .>>. pValue |>> (Xc >> A)
-  let pt = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pValue |>> (Tr >> A)
-  let pv = pValue |>> (Ve >> A)
-  let pd = pnumber |>> U
-  choice [attempt px; attempt pt; attempt pv; pd]
+  let pcr= pValue .>> nSpaces1 .>> sstr1 "->" .>>. pValue |>> Cr
+  let pcl = pValue .>> nSpaces1 .>> sstr1 "<-" .>>. pValue |>> Cl
+  let ptf = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pValue |>> Tf
+  let pth = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pnumber |>> Th
+  let pv = pValue |>> V
+  let pu = pnumber |>> U
+  choice [attempt pcr; attempt pcl; attempt ptf; attempt pth; attempt pv; pu]
 
 let pCommodityClass : Parser<CommodityClass, UserState> =
   choice [stringReturn "Currency" Currency
@@ -139,7 +151,7 @@ let pIndent =
 
 let pHeader =
   let subitems = (choice [spCommodity; spCG; spNote] .>> nSpaces0 .>> skipNewline) |> indented |> many
-  sstr1 "journal" >>. pOptLineComment (manyChars (noneOf ";\n")) .>>. subitems
+  sstr1 "journal" >>. pOptLineComment (manyChars (noneOf ";\n")) .>>. increaseIndent subitems
     |>> fun ((t, c), ss) ->
           Header (name = t,
                   commodity = glse ss (function (Commodity x) -> Some x | _ -> None),
@@ -153,7 +165,7 @@ let pImport =
 
 let pAccountDecl =
   let subitems = (choice [spCommodity; spCG; spNote] .>> nSpaces0 .>> skipNewline) |> indented |> many
-  sstr1 "account" >>. pOptLineComment (pAccountHierarchy .>> nSpaces0) .>>. subitems
+  sstr1 "account" >>. pOptLineComment (pAccountHierarchy .>> nSpaces0) .>>. increaseIndent subitems
     |>> fun ((a, c), ss) -> Account (account = a,
                                      commodity = glse ss (function (Commodity x) -> Some x | _ -> None),
                                      note = glse ss (function (Note x) -> Some x | _ -> None),
@@ -162,7 +174,7 @@ let pAccountDecl =
 
 let pCommodityDecl =
   let subitems = (choice [spName; spMeasure; spCommodityClass; spMultiplier; spMTM] .>> nSpaces0 .>> skipNewline) |> indented |> many
-  sstr1 "commodity" >>. pOptLineComment (pCommodity .>> nSpaces0) .>>. subitems
+  sstr1 "commodity" >>. pOptLineComment (pCommodity .>> nSpaces0) .>>. increaseIndent subitems
     |>> fun ((t, c), ss) ->
           RJournalElement.Commodity (symbol = t,
                                      measure = glse ss (function (Measure m) -> Some m | _ -> None),
@@ -173,14 +185,15 @@ let pCommodityDecl =
           |> wrapCommented c
 
 let pEntry =
-  let subitems = tuple2 (pAccountHierarchy .>> nSpaces0) (opt (attempt (pRAmount .>> nSpaces0)))
-                        .>> nSpaces0 .>> skipNewline |> indented |> many
-  pdate .>> nSpaces1 .>>. restOfLine true .>>. subitems
+  let subsubitems = pAccountHierarchy .>> nSpaces0 .>> skipNewline
+  let subitems = (pAccountHierarchy .>> nSpaces0) .>>. (opt (attempt (pRAmount .>> nSpaces0))) .>> nSpaces0 .>> skipNewline
+                    .>>. opt (attempt (increaseIndent (indented subsubitems))) |> indented |>> fun ((a,b), c) -> (a,b,c)
+  pdate .>> nSpaces1 .>>. restOfLine true .>>. increaseIndent (many1 subitems)
     |>> fun ((d, n), xs) -> Entry (date = d, payee = None, narrative = n, comment = None, xs=xs)
 
 let pPrices =
   let subitems = (pdate .>> nSpaces1 .>>. pnumber .>> nSpaces0 .>> skipNewline) |> indented |> many
-  sstr1 "prices" >>. pOptLineComment (pCommodity .>> nSpaces1 .>>. pCommodity .>> nSpaces0) .>>. subitems
+  sstr1 "prices" >>. pOptLineComment (pCommodity .>> nSpaces1 .>>. pCommodity .>> nSpaces0) .>>. increaseIndent subitems
     |>> fun (((c,m), cm), xs) -> Prices (commodity = c, measure = m, xs = xs)
                                    |> wrapCommented cm
 

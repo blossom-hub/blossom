@@ -10,8 +10,11 @@
 100
 100 USD
 100 MSFT @ 160 USD      ; make a trade "buy 100 Microsft at 160 USD / share"
--100 MSFT @ 180 USD     ; negative example
+-100 MSFT @ 180 USD     ; negative example (sale)
+100 MSFT @ 166          ; shorthand if the commodity has a measure defined already
 100 GBP -> 134 USD      ; convert one commodity to another (no trade)
+100 GBP <- 134 USD      ;   the account at the end of the arrow will be increased by that value
+
 ```
 - all commodities are textural, following the value (some punctuation allowed, no spaces)
 - there is no symbolic ($) handling, e.g. `$100` is invalid
@@ -72,12 +75,35 @@ commodity {commodity}                     ; [0..] per file
 
 ### Transaction elements
 - a double space is needed between an account tree and the amount
+
+_Basic syntax_
 - there can only be one missing (elided) amount
 ```
 {date} {payee} | {narrative}      ; payee is optional, exclude | if not using
   {account tree one}  {amount}
   {account tree two}
 ```
+
+_Advanced syntax_
+- a conversion or trade may only have one row to settle into the same account
+- an account can override the second entry account by entering with extra indent
+
+Consider these two entries:
+```
+2020-03-04 Buy MSFT
+  Assets:Brokerage      100 MSFT @ 166
+  Expenses:Brokerage      9.99 USD
+    Assets:Cash
+
+2020-03-05 Buy MSFT
+  Assets:Brokerage      100 MSFT @ 166
+  ExpensesBrokerage       9.99 USD
+  Assets:Cash
+```
+1. `Assets:Brokerage` becomes long 100 MSFT and short 16,000 USD, whilst `Assets:Cash` is debited 9.99 USD
+2. `Assets:Cash` become short 16009.99 USD.
+
+_(provided a commodity declaration has been done for MSFT)_
 
 ### Prices and splits
 ```
