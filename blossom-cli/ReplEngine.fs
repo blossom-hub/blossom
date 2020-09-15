@@ -12,7 +12,7 @@ open Journal
 type State =
   {
     Filename: string option
-    Journal: RJournal option
+    Journal: (RJournalElement list) option
   }
   with
     static member Default = {
@@ -22,7 +22,7 @@ type State =
 
 let load state filename =
   try
-    let parsed = loadJournal true filename
+    let parsed = loadJournal filename
     printfn "%A" parsed
     Some {state with Journal = Some parsed; Filename = Some filename}
   with
