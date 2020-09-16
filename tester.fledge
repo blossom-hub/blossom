@@ -52,6 +52,10 @@ commodity NQZ20    ; Nasdaq futures
   Assets:Account 1  100 GBP -> 135 USD
   Assets:Account 1  145 EUR <- 100 GBP
 
+2020-01-06 Basic Exchanges 2
+  Assets:Account 1  100 GBP -> 135 USD
+  Assets:Account 2
+
 prices 9984JP JPY   ; From your favourite price source
   2020-01-01 1000
   2020-01-02 1001

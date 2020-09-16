@@ -45,41 +45,40 @@ let balanceEntry gdc acctDecls commodDecls = function
 
           let defaultContraAccount = List.tryHead blanks
 
-          // create the contra element y for each x in xs
-          let createContra (account, value, cAccount) =
+          // create the contra element y for each x in xs; only need to consider the cash/measure
+          // amounts at this stage (the other commodity parts are auto generated - they would balance)
+          let createContraV (account, value, cAccount) =
             let contraAccount = Option.orElse defaultContraAccount cAccount
             let contraAccountCommodity () = contraAccount |> Option.bind tryCommodityOf |> orGlobalCommodity
             let getContraAccount () = match contraAccount with Some a -> a | None -> raise (ArgumentException "Must provide contra account for entry")
             match value with
               | U d -> let c = tryCommodityOf account |> Option.defaultValue (contraAccountCommodity())
-                       [account, Ve (d, c); getContraAccount(), Ve (-d, c)]
-              | V (q, c) -> [account, Ve (q, c); getContraAccount(), Ve (-q, c)]
+                       [account, d, c; getContraAccount(), -d, c]
+              | V (q, c) -> [account, q, c; getContraAccount(), -q, c]
               | Tf ((q,c), (p, m)) ->
                   let account2 = Option.defaultValue account contraAccount
-                  let vl = (q*p*multiplierOf c, m)
-                  [account, Tr ((q,c), (p,m)); marketAccount, Tr ((-q,c), (p,m))
-                   account2, Ve (first (~-) vl); marketAccount, Ve vl]
+                  let v = q*p*multiplierOf c
+                  [account2, -v, m; marketAccount, v, m]
               | Th ((q,c), p) ->
                   let account2 = Option.defaultValue account contraAccount
                   let m = measureOf c
-                  let vl = (q*p*multiplierOf c, m)
-                  [account, Tr ((q,c), (p,m)); marketAccount, Tr ((-q,c), (p,m))
-                   account2, Ve (first (~-) vl); marketAccount, Ve vl]
+                  let v = q*p*multiplierOf c
+                  [account2, -v, m; marketAccount, v, m]
               | Cr ((q,c), (p, m)) ->
                   let account2 = Option.defaultValue account contraAccount
-                  [account, Ve (p,m); conversionsAccount, Ve (-p, m)
-                   account2, Ve (-q, c); conversionsAccount, Ve (q, c)]
+                  [account, p, m; conversionsAccount, -p, m
+                   account2, -q, c; conversionsAccount, q, c]
               | Cl ((q,c), (p, m)) ->
                   let account2 = Option.defaultValue account contraAccount
-                  [account, Ve (q,c); conversionsAccount, Ve (-q, c)
-                   account2, Ve (-p, m); conversionsAccount, Ve (p, m)]
+                  [account, q, c; conversionsAccount, -q, c
+                   account2, -p, m; conversionsAccount, p, m]
 
               // match settAccount with
               //   | None -> [account, value]
               //   | Some a -> match value with
               //                 | None -> raise (ArgumentException "Must provide a value when using settlement account")
               //                 | Some u -> [account, value ; a, Some <| contraRAmountV u]
-          let ys = nonBlanks |> List.collect createContra
+          let ys = nonBlanks |> List.collect createContraV
           Some <| Choice1Of2 ys
 
       with
