@@ -84,27 +84,46 @@ _Basic syntax_
   {account tree two}
 ```
 
-_Advanced syntax_
-- a conversion or trade may only have one row to settle into the same account
-- an account can override the second entry account by entering with extra indent
+It is possible to override the related account for a transaction entry, so that two or more accounts can be used to balance the entry. This allows for finer grained control and better narratives for complex transactions. It is possible for an entry to settle to it's own account (common for conversions and trading).
 
-Consider these two entries:
+The syntax is:
+```
+... ~               ; settle to same account
+... ~{account}      ; settle to specified {account}
+```
+
+Consider these three entries:
 ```
 2020-03-04 Buy MSFT
-  Assets:Brokerage      100 MSFT @ 166
+  Assets:Brokerage      100 MSFT @ 166 ~Assets:Cash
   Expenses:Brokerage      9.99 USD
-    Assets:Cash
+  Assets:Operating Cash
+
+2020-03-04 Buy MSFT
+  Assets:Brokerage      100 MSFT @ 166 ~
+  Expenses:Brokerage      9.99 USD
+    Assets:Operating Cash
 
 2020-03-05 Buy MSFT
   Assets:Brokerage      100 MSFT @ 166
   ExpensesBrokerage       9.99 USD
   Assets:Cash
 ```
-1. `Assets:Brokerage` becomes long 100 MSFT and short 16,000 USD, whilst `Assets:Cash` is debited 9.99 USD
-2. `Assets:Cash` become short 16009.99 USD.
+1. `Assets:Brokerage` becomes long 100 MSFT and `Assets:Cash` is short 16,000 USD, whilst `Assets:Operating Cash` is short 9.99 USD.
+1. `Assets:Brokerage` becomes long 100 MSFT and short 16,000 USD, whilst `Assets:Operating Cash` is short 9.99 USD.
+2. `Assets:Brokerage` becomes long 100 MSFT and `Assets:Cash` become short 16009.99 USD.
 
 _(provided a commodity declaration has been done for MSFT)_
 
+This also means that the following is _technically_ correct and equivalent, but not necessarily preferred.
+```
+2020-03-05 Wendys | Buy Lunch
+  Expenses:Fast food    12.99 USD ~Assets:Wallet
+
+2020-03-05 Wendys | Buy Lunch
+  Expenses:Fast food    12.99 USD
+  Assets:Wallet
+```
 ### Prices and splits
 ```
 prices {commodity} {unit commodity}
