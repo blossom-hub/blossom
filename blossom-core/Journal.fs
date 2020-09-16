@@ -48,10 +48,10 @@ let balanceEntry gdc acctDecls commodDecls = function
           // create the contra element y for each x in xs
           let createContra (account, value, cAccount) =
             let contraAccount = Option.orElse defaultContraAccount cAccount
-            let contraAccountCommodity = contraAccount |> Option.bind tryCommodityOf |> orGlobalCommodity
+            let contraAccountCommodity () = contraAccount |> Option.bind tryCommodityOf |> orGlobalCommodity
             let getContraAccount () = match contraAccount with Some a -> a | None -> raise (ArgumentException "Must provide contra account for entry")
             match value with
-              | U d -> let c = tryCommodityOf account |> Option.defaultValue contraAccountCommodity
+              | U d -> let c = tryCommodityOf account |> Option.defaultValue (contraAccountCommodity())
                        [account, Ve (d, c); getContraAccount(), Ve (-d, c)]
               | V (q, c) -> [account, Ve (q, c); getContraAccount(), Ve (-q, c)]
               | Tf ((q,c), (p, m)) ->
