@@ -32,8 +32,7 @@ commodity NQZ20    ; Nasdaq futures
 ; Comments are not supported on entry rows (yet)
 
 2020-01-01 Basic Transfer 1   ; but comments ok here
-  Assets:Account 1  100 USD
-    Assets:Settlement Alpha
+  Assets:Account 1   100 USD ~Assets:Settlement Alpha
 
 2020-01-02 Basic Transfer 2
   Assets:Account 1  100 USD
@@ -44,13 +43,13 @@ commodity NQZ20    ; Nasdaq futures
   Assets:Account 2
 
 2020-01-04 Basic Trade 1
-  Assets:Account 1  2 NQZ20 @ 1135
+  Assets:Account 1  2 NQZ20 @ 1135 ~
   Expenses:Trading    4 USD
     Assets:Account 2
 
 2020-01-05 Basic Exchanges 1
-  Assets:Account 1  100 GBP -> 135 USD
-  Assets:Account 1  145 EUR <- 100 GBP
+  Assets:Account 1  100 GBP -> 135 USD ~
+  Assets:Account 1  145 EUR <- 100 GBP ~
 
 2020-01-06 Basic Exchanges 2
   Assets:Account 1  100 GBP -> 135 USD
