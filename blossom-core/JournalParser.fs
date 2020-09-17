@@ -42,6 +42,7 @@ type RAmount =
   | Cl of Value * Value
 
 type RContraAccount =
+   | NoCAccount
    | Self
    | CAccount of Account
 
@@ -56,7 +57,7 @@ type RJournalElement =
   | Account of AccountDecl
   | Commodity of CommodityDecl
   // Core entries
-  | Entry of date:DateTime * payee:string option * narrative:string * comment:string option * xs:(Account * RAmount option * RContraAccount option) list
+  | Entry of date:DateTime * payee:string option * narrative:string * xs:(Account * RAmount option * RContraAccount) list
   | Prices of commodity:Commodity * measure:Commodity * xs:(DateTime * decimal) list
   | Split of date:DateTime * commodity:Commodity * pre:int * post:int
   | Assertion of date:DateTime * account:Account * amount:RAmount
@@ -189,8 +190,11 @@ let pCommodityDecl =
 
 let pEntry =
   let subsubitems = pAccountHierarchy .>> nSpaces0 .>> skipNewline
-  let contraAccount = choice [attempt (skipChar '~' >>. nSpaces0 >>. pAccountHierarchy |>> CAccount); skipChar '~' >>. preturn Self]
-  let subitems = (pAccountHierarchy .>> nSpaces0) .>>. (opt (attempt (pRAmount .>> nSpaces0))) .>> nSpaces0 .>>. opt contraAccount .>> skipNewline |> indented |>> fun ((a,b), c) -> (a,b,c)
+  let contraAccount = choice [attempt (skipChar '~' >>. nSpaces0 >>. pAccountHierarchy |>> CAccount)
+                              skipChar '~' >>. preturn Self]
+                        |> opt
+                        |>> function Some c -> c | None -> NoCAccount
+  let subitems = (pAccountHierarchy .>> nSpaces0) .>>. (opt (attempt (pRAmount .>> nSpaces0))) .>> nSpaces0 .>>. contraAccount .>> skipNewline |> indented |>> fun ((a,b), c) -> (a,b,c)
   pdate .>> nSpaces1 .>>. restOfLine true .>>. increaseIndent (many1 subitems)
     |>> fun ((d, n), xs) -> Entry (date = d, payee = None, narrative = n, xs=xs)
 

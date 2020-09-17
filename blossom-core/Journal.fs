@@ -19,13 +19,13 @@ let balanceEntry gdc acctDecls commodDecls = function
       // Helpers
       let measureOf commodity = commodDecls |> Map.tryFind commodity
                                             |> Option.bind (fun c -> c.Measure)
-                                            |> function Some c -> c | None -> raise (ArgumentException "No matched commodity definition")
+                                            |> function Some c -> c | None -> internalDefaultCommodity
       let multiplierOf commodity = commodDecls |> Map.tryFind commodity
                                                |> Option.bind (fun c -> c.Multiplier)
                                                |> Option.defaultValue 1m
       let tryCommodityOf account = acctDecls |> Map.tryFind account
                                              |> Option.bind (fun a -> a.Commodity)
-      let orGlobalCommodity = Option.orElse gdc >> function Some c -> c | None -> raise (ArgumentException "No global default commodity for fallback")
+      let orGlobalCommodity = Option.orElse gdc >> function Some c -> c | None -> internalDefaultCommodity
 
       let contraRAmountV = function | U d                 -> U (-d)
                                     | V (q, c)            -> V (-q, c)
@@ -34,58 +34,37 @@ let balanceEntry gdc acctDecls commodDecls = function
                                     | Cr (_, b)           -> V b
                                     | Cl (a, _)           -> V a
 
-      try
-          // is there a blank account for auto contra?
-          let blanks, nonBlanks = xs |> List.partition (snd3 >> Option.isNone)
-                                     |> (List.map fst3) *** (List.map (second3 Option.get))
+      // is there a blank account for auto contra?
+      let blanks, nonBlanks = xs |> List.partition (snd3 >> Option.isNone)
+                                 |> (List.map fst3) *** (List.map (second3 Option.get))
 
-          if List.length blanks > 1
-            then raise (ArgumentException "There can only be one default blank account")
-            else ()
+      let collectWeightings (account, value, contraAccount) =
+        // if this leg has it's own contra account, it automatically balances, it has zero weight to return
+        match contraAccount with
+          | NoCAccount ->
+              match value with
+                | U q                -> [q, tryCommodityOf account |> orGlobalCommodity]
+                | V (q, c)           -> [q, c]
+                | Tf ((q,c), (p, m)) -> [q*p*multiplierOf c, m]
+                | Th ((q,c), p)      -> [q*p*multiplierOf c, measureOf c]
+                | Cr ((q,c), _)      -> [q, c]
+                | Cl (_, (p, m))     -> [p, m]
+          | _ -> []
+      let ys = nonBlanks |> List.collect collectWeightings
+      // now group up and check the result balancing (or not)
+      let residual = ys |> List.groupBy snd
+                        |> List.map (second (List.sumBy fst))
+                        |> List.filter (fun (_,d) -> d <> 0M)
 
-          let defaultContraAccount = List.tryHead blanks
-
-          // create the contra element y for each x in xs; only need to consider the cash/measure
-          // amounts at this stage (the other commodity parts are auto generated - they would balance)
-          let createContraV (account, value, cAccount) =
-            let contraAccount = Option.orElse defaultContraAccount cAccount
-            let contraAccountCommodity () = contraAccount |> Option.bind tryCommodityOf |> orGlobalCommodity
-            let getContraAccount () = match contraAccount with Some a -> a | None -> raise (ArgumentException "Must provide contra account for entry")
-            match value with
-              | U d -> let c = tryCommodityOf account |> Option.defaultValue (contraAccountCommodity())
-                       [account, d, c; getContraAccount(), -d, c]
-              | V (q, c) -> [account, q, c; getContraAccount(), -q, c]
-              | Tf ((q,c), (p, m)) ->
-                  let account2 = Option.defaultValue account contraAccount
-                  let v = q*p*multiplierOf c
-                  [account2, -v, m; marketAccount, v, m]
-              | Th ((q,c), p) ->
-                  let account2 = Option.defaultValue account contraAccount
-                  let m = measureOf c
-                  let v = q*p*multiplierOf c
-                  [account2, -v, m; marketAccount, v, m]
-              | Cr ((q,c), (p, m)) ->
-                  let account2 = Option.defaultValue account contraAccount
-                  [account, p, m; conversionsAccount, -p, m
-                   account2, -q, c; conversionsAccount, q, c]
-              | Cl ((q,c), (p, m)) ->
-                  let account2 = Option.defaultValue account contraAccount
-                  [account, q, c; conversionsAccount, -q, c
-                   account2, -p, m; conversionsAccount, p, m]
-
-              // match settAccount with
-              //   | None -> [account, value]
-              //   | Some a -> match value with
-              //                 | None -> raise (ArgumentException "Must provide a value when using settlement account")
-              //                 | Some u -> [account, value ; a, Some <| contraRAmountV u]
-          let ys = nonBlanks |> List.collect createContraV
-          Some <| Choice1Of2 ys
-
-      with
-        | :? ArgumentException as ae -> Some (Choice2Of2 ae.Message)
-
-
-  | elt -> None
+      let defaultContraAccount = List.tryHead blanks
+      match List.length blanks, defaultContraAccount, List.length residual with
+        | 0, _, 0       -> Entry (dt, py, na, xs) |> Choice1Of2
+        | 0, _, _       -> Choice2Of2 "Entry doesn't balance! Need a contra account but none specified."
+        | 1, Some _ , 0 -> Choice2Of2 "Entry balances, but a contra account has been specified."
+        | 1, Some ca, _ -> let ys = residual |> List.map (fun (c, v) -> (ca, Some <| V (-v, c), NoCAccount))
+                           Entry (dt, py, na, xs @ ys) |> Choice1Of2
+        | _, _, _       -> Choice2Of2 "Entry has more than one default contra account, there should only be one."
+  | elt -> Choice1Of2 elt
 
 let loadJournal filename =
   let elts = loadRJournal filename |> List.map stripComments
@@ -100,7 +79,7 @@ let loadJournal filename =
   let header = List.tryHead headers
   let globalDefaultCommodity = header |> Option.bind (fun h -> h.Commodity)
 
-  let xyz = elts |> List.choose (balanceEntry globalDefaultCommodity accountDecls commodityDecls)
+  let xyz = elts |> List.map (balanceEntry globalDefaultCommodity accountDecls commodityDecls)
 
   printfn "%A" xyz
   elts
