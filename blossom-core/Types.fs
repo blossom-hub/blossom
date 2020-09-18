@@ -10,9 +10,9 @@ type AccountHierarchy = AccountHierarchy of Account list
 type Value = decimal * Commodity
 
 type Amount =
-  | Ve of Value
-  | Tr of Value * Value
-  | Xc of Value * Value
+  | V of Value
+  | T of Value * Value
+  | X of Value * Value
 
 type CommodityClass =
   | Currency

@@ -34,8 +34,8 @@ type UserState =
 *)
 
 type RAmount =
-  | U of decimal
-  | V of Value
+  | Un of decimal
+  | Ve of Value
   | Tf of Value * Value
   | Th of Value * decimal
   | Cr of Value * Value
@@ -110,8 +110,8 @@ let pRAmount =
   let pcl = pValue .>> nSpaces1 .>> sstr1 "<-" .>>. pValue |>> Cl
   let ptf = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pValue |>> Tf
   let pth = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pnumber |>> Th
-  let pv = pValue |>> V
-  let pu = pnumber |>> U
+  let pv = pValue |>> Ve
+  let pu = pnumber |>> Un
   choice [attempt pcr; attempt pcl; attempt ptf; attempt pth; attempt pv; pu]
 
 let pCommodityClass : Parser<CommodityClass, UserState> =
