@@ -12,7 +12,7 @@ open Journal
 type State =
   {
     Filename: string option
-    Journal: (RJournalElement list) option
+    Journal: Journal option
   }
   with
     static member Default = {
@@ -59,9 +59,8 @@ let execute state input =
     printfn "=> %A" result
     action result
   with
-    | :? InvalidOperationException as ex ->
-          printfn "=> error detected %A" ex.Message
-          Some state
+    | ex -> printfn "=> error detected %A" ex.Message
+            Some state
 
 let rec go state =
   printf "] "

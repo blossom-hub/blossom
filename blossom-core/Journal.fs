@@ -56,15 +56,26 @@ let balanceEntry gdc acctDecls commodDecls = function
                         |> List.map (second (List.sumBy fst))
                         |> List.filter (fun (_,d) -> d <> 0M)
 
+      let convertXs (account, value, contraAccount) =
+        let cvalue =
+          function | U q -> Ve (q, tryCommodityOf account |> orGlobalCommodity)
+                   | V v -> Ve v
+                   | Tf (a, b) -> Tr (a, b)
+                   | Th ((q, c), p) -> Tr ((q, c), (p, measureOf c))
+                   | Cr (a, b) -> Xc (b, a)
+                   | Cl (a, b) -> Xc (a, b)
+        let cca = function | NoCAccount -> None | Self -> Some account | CAccount c -> Some c
+        (account, value |> cvalue, cca contraAccount)
+
       let defaultContraAccount = List.tryHead blanks
-      match List.length blanks, defaultContraAccount, List.length residual with
-        | 0, _, 0       -> Entry (dt, py, na, xs) |> Choice1Of2
-        | 0, _, _       -> Choice2Of2 "Entry doesn't balance! Need a contra account but none specified."
-        | 1, Some _ , 0 -> Choice2Of2 "Entry balances, but a contra account has been specified."
-        | 1, Some ca, _ -> let ys = residual |> List.map (fun (c, v) -> (ca, Some <| V (-v, c), NoCAccount))
-                           Entry (dt, py, na, xs @ ys) |> Choice1Of2
-        | _, _, _       -> Choice2Of2 "Entry has more than one default contra account, there should only be one."
-  | elt -> Choice1Of2 elt
+      Some <| match List.length blanks, defaultContraAccount, List.length residual with
+                | 0, _, 0       -> {Date = dt; Payee = py; Narrative = na; Postings = xs |> List.map (second3 Option.get >> convertXs)} |> Choice1Of2
+                | 0, _, _       -> Choice2Of2 "Entry doesn't balance! Need a contra account but none specified."
+                | 1, Some _ , 0 -> Choice2Of2 "Entry balances, but a contra account has been specified."
+                | 1, Some ca, _ -> let zs = residual |> List.map (fun (c, v) -> (ca, V (-v, c), NoCAccount))
+                                   {Date = dt; Payee = py; Narrative = na; Postings = nonBlanks @ zs |> List.map convertXs} |> Choice1Of2
+                | _, _, _       -> Choice2Of2 "Entry has more than one default contra account, there should only be one."
+  | _ -> None
 
 let loadJournal filename =
   let elts = loadRJournal filename |> List.map stripComments
@@ -76,10 +87,22 @@ let loadJournal filename =
   let commodityDecls = elts |> List.choose (function RJournalElement.Commodity c -> Some (c.Symbol, c) | _ -> None)
                             |> Map.ofList
 
-  let header = List.tryHead headers
-  let globalDefaultCommodity = header |> Option.bind (fun h -> h.Commodity)
+  let header = List.tryHead headers |> Option.defaultValue {Name = "Untitled"; Commodity = None; CapitalGains = None; Note = None}
 
-  let xyz = elts |> List.map (balanceEntry globalDefaultCommodity accountDecls commodityDecls)
+  let entries = elts |> List.choose (balanceEntry header.Commodity accountDecls commodityDecls)
 
-  printfn "%A" xyz
-  elts
+  let register = entries |> List.choose (function | Choice1Of2 x -> Some x
+                                                  | Choice2Of2 s -> printfn "%s" s; None)
+                         |> List.groupBy (fun e -> e.Date)
+                         |> Map.ofList
+
+  // Avengers assemble!
+  {
+    Meta = header
+    AccountDecls = accountDecls
+    CommodityDecls = commodityDecls
+    Register = register
+    Prices = Map.empty
+    Splits = Map.empty
+    Assertions = []
+  }

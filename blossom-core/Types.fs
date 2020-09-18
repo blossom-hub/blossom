@@ -47,7 +47,7 @@ type Entry = {
   Date: DateTime
   Payee: string option
   Narrative: string
-  Postings: (Account * Amount) list
+  Postings: (Account * Amount * Account option) list
 }
 
 type Journal = {
