@@ -48,7 +48,7 @@ commodity NQZ20    ; Nasdaq futures
 
 2020-01-04 Basic Trade 2
   Assets:Account 1  2 ASSET @ 100 USD
-  Assets:Settlment Trading
+  Assets:Settlement Trading
 
 2020-01-05 Basic Exchanges 1
   Assets:Account 1  100 GBP -> 135 USD ~
