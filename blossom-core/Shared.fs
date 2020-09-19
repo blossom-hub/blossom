@@ -22,6 +22,13 @@ let fst3 (a,_,_) = a
 let snd3 (_,b,_) = b
 let thd3 (_,_,c) = c
 
+type idstring = string
+let uid () : idstring =
+  let gen() =
+    let b = Path.GetRandomFileName()
+    let dp = b.IndexOf('.')
+    b.[..dp-1]
+  gen()
 
 module List =
   let groupByApply keyProjection valueProjection list =
