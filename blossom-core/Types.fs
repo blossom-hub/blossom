@@ -55,7 +55,7 @@ type Journal = {
   AccountDecls: Map<Account, AccountDecl>
   CommodityDecls: Map<Commodity, CommodityDecl>
   Register: Map<DateTime, Entry list>
-  Prices: Map<Commodity, Map<Commodity, Map<DateTime, decimal>>>
+  Prices: Map<Commodity * Commodity, Map<DateTime, decimal>>
   Splits: Map<Commodity, (DateTime * int * int) list>
   Assertions: (DateTime * Account * Value) list
 }

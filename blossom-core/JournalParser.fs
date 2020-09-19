@@ -60,7 +60,7 @@ type RJournalElement =
   | Entry of date:DateTime * payee:string option * narrative:string * xs:(Account * RAmount option * RContraAccount) list
   | Prices of commodity:Commodity * measure:Commodity * xs:(DateTime * decimal) list
   | Split of date:DateTime * commodity:Commodity * pre:int * post:int
-  | Assertion of date:DateTime * account:Account * amount:RAmount
+  | Assertion of date:DateTime * account:Account * value:Value
   // A element that has a comment associated with it is a rec element
   | Commented of RJournalElement * string
 
@@ -106,7 +106,7 @@ let pValue =
   pnumber .>> nSpaces1 .>>. pCommodity |>> Value
 
 let pRAmount =
-  let pcr= pValue .>> nSpaces1 .>> sstr1 "->" .>>. pValue |>> Cr
+  let pcr = pValue .>> nSpaces1 .>> sstr1 "->" .>>. pValue |>> Cr
   let pcl = pValue .>> nSpaces1 .>> sstr1 "<-" .>>. pValue |>> Cl
   let ptf = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pValue |>> Tf
   let pth = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pnumber |>> Th
@@ -157,7 +157,7 @@ let pHeader =
   let subitems = (choice [spCommodity; spCG; spNote] .>> nSpaces0 .>> skipNewline) |> indented |> many
   sstr1 "journal" >>. pOptLineComment (manyChars (noneOf ";\n")) .>>. increaseIndent subitems
     |>> fun ((t, c), ss) ->
-          Header {Name = t
+          Header {Name = t.Trim()
                   Commodity = glse ss (function (Commodity x) -> Some x | _ -> None)
                   CapitalGains = glse ss (function (CG x) -> Some x | _ -> None)
                   Note = glse ss (function (Note x) -> Some x | _ -> None)}
@@ -188,6 +188,7 @@ let pCommodityDecl =
                                      Mtm = List.contains MTM ss}
           |> wrapCommented c
 
+// TODO: Implement the payee, support the inline comments
 let pEntry =
   let subsubitems = pAccountHierarchy .>> nSpaces0 .>> skipNewline
   let contraAccount = choice [attempt (skipChar '~' >>. nSpaces0 >>. pAccountHierarchy |>> CAccount)
@@ -209,8 +210,8 @@ let pSplit =
     |>> fun ((d, c, ou, nu), cm) -> Split (date = d, commodity = c, pre = ou, post = nu) |> wrapCommented cm
 
 let pAssertion =
-  sstr1 "assert" >>. pOptLineComment (tuple3 (pdate .>> nSpaces1) (pAccountHierarchy .>> nSpaces1) (pRAmount .>> nSpaces0))
-    |>> fun ((d, t, n), c) -> Assertion (date = d, account = t, amount = n) |> wrapCommented c
+  sstr1 "assert" >>. pOptLineComment (tuple3 (pdate .>> nSpaces1) (pAccountHierarchy .>> nSpaces1) (pValue .>> nSpaces0))
+    |>> fun ((d, t, n), c) -> Assertion (date = d, account = t, value = n) |> wrapCommented c
 
 let pRJournal =
   let parsers = [ pIndent;

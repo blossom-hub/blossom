@@ -79,30 +79,45 @@ let balanceEntry gdc acctDecls commodDecls = function
 
 let loadJournal filename =
   let elts = loadRJournal filename |> List.map stripComments
-  // handle imports here ?//
 
-  let headers = elts |> List.choose (function Header h -> Some h | _ -> None)
+  // handle imports here, we will need to rec the load function and combine results
+  // will have to split this function later to handle
+  let imports = elts |> List.choose (function Import i -> Some i | _ -> None)
+
+  let header = elts |> List.choose (function Header h -> Some h | _ -> None)
+                    |> List.tryHead
+                    |> Option.defaultValue {Name = "Untitled"; Commodity = None; CapitalGains = None; Note = None}
+
   let accountDecls = elts |> List.choose (function Account a -> Some (a.Account, a) | _ -> None)
                           |> Map.ofList
+
   let commodityDecls = elts |> List.choose (function RJournalElement.Commodity c -> Some (c.Symbol, c) | _ -> None)
                             |> Map.ofList
 
-  let header = List.tryHead headers |> Option.defaultValue {Name = "Untitled"; Commodity = None; CapitalGains = None; Note = None}
+  let register = elts |> List.choose (balanceEntry header.Commodity accountDecls commodityDecls)
+                      |> List.choose (function | Choice1Of2 x -> Some x
+                                               | Choice2Of2 s -> printfn "%s" s; None)
+                      |> List.groupBy (fun e -> e.Date)
+                      |> Map.ofList
 
-  let entries = elts |> List.choose (balanceEntry header.Commodity accountDecls commodityDecls)
+  let prices = elts |> List.choose (function Prices (c, m, xs) -> Some ((c, m), xs) | _ -> None)
+                    |> List.groupByApply fst snd
+                    |> List.map (second (List.collect id >> Map.ofList))
+                    |> Map.ofList
 
-  let register = entries |> List.choose (function | Choice1Of2 x -> Some x
-                                                  | Choice2Of2 s -> printfn "%s" s; None)
-                         |> List.groupBy (fun e -> e.Date)
-                         |> Map.ofList
+  let splits = elts |> List.choose (function Split (d, c, k1, k2) -> Some (c, (d, k1, k2)) | _ -> None)
+                    |> List.groupByApply fst snd
+                    |> Map.ofList
 
-  // Avengers assemble!
+  let assertions = elts |> List.choose (function Assertion (d,a,v) -> Some (d,a,v) | _ -> None)
+
+  // Avengers... assemble!
   {
     Meta = header
     AccountDecls = accountDecls
     CommodityDecls = commodityDecls
     Register = register
-    Prices = Map.empty
-    Splits = Map.empty
-    Assertions = []
+    Prices = prices
+    Splits = splits
+    Assertions = assertions
   }

@@ -21,3 +21,10 @@ let ( *** ) f g (a, b) = (f a, g b)
 let fst3 (a,_,_) = a
 let snd3 (_,b,_) = b
 let thd3 (_,_,c) = c
+
+
+module List =
+  let groupByApply keyProjection valueProjection list =
+    let grouped = list |> List.groupBy keyProjection
+    let projected = grouped |> List.map (second (List.map valueProjection))
+    projected

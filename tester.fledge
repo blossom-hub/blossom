@@ -31,7 +31,7 @@ commodity NQZ20    ; Nasdaq futures
 
 ; Comments are not supported on entry rows (yet)
 
-2020-01-01 Basic Transfer 1   ; but comments ok here
+2020-01-01 Me | Basic Transfer 1   ; but comments ok here
   Assets:Account 1   100 USD ~Assets:Settlement Alpha
 
 2020-01-02 Basic Transfer 2
@@ -61,6 +61,12 @@ commodity NQZ20    ; Nasdaq futures
 prices 9984JP JPY   ; From your favourite price source
   2020-01-01 1000
   2020-01-02 1001
+
+
+prices 9984JP JPY   ; From your favourite price source 2
+  2020-01-03 1002
+  2020-01-04 1003
+
 
 split 2020-02-01 9984JP 1 3   ; 1-to-3 split
 
