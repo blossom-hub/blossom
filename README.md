@@ -10,6 +10,9 @@ Blossom is a _yet another_ plain text acount application cli similar to [Ledger-
 ## Does it work yet?
 No, this repository and build is in early days.
 
+## Can I contribute?
+There's not much to contribute to right now, star the project and come back later.
+
 ## Why is there _another_ clone of ledger?
 1. I find that the other systems don't cater well for more advanced trading strategies such as options or futures, which large numbers of trading assets (100+ can soon accrue).
 1. My use of MS Money for the last 15 years didn't really cut it for trading and multicurrency handling; it's long dead and I needed another solution.
@@ -22,7 +25,7 @@ After the initial accounting portions which are fairly standard across pta softw
 - Support for non-nav assets such as mtm futures
 - Possible future support for risk, stress reports (option evaluation, derivatives linkage to underlyings, volatility surfaces etc) for OTC products.
 
-Most of the "standard" formatting works in blossom, although there some extra helpers and formatting supported to cut down on boilerplate and monotonous copy/paste.
+Most of the "standard" formatting works in blossom, although there some extra helpers and formatting supported to cut down on boilerplate and monotonous copy/paste. You can see some of the format ideas at https://github.com/simonjpascoe/blossom/blob/master/JournalFormat.md.
 
 ## Plans
 I'm currently migrating a bigger codebase from my initial implementation into this repository and upgrading several features.
