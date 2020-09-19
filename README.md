@@ -10,6 +10,9 @@ Blossom is a _yet another_ plain text acount application cli similar to [Ledger-
 ## Does it work yet?
 No, this repository and build is in early days.
 
+## Can I contribute?
+There's not much to contribute to right now, star the project and come back later.
+
 ## Why is there _another_ clone of ledger?
 1. I find that the other systems don't cater well for more advanced trading strategies such as options or futures, which large numbers of trading assets (100+ can soon accrue).
 1. My use of MS Money for the last 15 years didn't really cut it for trading and multicurrency handling; it's long dead and I needed another solution.
