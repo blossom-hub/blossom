@@ -1,5 +1,7 @@
 module Types
 
+open Types
+
 type Command =
   // Application management
   | Quit
@@ -7,6 +9,7 @@ type Command =
   // File management
   | Load of string
   | Reload
-  | PrettyPrint of string
   // Accounting
   | Balances of string
+  // Meta
+  | Meta of MetaRequest

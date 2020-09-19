@@ -24,14 +24,19 @@ let clear = str "cls" >>. preturn Clear
 // File management
 let load = choice [str "load"; str ":l"] >>. ws1 >>. restOfLine false |>> Load
 let reload = choice [str "reload"; str ":r"] >>. preturn Reload
-let pprint = choice [str "pp"] >>. ws1 >>. restOfLine false |>> PrettyPrint
 
 // Accounting
 let balances = choice [str "balances"; str "bal"; str ":b"] >>. ws >>. restOfLine false |>> Balances
 
+// Meta
+let meta = str "meta" >>. ws1 >>. choice [str "accounts" >>. preturn Accounts
+                                          str "commodities" >>. preturn Commodities
+                                          str "payees" >>. preturn Payees] |>> Meta
+
 let applicationCommands = [quit; clear]
-let fileCommands = [load; reload; pprint]
+let fileCommands = [load; reload;]
 let accountingCommands = [balances]
+let otherCommands = [meta]
 let parse : Parser<Command> =
-  let commands = applicationCommands @ fileCommands @ accountingCommands
+  let commands = [applicationCommands; fileCommands; accountingCommands; otherCommands] |> List.concat
   choice commands .>> eof

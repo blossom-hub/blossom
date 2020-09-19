@@ -4,10 +4,12 @@ open System
 open System.IO
 
 open Types
+open Renderers
 open ReplParser
 open ParserShared
-open JournalParser
 open Journal
+
+open Reports
 
 type State =
   {
@@ -36,23 +38,24 @@ let reload state =
     | None    -> printfn "Cannot reload if no file loaded"
                  Some state
 
-let prettyPrint state filename =
+let balances query journal =
   printfn "Not yet supported"
-  Some state
-
-let balances state query =
-  printfn "Not yet supported"
-  Some state
 
 let execute state input =
+  let ifJournalLoaded op =
+    match state.Journal with
+      | Some j -> op j
+      | None   -> printfn "You must load a journal first."
+    Some state
+
   let action = function
     | Quit                 -> None
     | Clear                -> Console.Clear()
                               Some state
     | Load filename        -> load state filename
     | Reload               -> reload state
-    | PrettyPrint filename -> prettyPrint state filename
-    | Balances query       -> balances state query
+    | Balances query       -> ifJournalLoaded <| balances query
+    | Meta request         -> ifJournalLoaded <| meta HumanReadable.seqToLines request
 
   try
     let result = runParser parse () (FromString input)

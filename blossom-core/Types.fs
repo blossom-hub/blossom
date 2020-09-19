@@ -59,3 +59,5 @@ type Journal = {
   Splits: Map<Commodity, (DateTime * int * int) list>
   Assertions: (DateTime * Account * Value) list
 }
+
+type MetaRequest = Accounts | Commodities | Payees

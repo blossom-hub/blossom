@@ -9,6 +9,7 @@
     <Compile Include="Shared.fs" />
     <Compile Include="JournalParser.fs" />
     <Compile Include="Journal.fs" />
+    <Compile Include="Reports.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
