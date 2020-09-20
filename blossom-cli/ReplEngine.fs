@@ -38,11 +38,8 @@ let reload state =
     | None    -> printfn "Cannot reload if no file loaded"
                  Some state
 
-let balances query journal =
-  printfn "Not yet supported"
-
 let execute state input =
-  let ifJournalLoaded op =
+  let withJournal op =
     match state.Journal with
       | Some j -> op j
       | None   -> printfn "You must load a journal first."
@@ -54,8 +51,8 @@ let execute state input =
                               Some state
     | Load filename        -> load state filename
     | Reload               -> reload state
-    | Balances query       -> ifJournalLoaded <| balances query
-    | Meta request         -> ifJournalLoaded <| meta HumanReadable.seqToLines request
+    | Balances query       -> withJournal <| balances HumanReadable.renderTable query
+    | Meta request         -> withJournal <| meta HumanReadable.seqToLines request
 
   try
     let result = runParser parse () (FromString input)

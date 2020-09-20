@@ -121,3 +121,44 @@ let loadJournal filename =
     Splits = splits
     Assertions = assertions
   }
+
+let evaluateMovements journal =
+  let register = journal.Register
+
+  let multiplierOf c = journal.CommodityDecls |> Map.tryFind c
+                                              |> Option.bind (fun d -> d.Multiplier)
+                                              |> Option.defaultValue 1m
+
+  let expandPosting (account, amount, caccount) =
+    match amount with
+      | V (qty, commodity) ->
+          let contra = match caccount with Some ca -> [ca, -qty, commodity] | None -> []
+          [account, qty, commodity] @ contra
+      | T ((qty, commodity), (price, measure)) ->
+          let cash = qty * price * multiplierOf commodity
+          let contra = match caccount with Some ca -> [ca, -cash, measure] | None -> []
+          [account, qty, commodity
+           marketAccount, -qty, commodity
+           marketAccount, cash, measure] @ contra
+      | X ((qty1, commodity1), (qty2, commodity2)) ->
+          let contra = match caccount with Some ca -> [ca, -qty2, commodity2] | None -> []
+          [account, qty1, commodity1
+           conversionsAccount, -qty1, commodity1
+           conversionsAccount, qty2, commodity2] @ contra
+  let expandEntry entry = entry.Postings |> List.collect expandPosting
+  register |> Map.map (fun _ es -> List.collect expandEntry es)
+
+let evaluateBalances journal =
+  let movements = evaluateMovements journal |> Map.toList
+
+  let f pre (dt, ms) =
+    let applyMovement s (account, qty, commodity) =
+      let before = s |> Map.tryFind account |> Option.defaultValue Map.empty
+      let v = qty + (before |> Map.tryFind commodity |> Option.defaultValue 0m)
+      s |> Map.add account (before |> Map.add commodity v)
+
+    let result = ms |> List.fold applyMovement pre
+
+    (dt, result), result
+
+  movements |> List.mapFold f Map.empty |> fst |> Map.ofList
