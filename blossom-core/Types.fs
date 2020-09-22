@@ -9,6 +9,8 @@ type AccountHierarchy = AccountHierarchy of Account list
 
 type Value = decimal * Commodity
 
+type Tenor = Y | M | H | Q | W of DayOfWeek | D
+
 type Amount =
   | V of Value
   | T of Value * Value
@@ -19,6 +21,14 @@ type CommodityClass =
   | Equity
   | Option
   | Future
+
+type Filter = {
+  between: ((bool * DateTime) option * (bool * DateTime) option) option
+  account: string option
+  payee: string option
+  narrative: string option
+  commodity: string option
+}
 
 type JournalMeta = {
   Name: string

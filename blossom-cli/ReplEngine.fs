@@ -7,6 +7,7 @@ open Types
 open Renderers
 open ReplParser
 open ParserShared
+open SubParsers
 open Journal
 
 open Reports
@@ -21,6 +22,8 @@ type State =
       Filename = None
       Journal = None
     }
+
+let getFilter = FromString >> runParser pFilter JournalParser.UserState.Default
 
 let load state filename =
   try
@@ -51,7 +54,7 @@ let execute state input =
                               Some state
     | Load filename        -> load state filename
     | Reload               -> reload state
-    | Balances query       -> withJournal <| balances HumanReadable.renderTable query
+    | Balances query       -> withJournal <| balances HumanReadable.renderTable (getFilter query)
     | Meta request         -> withJournal <| meta HumanReadable.seqToLines request
 
   try
