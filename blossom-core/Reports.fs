@@ -41,13 +41,30 @@ let meta renderer request journal  =
 
 
 let balances renderer request journal =
-  // do filter
+  // do prefilter
+  let j2 = prefilter request journal
 
   // run it
-  let result = evaluateBalances journal |> Map.toList
-                                        |> List.tryLast
-                                        |> Option.map (snd >> Map.toList >> List.map (second Map.toList))
-                                        |> Option.defaultValue []
+  let result = evaluateBalances j2 |> Map.toList
+                                   |> List.tryLast
+                                   |> Option.map (snd >> Map.toList >> List.map (second Map.toList))
+                                   |> Option.defaultValue []
+
+  // re-apply specific filters to crystalise the result
+  // TODO make this an option
+  let accountFilter xs =
+    match request.account with
+      | None -> xs
+      | Some r -> xs |> List.filter (fun (Account a,_) -> regexfilter r a)
+
+  let commodityFilter xs =
+    match request.commodity with
+      | None -> xs
+      | Some r -> xs |> List.map (second(List.filter (fun (Commodity c, _) -> regexfilter r c)))
+                     |> List.filter (snd >> List.isEmpty >> not)
+
+  let result = result |> accountFilter |> commodityFilter
+
   // temporarily make a table
   let cs = [{Header = "Account"; Key = true}; {Header = "Balance"; Key = false}; {Header ="Commodity"; Key = false}]
   let data = result |> List.collect (fun (Account a, vs) -> vs |> List.map (fun (Commodity m, q) -> [Text a; Number (q, 3); Text m]))

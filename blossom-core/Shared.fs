@@ -1,6 +1,6 @@
 module Shared
 
-open System
+open System.Text.RegularExpressions
 open System.IO
 
 let curry f a b = f (a,b)
@@ -29,6 +29,17 @@ let uid () : idstring =
     let dp = b.IndexOf('.')
     b.[..dp-1]
   gen()
+
+let firstMatch pattern input =
+  let m = Regex.Match(input, pattern, RegexOptions.IgnoreCase)
+  if (m.Success) then Some m.Groups.[1].Value else None
+
+let (|FirstRegexGroup|_|) = firstMatch
+
+let regexfilter p v =
+  match v with
+    | FirstRegexGroup p _ -> true
+    | _ -> false
 
 module List =
   let groupByApply keyProjection valueProjection list =

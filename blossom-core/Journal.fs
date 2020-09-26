@@ -162,3 +162,48 @@ let evaluateBalances journal =
     (dt, result), result
 
   movements |> List.mapFold f Map.empty |> fst |> Map.ofList
+
+let prefilter request journal =
+  let register = journal.Register
+
+  let dateFilter dt =
+    match request.between with
+      | None -> true
+      | Some (left, right) ->
+          let q1 = match left  with | None -> true | Some (f, d0) -> (if f then (>=) else (>)) dt d0
+          let q2 = match right with | None -> true | Some (f, dT) -> (if f then (<=) else (<)) dt dT
+          q1 && q2
+
+  let payeeFilter es =
+    match request.payee with
+      | None -> es
+      | Some r -> es |> List.filter (fun e -> match e.Payee with | None -> true | Some p -> regexfilter r p)
+
+  let narrativeFilter es =
+    match request.narrative with
+      | None -> es
+      | Some r -> es |> List.filter (fun e -> regexfilter r e.Narrative)
+
+  let postingSemiFilter es =
+    let f = match request.account with
+              | None -> fun _ -> true
+              | Some r -> fun (Types.Account a, _, ca) ->
+                            let q1 = regexfilter r a
+                            let q2 = match ca with Some (Types.Account c) -> regexfilter r c | _ -> true
+                            q1 && q2
+    let g = match request.commodity with
+              | None -> fun _ -> true
+              | Some r -> fun (_, amt, _) ->
+                            match amt with
+                              | V (_, Types.Commodity c) -> regexfilter r c
+                              | T ((_, Types.Commodity c1), (_, Types.Commodity c2)) -> regexfilter r c1 || regexfilter r c2
+                              | X ((_, Types.Commodity c1), (_, Types.Commodity c2)) -> regexfilter r c1 || regexfilter r c2
+    es |> List.filter (fun e -> e.Postings |> List.exists (fun p -> f p && g p))
+
+  let apply dt es =
+    match dateFilter dt with
+      | false -> []
+      | true -> es |> narrativeFilter |> payeeFilter |> postingSemiFilter
+
+  let register2 = register |> Map.map apply
+  {journal with Register = register2}
