@@ -86,7 +86,7 @@ A regular expression against the payee field in transactions.
 #### Narrative: `?`
 Similar to payee filter, except on the narrative field.
 ```
-] :c "Work lunch"
+] :c ?"Work lunch"
 ```
 
 #### Commodity: `%`
