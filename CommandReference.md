@@ -50,31 +50,48 @@ View the list of accounts / commodities etc.
 
 ## Reporting commands
 
-> Example outputs will be later as the tool develops. A key decision is how to _actually_ filter - should the result be the full set of transactions, or just specific to the filter? e.g. if the transaction is an FX purchase `GBP<->USD`, and you filter by `%GBP`, should one see both legs? This can be somewhat confusing for balance reports so further testing required.
-
 ### Common filters
 The following filters generally apply to most commands detailed below. `:c` is a stand-in for any command in the examples. Most textural entries accept regular expressions, and can be quoted for more complex expressions.
 
+Filters run in two modes (where supported) with respect to commodities/postings: `strict` (default) will filter everything down to give a precise result, whereas `flex` mode will keep related postings if the entry passes initial scanning. Consider the following entry:
+```
+2020-01-01 Buy some flowers
+  Assets:Wallet     -120 USD
+  Expenses:Flowers   120 USD
+```
+And now consider these two outputs:
+```
+] :b Assets
+      Account   Balance   Commodity
+Assets:Wallet      -120         USD
+] :b * Assets
+         Account   Balance   Commodity
+   Assets:Wallet      -120         USD
+Expenses:Flowers       120         USD
+```
+In the second output, the whole of the entry is considered for reporting, whereas in the first, only the `Assets:Wallet` will be reported.
+
+This flag is controlled (as seen above) using the `*` element on the query.
+
 #### No filter symbol - filter accounts
-No symbol means that the text is applied as a regular expression on the account name. An `!` at the beginning turns off the regular expression.
+No symbol means that the text is applied as a regular expression on the account name.
 
 ```
 ] :c Asset          ; all accounts with "Asset" in the text
 ] :c Wallet$        ; all accounts ending with "Wallet"
-] :c !Asset         ; the account equal to "Asset"
 ```
 
-#### Date ranges: `>` and `<`
-The date is in the common format of `yyyy-MM-dd` _except_ that it the month and day elements are optional. If they are omitted, then the January or 1 day are used. For `<`, it will substituted to the day before.
-
-Dates are inclusive.
+#### Date ranges: `>`, `<`, `>=`, and `<=`
+The date is in the common format of `yyyy-MM-dd` _except_ that it the month and day elements are optional. If they are omitted, then the January or 1 day are used.
 
 ```
-] :c >2020                ; [2020-01-01, max date in journal]
-] :c <2021                ; [min date in journal, 2020-12-31]
-] :c <2021-01-03          ; [min date in journal, 2020-01-03]
-] :c >2020-03 <2020-04    ; [2020-03-01, 2020-01-31]
-] :c >2020-04-04 <2021-10 ; [2020-04-04, 2020-09-30]
+] :c >2020                 ; [2020-01-02, max date in journal]
+] :c <2021                 ; [min date in journal, 2020-12-31]
+] :c <2021-01-03           ; [min date in journal, 2020-01-02]
+] :c <=2021-01-03          ; [min date in journal, 2020-01-03]
+] :c >2020-03 <2020-04     ; [2020-03-02, 2020-03-31]
+] :c >2020-03 <=2020-04    ; [2020-03-02, 2020-04-01]
+] :c >2020-04-04 <2021-10  ; [2020-04-05, 2020-09-30]
 ```
 
 #### Payee filter: `@`

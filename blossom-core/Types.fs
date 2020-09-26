@@ -23,6 +23,7 @@ type CommodityClass =
   | Future
 
 type Filter = {
+  flexmode: bool
   between: ((bool * DateTime) option * (bool * DateTime) option) option
   account: string option
   payee: string option

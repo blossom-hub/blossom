@@ -13,6 +13,7 @@ type FilterTag =
   | P of string
   | N of string
   | C of string
+  | Fx
 
 let cflag c = opt (pchar c) |>> Option.isSome
 
@@ -23,7 +24,7 @@ let pPartialDate =
   pipe3 pint32 pelt pelt mk
 
 let pFilterTags =
-  let symbols = "><@!?="
+  let symbols = "><@?=*"
   let stn = " \t\n"
   let nnlQ q = manySatisfy (function| x when x = q -> false
                                     |'\t'|'\n' -> false
@@ -34,6 +35,7 @@ let pFilterTags =
 
   let text  = sQ <|> dQ <|> uQ
 
+  let pFlexMode = pchar '*' >>. preturn Fx
   let pFrom = pchar '>' >>. cflag '=' .>>. pPartialDate |>> F
   let pTo   = pchar '<' >>. cflag '=' .>>. pPartialDate |>> T
   let pPayee = pchar '@' >>. text |>> P
@@ -41,7 +43,7 @@ let pFilterTags =
   let pCommod = pchar '%' >>. text |>> C
   let pAcc = text |>> A
 
-  let pelt = choice [pFrom; pTo; pPayee; pNarr; pCommod; pAcc]
+  let pelt = choice [pFlexMode; pFrom; pTo; pPayee; pNarr; pCommod; pAcc]
 
   nSpaces0 >>. sepBy pelt nSpaces1 .>> eof
 
@@ -55,7 +57,11 @@ let pFilter =
     let n = glse tags (function N v -> Some v | _ -> None)
     let c = glse tags (function C v -> Some v | _ -> None)
 
+    let fx = glse tags (function Fx -> Some true | _ -> Some false)
+               |> Option.defaultValue false
+
     {
+      flexmode = fx
       between = match (f,t) with (None, None) -> None | _ -> Some (f,t)
       account = a
       payee = p

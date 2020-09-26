@@ -63,7 +63,9 @@ let balances renderer request journal =
       | Some r -> xs |> List.map (second(List.filter (fun (Commodity c, _) -> regexfilter r c)))
                      |> List.filter (snd >> List.isEmpty >> not)
 
-  let result = result |> accountFilter |> commodityFilter
+  let result = match request.flexmode with
+                 | true -> result
+                 | false -> result |> accountFilter |> commodityFilter
 
   // temporarily make a table
   let cs = [{Header = "Account"; Key = true}; {Header = "Balance"; Key = false}; {Header ="Commodity"; Key = false}]
