@@ -37,7 +37,7 @@ let pFilterTags =
   let pFrom = pchar '>' >>. cflag '=' .>>. pPartialDate |>> F
   let pTo   = pchar '<' >>. cflag '=' .>>. pPartialDate |>> T
   let pPayee = pchar '@' >>. text |>> P
-  let pNarr = pchar '!' >>. text |>> N
+  let pNarr = pchar '?' >>. text |>> N
   let pCommod = pchar '%' >>. text |>> C
   let pAcc = text |>> A
 
