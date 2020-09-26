@@ -1,0 +1,18 @@
+Y2020
+
+01/01 Me, Basic transfer
+  Assets:Account 1  100 USD
+  Assets:Settlement Alpha
+
+01/02 Basic transfer 2
+  Assets:Account 1  100 USD
+  Assets:Account 2
+
+01/04 Basic trade 1
+  Assets:Account 1   2 "NQZ20" @ 1135 USD
+  Expenses:Trading  4 USD
+  Assets:Account 2
+
+2020-01-04 Basic Trade 2
+  Assets:Account 1  2 ASSET @ 100 USD
+  Assets:Settlement Trading
