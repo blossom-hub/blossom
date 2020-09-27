@@ -101,12 +101,11 @@ Consider these three entries:
 
 2020-03-04 Buy MSFT
   Assets:Brokerage      100 MSFT @ 166 ~
-  Expenses:Brokerage      9.99 USD
-    Assets:Operating Cash
+  Expenses:Brokerage      9.99 USD ~Assets:Operating Cash
 
 2020-03-05 Buy MSFT
   Assets:Brokerage      100 MSFT @ 166
-  ExpensesBrokerage       9.99 USD
+  Expenses:Brokerage       9.99 USD
   Assets:Cash
 ```
 1. `Assets:Brokerage` becomes long 100 MSFT and `Assets:Cash` is short 16,000 USD, whilst `Assets:Operating Cash` is short 9.99 USD.
