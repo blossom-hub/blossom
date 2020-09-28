@@ -5,7 +5,7 @@
 
 import another_ledger.fledge
 
-journal Example ledger    ; Comment supported here
+journal Example ledger
   note This is purely for parser testing
   cg Income:Capital Gains
   commodity USD
@@ -29,17 +29,15 @@ commodity NQZ20    ; Nasdaq futures
 
 ; Top level comment half way through ledger
 
-; Comments are not supported on entry rows (yet)
-
 2020-01-01 Me | Basic Transfer 1   ; but comments ok here
-  Assets:Account 1   100 USD ~Assets:Settlement Alpha
+  Assets:Account 1   100 USD ~Assets:Settlement Alpha  ; test comment 0
 
 2020-01-02 Basic Transfer 2
   Assets:Account 1  100 USD
 
 2020-01-03 Basic Transfer 3
   Assets:Account 1  100
-  Assets:Account 2
+  Assets:Account 2  ; test posting line comment
 
 2020-01-04 Basic Trade 1
   Assets:Account 1  2  NQZ20 @ 1135 ~

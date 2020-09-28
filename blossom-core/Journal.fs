@@ -35,8 +35,8 @@ let balanceEntry gdc acctDecls commodDecls = function
                                     | Cl (a, _)           -> Ve a
 
       // is there a blank account for auto contra?
-      let blanks, nonBlanks = xs |> List.partition (snd3 >> Option.isNone)
-                                 |> (List.map fst3) *** (List.map (second3 Option.get))
+      let blanks, nonBlanks = xs |> List.partition (fst >> snd3 >> Option.isNone)
+                                 |> (List.map (fst >> fst3)) *** (List.map (fst >> second3 Option.get))
 
       let collectWeightings (account, value, contraAccount) =
         // if this leg has it's own contra account, it automatically balances, it has zero weight to return
@@ -69,7 +69,7 @@ let balanceEntry gdc acctDecls commodDecls = function
 
       let defaultContraAccount = List.tryHead blanks
       Some <| match List.length blanks, defaultContraAccount, List.length residual with
-                | 0, _, 0       -> {Date = dt; Payee = py; Narrative = na; Postings = xs |> List.map (second3 Option.get >> convertXs)} |> Choice1Of2
+                | 0, _, 0       -> {Date = dt; Payee = py; Narrative = na; Postings = xs |> List.map (fst >> second3 Option.get >> convertXs)} |> Choice1Of2
                 | 0, _, _       -> Choice2Of2 "Entry doesn't balance! Need a contra account but none specified."
                 | 1, Some _ , 0 -> Choice2Of2 "Entry balances, but a contra account has been specified."
                 | 1, Some ca, _ -> let zs = residual |> List.map (fun (c, v) -> (ca, Ve (-v, c), NoCAccount))
