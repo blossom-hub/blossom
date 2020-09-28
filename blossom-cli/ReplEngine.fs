@@ -28,7 +28,6 @@ let getFilter = FromString >> runParser pFilter JournalParser.UserState.Default
 let load state filename =
   try
     let parsed = loadJournal filename
-    printfn "%A" parsed
     Some {state with Journal = Some parsed; Filename = Some filename}
   with
     | :? FileNotFoundException as ex ->
