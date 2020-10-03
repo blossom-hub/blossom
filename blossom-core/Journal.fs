@@ -12,6 +12,9 @@ let internalDefaultCommodity = Types.Commodity "$"  // this is not a parsable va
 
 let stripComments = function
   | Commented (elt, _) -> elt
+  | Entry (dt, payee, narrative, xs) -> let zs = xs |> List.map    (function | PCommented (elt2, _) -> elt2 | elt2 -> elt2)
+                                                    |> List.filter (function | PComment _ -> false | _ -> true)
+                                        Entry (dt, payee, narrative, zs)
   | elt -> elt
 
 let balanceEntry gdc acctDecls commodDecls = function
@@ -27,16 +30,10 @@ let balanceEntry gdc acctDecls commodDecls = function
                                              |> Option.bind (fun a -> a.Commodity)
       let orGlobalCommodity = Option.orElse gdc >> function Some c -> c | None -> internalDefaultCommodity
 
-      let contraRAmountV = function | Un d                -> Un (-d)
-                                    | Ve (q, c)           -> Ve (-q, c)
-                                    | Tf ((q, c), (p, m)) -> Ve (-q*p*multiplierOf c, m)
-                                    | Th ((q, c), p)      -> Ve (-q*p*multiplierOf c, measureOf c)
-                                    | Cr (_, b)           -> Ve b
-                                    | Cl (a, _)           -> Ve a
-
+      let postings = xs |> List.choose (function | Posting (account, amount, contra) -> Some (account, amount, contra) | _ -> None)
       // is there a blank account for auto contra?
-      let blanks, nonBlanks = xs |> List.partition (fst >> snd3 >> Option.isNone)
-                                 |> (List.map (fst >> fst3)) *** (List.map (fst >> second3 Option.get))
+      let blanks, nonBlanks = postings |> List.partition (snd3 >> Option.isNone)
+                                       |> (List.map fst3) *** (List.map (second3 Option.get))
 
       let collectWeightings (account, value, contraAccount) =
         // if this leg has it's own contra account, it automatically balances, it has zero weight to return
@@ -57,7 +54,7 @@ let balanceEntry gdc acctDecls commodDecls = function
                         |> List.filter (fun (_,d) -> d <> 0M)
 
       let convertXs (account, value, contraAccount) =
-        let cvalue =
+        let cv =
           function | Un q -> V (q, tryCommodityOf account |> orGlobalCommodity)
                    | Ve v -> V v
                    | Tf (a, b) -> T (a, b)
@@ -65,11 +62,11 @@ let balanceEntry gdc acctDecls commodDecls = function
                    | Cr (a, b) -> X (b, a)
                    | Cl (a, b) -> X (a, b)
         let cca = function | NoCAccount -> None | Self -> Some account | CAccount c -> Some c
-        (account, value |> cvalue, cca contraAccount)
+        (account, cv value, cca contraAccount)
 
       let defaultContraAccount = List.tryHead blanks
       Some <| match List.length blanks, defaultContraAccount, List.length residual with
-                | 0, _, 0       -> {Date = dt; Payee = py; Narrative = na; Postings = xs |> List.map (fst >> second3 Option.get >> convertXs)} |> Choice1Of2
+                | 0, _, 0       -> {Date = dt; Payee = py; Narrative = na; Postings = postings |> List.map (second3 Option.get >> convertXs)} |> Choice1Of2
                 | 0, _, _       -> Choice2Of2 "Entry doesn't balance! Need a contra account but none specified."
                 | 1, Some _ , 0 -> Choice2Of2 "Entry balances, but a contra account has been specified."
                 | 1, Some ca, _ -> let zs = residual |> List.map (fun (c, v) -> (ca, Ve (-v, c), NoCAccount))

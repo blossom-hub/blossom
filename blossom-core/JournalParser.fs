@@ -46,33 +46,39 @@ type RContraAccount =
    | Self
    | CAccount of Account
 
+type RPostingElement =
+  | Posting of account:Account * amount:RAmount option * contra:RContraAccount
+  | PComment of Comment
+  | PCommented of RPostingElement * Comment
+
 type RJournalElement =
   // Operational
   | Indent of int
   // Standard
   | Header of JournalMeta
   | Import of string
-  | Comment of string
+  | Comment of Comment
   // Declarations
   | Account of AccountDecl
   | Commodity of CommodityDecl
   // Core entries
-  | Entry of date:DateTime * payee:string option * narrative:string * xs:((Account * RAmount option * RContraAccount) * string option) list
+  | Entry of date:DateTime * payee:string option * narrative:string * xs:RPostingElement list
   | Prices of commodity:Commodity * measure:Commodity * xs:(DateTime * decimal) list
   | Split of date:DateTime * commodity:Commodity * pre:int * post:int
   | Assertion of date:DateTime * account:Account * value:Value
-  // A element that has a comment associated with it is a rec element
-  | Commented of RJournalElement * string
+  // A element that has a comment associated with it
+  | Commented of RJournalElement * Comment
 
-type RSubElement =
-  | Commodity of Commodity
-  | CG of Account
-  | Note of string
-  | Name of string
-  | CommodityClass of CommodityClass
-  | Measure of Commodity
-  | Multiplier of int
-  | MTM
+type private RSubElement =
+  | SComment of Comment
+  | SCommodity of Commodity
+  | SCG of Account
+  | SNote of string
+  | SName of string
+  | SCommodityClass of CommodityClass
+  | SMeasure of Commodity
+  | SMultiplier of int
+  | SMTM
 
 // TODO Add line number to parser for the root items
 
@@ -127,14 +133,14 @@ let pAccountHierarchy =
   many1Till (pAccountElt .>> (opt (pchar ':'))) (followedBy (sstr "  " <|> skipNewline)) |>> fun ts -> String.Join(":", ts) |> Types.Account
 
 // RSubElement Parsers
-let spCommodity = sstr1 "commodity" >>. pCommodity |>> Commodity
-let spCG = sstr1 "cg" >>. pAccountHierarchy |>> CG
-let spNote = sstr1 "note" >>. restOfLine false |>> Note
-let spName = sstr1 "name" >>. restOfLine false |>> Name
-let spCommodityClass = sstr1 "class" >>. pCommodityClass |>> CommodityClass
-let spMeasure = sstr1 "measure" >>. pCommodity |>> Measure
-let spMultiplier = sstr1 "multiplier" >>. pint32 |>> Multiplier
-let spMTM : Parser<RSubElement, UserState> = sstr "mtm" >>% MTM
+let private spCommodity = sstr1 "commodity" >>. pCommodity |>> SCommodity
+let private spCG = sstr1 "cg" >>. pAccountHierarchy |>> SCG
+let private spNote = sstr1 "note" >>. restOfLine false |>> SNote
+let private spName = sstr1 "name" >>. restOfLine false |>> SName
+let private spCommodityClass = sstr1 "class" >>. pCommodityClass |>> SCommodityClass
+let private spMeasure = sstr1 "measure" >>. pCommodity |>> SMeasure
+let private spMultiplier = sstr1 "multiplier" >>. pint32 |>> SMultiplier
+let private spMTM = sstr "mtm" >>% SMTM
 
 let glse xs pred = xs |> List.choose pred
                       |> List.tryLast
@@ -144,7 +150,7 @@ let glse xs pred = xs |> List.choose pred
 let wrapCommented c elt = match c with | Some c -> Commented(elt, c)
                                        | None   -> elt
 
-let pComment0 = pchar ';' >>. restOfLine false
+let pComment0 = pchar ';' >>. restOfLine false |>> Types.Comment
 let pComment = pComment0 |>> Comment
 
 let pOptLineComment p = p .>> nSpaces0 .>>. opt pComment0 .>> optional newline
@@ -158,9 +164,9 @@ let pHeader =
   sstr1 "journal" >>. restOfLine true .>>. increaseIndent subitems
     |>> fun (t, ss) ->
           Header {Name = t.Trim()
-                  Commodity = glse ss (function (Commodity x) -> Some x | _ -> None)
-                  CapitalGains = glse ss (function (CG x) -> Some x | _ -> None)
-                  Note = glse ss (function (Note x) -> Some x | _ -> None)}
+                  Commodity = glse ss (function (SCommodity x) -> Some x | _ -> None)
+                  CapitalGains = glse ss (function (SCG x) -> Some x | _ -> None)
+                  Note = glse ss (function (SNote x) -> Some x | _ -> None)}
 
 let pImport =
   let filename = restOfLine true
@@ -170,9 +176,9 @@ let pAccountDecl =
   let subitems = (choice [spCommodity; spCG; spNote] .>> nSpaces0 .>> skipNewline) |> indented |> many
   sstr1 "account" >>. pOptLineComment pAccountHierarchy .>>. increaseIndent subitems
     |>> fun ((a, c), ss) -> Account {Account = a
-                                     Commodity = glse ss (function (Commodity x) -> Some x | _ -> None)
-                                     Note = glse ss (function (Note x) -> Some x | _ -> None)
-                                     CapitalGains = glse ss (function (CG x) -> Some x | _ -> None)}
+                                     Commodity = glse ss (function (SCommodity x) -> Some x | _ -> None)
+                                     Note = glse ss (function (SNote x) -> Some x | _ -> None)
+                                     CapitalGains = glse ss (function (SCG x) -> Some x | _ -> None)}
                             |> wrapCommented c
 
 let pCommodityDecl =
@@ -180,25 +186,31 @@ let pCommodityDecl =
   sstr1 "commodity" >>. pOptLineComment pCommodity .>>. increaseIndent subitems
     |>> fun ((t, c), ss) ->
           RJournalElement.Commodity {Symbol = t
-                                     Measure = glse ss (function (Measure m) -> Some m | _ -> None)
-                                     Name = glse ss (function (Name n) -> Some n | _ -> None)
-                                     Klass = glse ss (function (CommodityClass c) -> Some c | _ -> None)
-                                     Multiplier = glse ss (function (Multiplier m) -> Some (decimal m) | _ -> None)
-                                     Mtm = List.contains MTM ss}
+                                     Measure = glse ss (function (SMeasure m) -> Some m | _ -> None)
+                                     Name = glse ss (function (SName n) -> Some n | _ -> None)
+                                     Klass = glse ss (function (SCommodityClass c) -> Some c | _ -> None)
+                                     Multiplier = glse ss (function (SMultiplier m) -> Some (decimal m) | _ -> None)
+                                     Mtm = List.contains SMTM ss}
           |> wrapCommented c
+
+let pPostingEntry =
+  let contraAccount = choice [attempt (skipChar '~' >>. nSpaces0 >>. pAccountHierarchy |>> CAccount)
+                              skipChar '~' >>. preturn Self] |> opt
+                        |>> function Some c -> c | None -> NoCAccount
+  let pp = pOptLineComment (tuple3 (pAccountHierarchy .>> nSpaces0) (opt (attempt (pRAmount .>> nSpaces0))) (nSpaces0 >>. contraAccount))
+                |>> fun ((h,a,ca), cm) -> let ps = Posting (h, a, ca)
+                                          match cm with | Some c -> PCommented (ps, c) | _ -> ps
+  let pc = pComment0 .>> skipNewline |>> PComment
+  choice [attempt pc; pp]
 
 let pEntry =
   // TODO: could write it as a parser later..
   let spn (n:string) = n.Split([|'|'|], 2) |> List.ofArray
                                            |> function | [x] -> (None, x) | x::xs -> (Some (x.Trim()), List.head xs) | _ -> (None, n)
-  let contraAccount = choice [attempt (skipChar '~' >>. nSpaces0 >>. pAccountHierarchy |>> CAccount)
-                              skipChar '~' >>. preturn Self] |> opt
-                        |>> function Some c -> c | None -> NoCAccount
-  let subitems = pOptLineComment ((pAccountHierarchy .>> nSpaces0) .>>. (opt (attempt (pRAmount .>> nSpaces0))) .>> nSpaces0 .>>. contraAccount)
-                  |> indented |>> fun (((a,b), c), d) -> ((a,b,c),d)
+  let subitems = pPostingEntry |> indented
   pdate .>> nSpaces1 .>>. pOptLineComment (manyChars (noneOf ";\n")) .>>. increaseIndent (many1 subitems)
     |>> fun ((d, (n, cm)), xs) ->
-          let (p, n) = spn n
+          let p, n = spn n
           Entry (date = d, payee = p, narrative = n.Trim(), xs=xs)
             |> wrapCommented cm
 

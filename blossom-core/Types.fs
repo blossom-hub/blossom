@@ -3,6 +3,7 @@ module Types
 open System
 
 // "NewType" style definitions
+type Comment = Comment of string
 type Commodity = Commodity of string
 type Account = Account of string
 type AccountHierarchy = AccountHierarchy of Account list

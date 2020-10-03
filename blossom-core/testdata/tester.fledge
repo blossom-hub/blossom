@@ -36,6 +36,7 @@ commodity NQZ20    ; Nasdaq futures
   Assets:Account 1  100 USD
 
 2020-01-03 Basic Transfer 3
+  ; indented comments now okay
   Assets:Account 1  100
   Assets:Account 2  ; test posting line comment
 
