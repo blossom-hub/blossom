@@ -43,7 +43,7 @@ let pFilterTags =
   let pCommod = pchar '%' >>. text |>> C
   let pAcc = text |>> A
 
-  let pelt = choice [pFlexMode; pFrom; pTo; pPayee; pNarr; pCommod; pAcc]
+  let pelt = choice [attempt pFlexMode; pFrom; pTo; pPayee; pNarr; pCommod; pAcc]
 
   nSpaces0 >>. sepBy pelt nSpaces1 .>> eof
 
@@ -57,8 +57,7 @@ let pFilter =
     let n = glse tags (function N v -> Some v | _ -> None)
     let c = glse tags (function C v -> Some v | _ -> None)
 
-    let fx = glse tags (function Fx -> Some true | _ -> Some false)
-               |> Option.defaultValue false
+    let fx = List.contains Fx tags
 
     {
       flexmode = fx
