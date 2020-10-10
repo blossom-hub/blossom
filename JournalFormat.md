@@ -67,6 +67,7 @@ account {account tree}        ; [0..] per file
 commodity {commodity}                     ; [0..] per file
   name {text}                             ; (optional) full name
   measure {commodity}                     ; (optional) default measure [pricing] commodity
+  underlying {commodity}                  ; (optional) underlying of this derivative commodity
   class {Currency|Equity|Option|Future}   ; (optional) provides better treatment
   multiplier {factor}                     ; (optional) for leveraged instruments
   mtm                                     ; (optional) mark as mark-to-market treatment
@@ -80,6 +81,12 @@ _Basic syntax_
 - there can only be one missing (elided) amount
 ```
 {date} {payee} | {narrative}      ; payee is optional, exclude | if not using
+  {account tree one}  {amount}
+  {account tree two}
+```
+A transaction can be flagged for review by adding a * after the date:
+```
+{date} * {payee} | {narrative}      ; flagged for later
   {account tree one}  {amount}
   {account tree two}
 ```
