@@ -176,7 +176,7 @@ let prefilter request journal =
   let payeeFilter es =
     match request.payee with
       | None -> es
-      | Some r -> es |> List.filter (fun e -> match e.Payee with | None -> true | Some p -> regexfilter r p)
+      | Some r -> es |> List.filter (fun e -> match e.Payee with | None -> false | Some p -> regexfilter r p)
 
   let narrativeFilter es =
     match request.narrative with
