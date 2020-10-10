@@ -62,7 +62,7 @@ type RJournalElement =
   | Account of AccountDecl
   | Commodity of CommodityDecl
   // Core entries
-  | Entry of date:DateTime * payee:string option * narrative:string * xs:RPostingElement list
+  | Entry of flagged: bool * date:DateTime * payee:string option * narrative:string * xs:RPostingElement list
   | Prices of commodity:Commodity * measure:Commodity * xs:(DateTime * decimal) list
   | Split of date:DateTime * commodity:Commodity * pre:int * post:int
   | Assertion of date:DateTime * account:Account * value:Value
@@ -211,10 +211,11 @@ let pEntry =
   let spn (n:string) = n.Split([|'|'|], 2) |> List.ofArray
                                            |> function | [x] -> (None, x) | x::xs -> (Some (x.Trim()), List.head xs) | _ -> (None, n)
   let subitems = pPostingEntry |> indented
-  pdate .>> nSpaces1 .>>. pOptLineComment (manyChars (noneOf ";\n")) .>>. increaseIndent (many1 subitems)
-    |>> fun ((d, (n, cm)), xs) ->
+  let pflag = opt (pchar '*' .>> nSpaces1) |>> Option.isSome
+  tuple4 (pdate .>> nSpaces1) pflag (pOptLineComment (manyChars (noneOf ";\n"))) (increaseIndent (many1 subitems))
+    |>> fun (d, f, (n, cm), xs) ->
           let p, n = spn n
-          Entry (date = d, payee = p, narrative = n.Trim(), xs=xs)
+          Entry (flagged = f, date = d, payee = p, narrative = n.Trim(), xs=xs)
             |> wrapCommented cm
 
 let pPrices =

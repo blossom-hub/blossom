@@ -12,13 +12,13 @@ let internalDefaultCommodity = Types.Commodity "$"  // this is not a parsable va
 
 let stripComments = function
   | Commented (elt, _) -> elt
-  | Entry (dt, payee, narrative, xs) -> let zs = xs |> List.map    (function | PCommented (elt2, _) -> elt2 | elt2 -> elt2)
-                                                    |> List.filter (function | PComment _ -> false | _ -> true)
-                                        Entry (dt, payee, narrative, zs)
+  | Entry (flagged, dt, payee, narrative, xs) -> let zs = xs |> List.map    (function | PCommented (elt2, _) -> elt2 | elt2 -> elt2)
+                                                             |> List.filter (function | PComment _ -> false | _ -> true)
+                                                 Entry (flagged, dt, payee, narrative, zs)
   | elt -> elt
 
 let balanceEntry gdc acctDecls commodDecls = function
-  | Entry (dt, py, na, xs) ->
+  | Entry (flagged, dt, py, na, xs) ->
       // Helpers
       let measureOf commodity = commodDecls |> Map.tryFind commodity
                                             |> Option.bind (fun c -> c.Measure)

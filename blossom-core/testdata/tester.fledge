@@ -34,7 +34,7 @@ commodity NQZ20    ; Nasdaq futures
 2020-01-01 Me | Basic Transfer 1   ; but comments ok here
   Assets:Account 1   100 USD ~Assets:Settlement Alpha  ; test comment 0
 
-2020-01-02 Basic Transfer 2
+2020-01-02 * Basic Transfer 2
   Assets:Account 1  100 USD
 
 2020-01-03 Basic Transfer 3
