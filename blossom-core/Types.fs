@@ -57,6 +57,7 @@ type CommodityDecl = {
 }
 
 type Entry = {
+  Flagged : bool
   Date: DateTime
   Payee: string option
   Narrative: string

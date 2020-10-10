@@ -66,11 +66,13 @@ let balanceEntry gdc acctDecls commodDecls = function
 
       let defaultContraAccount = List.tryHead blanks
       Some <| match List.length blanks, defaultContraAccount, List.length residual with
-                | 0, _, 0       -> {Date = dt; Payee = py; Narrative = na; Postings = postings |> List.map (second3 Option.get >> convertXs)} |> Choice1Of2
+                | 0, _, 0       -> {Flagged = flagged; Date = dt; Payee = py; Narrative = na;
+                                    Postings = postings |> List.map (second3 Option.get >> convertXs)} |> Choice1Of2
                 | 0, _, _       -> Choice2Of2 "Entry doesn't balance! Need a contra account but none specified."
                 | 1, Some _ , 0 -> Choice2Of2 "Entry balances, but a contra account has been specified."
                 | 1, Some ca, _ -> let zs = residual |> List.map (fun (c, v) -> (ca, Ve (-v, c), NoCAccount))
-                                   {Date = dt; Payee = py; Narrative = na; Postings = nonBlanks @ zs |> List.map convertXs} |> Choice1Of2
+                                   {Flagged = flagged; Date = dt; Payee = py; Narrative = na;
+                                    Postings = nonBlanks @ zs |> List.map convertXs} |> Choice1Of2
                 | _, _, _       -> Choice2Of2 "Entry has more than one default contra account, there should only be one."
   | _ -> None
 
@@ -119,20 +121,18 @@ let loadJournal filename =
     Assertions = assertions
   }
 
-let evaluateMovements journal =
-  let register = journal.Register
+let multiplierOf commodityDecls c =
+  commodityDecls |> Map.tryFind c
+                 |> Option.bind (fun d -> d.Multiplier)
+                 |> Option.defaultValue 1m
 
-  let multiplierOf c = journal.CommodityDecls |> Map.tryFind c
-                                              |> Option.bind (fun d -> d.Multiplier)
-                                              |> Option.defaultValue 1m
-
-  let expandPosting (account, amount, caccount) =
-    match amount with
+let expandPosting commodityDecls account amount caccount =
+  match amount with
       | V (qty, commodity) ->
           let contra = match caccount with Some ca -> [ca, -qty, commodity] | None -> []
           [account, qty, commodity] @ contra
       | T ((qty, commodity), (price, measure)) ->
-          let cash = qty * price * multiplierOf commodity
+          let cash = qty * price * multiplierOf commodityDecls commodity
           let contra = match caccount with Some ca -> [ca, -cash, measure] | None -> []
           [account, qty, commodity
            marketAccount, -qty, commodity
@@ -142,11 +142,13 @@ let evaluateMovements journal =
           [account, qty1, commodity1
            conversionsAccount, -qty1, commodity1
            conversionsAccount, qty2, commodity2] @ contra
-  let expandEntry entry = entry.Postings |> List.collect expandPosting
+
+let evaluateMovements commodityDecls register =
+  let expandEntry entry = entry.Postings |> List.collect (fun (a,b,c) -> expandPosting commodityDecls a b c)
   register |> Map.map (fun _ es -> List.collect expandEntry es)
 
 let evaluateBalances journal =
-  let movements = evaluateMovements journal |> Map.toList
+  let movements = evaluateMovements journal.CommodityDecls journal.Register |> Map.toList
 
   let f pre (dt, ms) =
     let applyMovement s (account, qty, commodity) =

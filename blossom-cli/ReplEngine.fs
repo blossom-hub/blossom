@@ -54,6 +54,7 @@ let execute state input =
     | Load filename        -> load state filename
     | Reload               -> reload state
     | Balances query       -> withJournal <| balances HumanReadable.renderTable (getFilter query)
+    | Journal query        -> withJournal <| journal HumanReadable.renderTable (getFilter query)
     | Meta request         -> withJournal <| meta HumanReadable.seqToLines request
 
   try

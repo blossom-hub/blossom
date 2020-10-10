@@ -51,7 +51,6 @@ let balances renderer request journal =
                                    |> Option.defaultValue []
 
   // re-apply specific filters to crystalise the result
-  // TODO make this an option
   let accountFilter xs =
     match request.account with
       | None -> xs
@@ -72,4 +71,46 @@ let balances renderer request journal =
   let data = result |> List.collect (fun (Account a, vs) -> vs |> List.map (fun (Commodity m, q) -> [Text a; Number (q, 3); Text m]))
 
   let table = Table (cs, data)
+  renderer table
+
+let journal renderer request journal =
+  // do prefilter
+  let j2 = prefilter request journal
+
+  // expand entries
+  let items =
+    j2.Register |> Map.toList
+                |> List.collect snd
+                |> List.collect (fun e -> e.Postings |> List.collect (fun (a,b,c) -> expandPosting journal.CommodityDecls a b c)
+                                                     |> List.map (fun (a,b,c) -> (e.Flagged, e.Date, e.Payee, e.Narrative, a, b, c)))
+
+  // re-apply specific filters to crystalise the result
+  let accountFilter xs =
+    match request.account with
+      | None -> xs
+      | Some r -> xs |> List.filter (fun (_, _, _, _, Account a, _, _) -> regexfilter r a)
+
+  let commodityFilter xs =
+    match request.commodity with
+      | None -> xs
+      | Some r -> xs |> List.filter (fun (_, _, _, _, _, _, Commodity c) -> regexfilter r c)
+
+  let postfilter = match request.flexmode with
+                     | true -> id
+                     | false -> accountFilter >> commodityFilter
+
+  let cs = [{Header = "Date"; Key=true}
+            {Header = "F"; Key = true}
+            {Header = "Payee"; Key = true}
+            {Header = "Narrative"; Key =true}
+            {Header = "Account"; Key = true}
+            {Header = "Amount"; Key = false}
+            {Header = "Commodity"; Key = false}]
+
+  let f2s = function true -> "*" | false -> ""
+  let p2s = Option.defaultValue ""
+  let createRow (f, d, p, n, Account a, q, Commodity c) = [Date d; f2s f |> Text; p2s p |> Text; Text n; Text a; Number(q, 3); Text c]
+  let data = items |> postfilter |> List.map createRow
+  let table = Table (cs, data)
+
   renderer table

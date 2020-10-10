@@ -11,5 +11,6 @@ type Command =
   | Reload
   // Accounting
   | Balances of string
+  | Journal of string
   // Meta
   | Meta of MetaRequest

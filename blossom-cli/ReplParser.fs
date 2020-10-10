@@ -27,6 +27,7 @@ let reload = choice [str "reload"; str ":r"] >>. preturn Reload
 
 // Accounting
 let balances = choice [str "balances"; str "bal"; str ":b"] >>. ws >>. restOfLine false |>> Balances
+let journal = choice [str "journal"; str ":j"] >>. ws >>. restOfLine false |>> Journal
 
 // Meta
 let meta = str "meta" >>. ws1 >>. choice [str "accounts" >>. preturn Accounts
@@ -35,7 +36,7 @@ let meta = str "meta" >>. ws1 >>. choice [str "accounts" >>. preturn Accounts
 
 let applicationCommands = [quit; clear]
 let fileCommands = [load; reload;]
-let accountingCommands = [balances]
+let accountingCommands = [balances; journal]
 let otherCommands = [meta]
 let parse : Parser<Command> =
   let commands = [applicationCommands; fileCommands; accountingCommands; otherCommands] |> List.concat
