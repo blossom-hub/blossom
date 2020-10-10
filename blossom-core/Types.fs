@@ -49,6 +49,7 @@ type AccountDecl = {
 type CommodityDecl = {
   Symbol: Commodity
   Measure: Commodity option
+  Underlying: Commodity option
   Name: string option
   Klass: CommodityClass option
   Multiplier: decimal option
