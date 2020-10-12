@@ -6,7 +6,6 @@ open Journal
 open Tabular
 
 let meta renderer request journal  =
-
   let accountsFromEntry entry =
     entry.Postings |> List.collect (fun (Account a, _, ca) -> match ca with Some (Account x) -> [a;x] | _ -> [a])
 
@@ -41,7 +40,7 @@ let meta renderer request journal  =
 
 
 let balances renderer request journal =
-  // do prefilter
+  // do pre-filter
   let j2 = prefilter request journal
 
   // run it
@@ -74,7 +73,7 @@ let balances renderer request journal =
   renderer table
 
 let journal renderer request journal =
-  // do prefilter
+  // do pre-filter
   let j2 = prefilter request journal
 
   // expand entries
@@ -111,6 +110,49 @@ let journal renderer request journal =
   let p2s = Option.defaultValue ""
   let createRow (f, d, p, n, Account a, q, Commodity c) = [Date d; f2s f |> Text; p2s p |> Text; Text n; Text a; Number(q, 3); Text c]
   let data = items |> postfilter |> List.map createRow
+  let table = Table (cs, data)
+
+  renderer table
+
+let balanceSeries renderer tenor request journal =
+   // define specific filters to crystalise the result
+  let accountFilter xs =
+    match request.account with
+      | None -> xs
+      | Some r -> xs |> Map.filter (fun (Account a) _ -> regexfilter r a)
+
+  let commodityFilter xs =
+    match request.commodity with
+      | None -> xs
+      | Some r -> xs |> Map.map (fun _ m -> m |> Map.filter (fun (Commodity c) _ -> regexfilter r c))
+
+  let postfilter = match request.flexmode with
+                     | true -> id
+                     | false -> Map.map (fun _ xs -> xs |> accountFilter |> commodityFilter)
+
+  // run it -> filter it
+  let result = prefilter request journal |> evaluateBalances
+                                         |> postfilter
+
+  // pick each balance date <= each schedule date
+  let dates = result |> Map.toList |> List.map fst
+  let left, right = dates |> (List.min &&& List.max)
+  let schedule = makeSchedule tenor left right |> Set.toList
+
+  // overall there aren't _too_ many elements to either date list
+  let balances = schedule |> List.map (fun dt -> dates |> List.filter (fun d -> d <= dt) |> List.last |> fun d -> d, result.[d])
+
+  let cs = [{Header = "Date"; Key=true}
+            {Header = "Account"; Key = true}
+            {Header = "Amount"; Key = false}
+            {Header = "Commodity"; Key = false}]
+
+  let createRow (d, m) =
+    m |> Map.toList
+      |> List.collect (fun (Account a, bs) -> bs |> Map.toList
+                                                 |> List.map (fun (Commodity m, q) -> [Date d; Text a; Number (q, 3); Text m]))
+
+  let data = balances |> List.collect createRow
   let table = Table (cs, data)
 
   renderer table

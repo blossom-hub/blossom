@@ -48,14 +48,15 @@ let execute state input =
     Some state
 
   let action = function
-    | Quit                 -> None
-    | Clear                -> Console.Clear()
-                              Some state
-    | Load filename        -> load state filename
-    | Reload               -> reload state
-    | Balances query       -> withJournal <| balances HumanReadable.renderTable (getFilter query)
-    | Journal query        -> withJournal <| journal HumanReadable.renderTable (getFilter query)
-    | Meta request         -> withJournal <| meta HumanReadable.seqToLines request
+    | Quit                         -> None
+    | Clear                        -> Console.Clear()
+                                      Some state
+    | Load filename                -> load state filename
+    | Reload                       -> reload state
+    | Balances query               -> withJournal <| balances HumanReadable.renderTable (getFilter query)
+    | Journal query                -> withJournal <| journal HumanReadable.renderTable (getFilter query)
+    | BalanceSeries (tenor, query) -> withJournal <| balanceSeries HumanReadable.renderTable tenor (getFilter query)
+    | Meta request                 -> withJournal <| meta HumanReadable.seqToLines request
 
   try
     let result = runParser parse () (FromString input)

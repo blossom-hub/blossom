@@ -1,7 +1,10 @@
 module Shared
 
+open System
 open System.Text.RegularExpressions
 open System.IO
+
+open Types
 
 let curry f a b = f (a,b)
 let uncurry f (a, b) = f a b
@@ -46,3 +49,23 @@ module List =
     let grouped = list |> List.groupBy keyProjection
     let projected = grouped |> List.map (second (List.map valueProjection))
     projected
+
+let makeSchedule tenor (left : DateTime) (right : DateTime) =
+  let go g f x = (x, false) |> List.unfold (fun (d, flag) -> if flag then None else Some (f d, (g d, d >= right)))
+                            |> Set.ofList
+  let m1d (d : DateTime) = d.AddDays(-1.0)
+  match tenor with
+    | Y -> seq {left.Year + 1 .. 1 .. right.Year + 1 }
+             |> Seq.map (fun y -> DateTime(y, 1, 1) |> m1d)
+             |> Set.ofSeq
+    | H -> if left.Month < 7 then DateTime(left.Year, 7, 1) else DateTime(left.Year+1, 1, 1)
+             |> go (fun d -> d.AddMonths(6)) m1d
+    | Q -> if left.Month < 3 then DateTime(left.Year, 4, 1)
+             elif left.Month < 7 then DateTime(left.Year, 7, 1)
+             elif left.Month < 10 then DateTime(left.Year, 10, 1)
+             else DateTime(left.Year+1, 1, 1)
+             |> go (fun d -> d.AddMonths(3)) m1d
+    | M -> DateTime(left.Year, left.Month+1, 1)
+             |> go (fun d -> d.AddMonths(1)) m1d
+    | W d -> failwith "NYI"
+    | D -> failwith "NYI"
