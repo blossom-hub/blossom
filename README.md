@@ -8,7 +8,7 @@ Blossom is a _yet another_ plain text acount application cli similar to [Ledger-
 - a small eco-system of helper utilities is in the planning (pretty-print, price import, etc - rather custom)
 
 ## Does it work yet?
-No, this repository and build is in early days.
+Yes and no. It works, but it doesn't do a whole lot and is not overly optimised. For "toy" inputs, it works fine, and I have successfully converted a ~2500 line input into the tool. But on the flip side, not all the features are there and the outputs are rather basic.
 
 ## Can I contribute?
 There's not much to contribute to right now, star the project and come back later.
