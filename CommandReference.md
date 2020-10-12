@@ -46,6 +46,7 @@ View the list of accounts / commodities etc.
 ```
 ] :meta accounts
 ] :meta commodities
+] :meta payees
 ```
 
 ## Reporting commands
@@ -119,9 +120,44 @@ Getting results with the specific commodity:
 ```
 
 ### Balance query - `:b` / `bal` / `balances`
+```
+] :b <filter string>
+```
+(see above for general example)
 
 ### Balance series query - `:s` / `series`
+```
+] :s <tenor> <filter string>
+```
+Group balances by the tenor at the account level. Currently outputs a cumulative summation.
+A tenor is defined as Y/H/Q/M (W is not yet supported). The final date is used for each period, capped/floored if there are not enough dates. 
+
+```
+] :s Q
+=> BalanceSeries (Q, "")
+      Date                     Account   Amount   Commodity
+2020-01-06            Assets:Account 1        2       ASSET
+                                            145         EUR
+                                             10         GBP
+                                              2       NQZ20
+                                         -45065         USD
+2020-01-06            Assets:Account 2     -145         EUR
+                                           -100         GBP
+                                           -104         USD
+2020-01-06     Assets:Settlement Alpha     -100         USD
+```
 
 ### View journal - `:j` / `journal`
-
+```
+] :j <filter string>
+```
+Displays the register from the journal.
+```
+=> Journal ""
+      Date   F   Payee           Narrative                     Account   Amount   Commodity
+2020-01-01          Me    Basic Transfer 1            Assets:Account 1      100         USD
+2020-01-01          Me    Basic Transfer 1     Assets:Settlement Alpha     -100         USD
+2020-01-02   *      SO    Basic Transfer 2            Assets:Account 1      100         USD
+                                                                           -100
+```
 
