@@ -13,5 +13,7 @@ type Command =
   | Balances of string
   | Journal of string
   | BalanceSeries of Tenor * bool * string
+  // Help
+  | Check of CheckRequest
   // Meta
   | Meta of MetaRequest

@@ -130,7 +130,7 @@ Getting results with the specific commodity:
 ] :s <tenor> <filter string>
 ```
 Group balances by the tenor at the account level. Currently outputs a cumulative summation.
-A tenor is defined as Y/H/Q/M (W is not yet supported). The final date is used for each period, capped/floored if there are not enough dates. 
+A tenor is defined as Y/H/Q/M (W is not yet supported). The final date is used for each period, capped/floored if there are not enough dates.
 
 ```
 ] :s Q
@@ -161,3 +161,17 @@ Displays the register from the journal.
                                                                            -100
 ```
 
+### Check functionality - `:c` / `check`
+```
+] :c <type of check>
+```
+Currently supported checks are: `assertions`
+
+#### (Balance) Assertion checks
+This will check the balance (in the relevant commodity) is correct verus the assertion in the journal, and report the delta.
+```
+] :c assertions
+=> Check Assertions
+      Date            Account   Commodity   Expected   Actual   Delta
+2020-02-01   Assets:Account 2         USD       -106     -104       2
+```

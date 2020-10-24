@@ -57,6 +57,7 @@ let execute state input =
     | Journal query       -> withJournal <| journal HumanReadable.renderTable (getFilter query)
     | BalanceSeries (tenor, cumulative, query)
                           -> withJournal <| balanceSeries HumanReadable.renderTable tenor cumulative (getFilter query)
+    | Check request       -> withJournal <| checkJournal HumanReadable.renderTable request
     | Meta request        -> withJournal <| meta HumanReadable.seqToLines request
 
   try

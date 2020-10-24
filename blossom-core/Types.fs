@@ -74,4 +74,5 @@ type Journal = {
   Assertions: (DateTime * Account * Value) list
 }
 
+type CheckRequest = Assertions
 type MetaRequest = Accounts | Commodities | Payees

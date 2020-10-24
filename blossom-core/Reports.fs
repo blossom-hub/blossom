@@ -39,6 +39,36 @@ let meta renderer request journal  =
           [entryCommodities; declCommodities; priceCommodities; splitCommodities] |> List.concat |> Set.ofList
       | Payees -> journal.Register |> Map.toList |> List.collect (snd >> List.choose (fun p -> p.Payee)) |> Set.ofList
 
+let checkJournal renderer request journal =
+  let checkAssertion asofBalances dt account quantity commodity =
+    let bals = asofBalances |> Map.tryFind dt
+    let actual = bals |> Option.bind (Map.tryFind (account, commodity)) |> Option.defaultValue 0M
+    match actual = quantity with
+      | false -> Some actual
+      | true  -> None
+
+  renderer <|
+    match request with
+      | Assertions -> let balances = evaluateBalances journal |> Map.toList
+                      let assertions = journal.Assertions
+                      let schedule = assertions |> List.map fst3
+                      let f1 = (fun dt -> dt, balances |> List.takeWhile (fun (d,_) -> d <= dt) |> List.last |> snd)
+                      let f2 = List.groupByApply (fst3 &&& thd3) (List.sumBy snd3) >> Map.ofList
+                      let asofBalances = schedule |> List.map (f1 >> second f2) |> Map.ofList
+                      let check1 (dt, a, (q, c)) =
+                        let r = checkAssertion asofBalances dt a q c
+                        match r with
+                          | Some actual -> Some (dt, a, q, c, actual)
+                          | None        -> None
+                      let fails = assertions |> List.choose check1
+                                             |> List.map (fun (dt, Account a, q, Commodity c, actual) -> [Date dt; Text a; Text c; Number (q, 3); Number (actual, 3); Number (actual-q, 3)])
+                      let cs = [{Header = "Date"; Key=true}
+                                {Header = "Account"; Key = true}
+                                {Header = "Commodity"; Key = true}
+                                {Header = "Expected"; Key = false}
+                                {Header = "Actual"; Key = false}
+                                {Header = "Delta"; Key = false}]
+                      Table (cs, fails)
 
 let balances renderer request journal =
   // do pre-filter

@@ -33,6 +33,9 @@ let series =
   choice [str "series"; str ":s"] >>. ws1 >>.
     tuple3 pTenor pCumulative (ws >>. restOfLine false) |>> BalanceSeries
 
+// Help
+let check = choice [str "check"; str ":c"] >>. ws1 >>. choice [str "assertions" >>. preturn Assertions] |>> Check
+
 // Meta
 let meta = str "meta" >>. ws1 >>. choice [str "accounts" >>. preturn Accounts
                                           str "commodities" >>. preturn Commodities
@@ -41,7 +44,7 @@ let meta = str "meta" >>. ws1 >>. choice [str "accounts" >>. preturn Accounts
 let applicationCommands = [quit; clear]
 let fileCommands = [load; reload;]
 let accountingCommands = [balances; journal; series]
-let otherCommands = [meta]
+let otherCommands = [meta; check]
 let parse : Parser<Command> =
   let commands = [applicationCommands; fileCommands; accountingCommands; otherCommands] |> List.concat
   choice commands .>> eof
