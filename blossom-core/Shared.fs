@@ -47,7 +47,7 @@ let regexfilter p v =
 module List =
   let groupByApply keyProjection valueProjection list =
     let grouped = list |> List.groupBy keyProjection
-    let projected = grouped |> List.map (second (List.map valueProjection))
+    let projected = grouped |> List.map (second valueProjection)
     projected
 
 let makeSchedule tenor (left : DateTime) (right : DateTime) =

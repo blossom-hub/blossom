@@ -12,6 +12,6 @@ type Command =
   // Accounting
   | Balances of string
   | Journal of string
-  | BalanceSeries of Tenor * string
+  | BalanceSeries of Tenor * bool * string
   // Meta
   | Meta of MetaRequest

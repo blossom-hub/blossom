@@ -28,7 +28,10 @@ let reload = choice [str "reload"; str ":r"] >>. preturn Reload
 // Accounting
 let balances = choice [str "balances"; str "bal"; str ":b"] >>. ws >>. restOfLine false |>> Balances
 let journal = choice [str "journal"; str ":j"] >>. ws >>. restOfLine false |>> Journal
-let series = choice [str "series"; str ":s"] >>. ws1 >>. pTenor .>> ws .>>. restOfLine false |>> BalanceSeries
+let series =
+  let pCumulative = opt (pchar '+') |>> function Some '+' -> true | _ -> false
+  choice [str "series"; str ":s"] >>. ws1 >>.
+    tuple3 pTenor pCumulative (ws >>. restOfLine false) |>> BalanceSeries
 
 // Meta
 let meta = str "meta" >>. ws1 >>. choice [str "accounts" >>. preturn Accounts

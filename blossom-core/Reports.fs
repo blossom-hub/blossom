@@ -1,5 +1,6 @@
 module Reports
 
+open System
 open Types
 open Shared
 open Journal
@@ -46,20 +47,19 @@ let balances renderer request journal =
   // run it
   let result = evaluateBalances j2 |> Map.toList
                                    |> List.tryLast
-                                   |> Option.map (snd >> Map.toList >> List.map (second Map.toList))
+                                   |> Option.map snd
                                    |> Option.defaultValue []
 
   // re-apply specific filters to crystalise the result
   let accountFilter xs =
     match request.account with
       | None -> xs
-      | Some r -> xs |> List.filter (fun (Account a,_) -> regexfilter r a)
+      | Some r -> xs |> List.filter (fun (Account a,_, _) -> regexfilter r a)
 
   let commodityFilter xs =
     match request.commodity with
       | None -> xs
-      | Some r -> xs |> List.map (second(List.filter (fun (Commodity c, _) -> regexfilter r c)))
-                     |> List.filter (snd >> List.isEmpty >> not)
+      | Some r -> xs |> List.filter (fun (_, _, Commodity c) -> regexfilter r c)
 
   let result = match request.flexmode with
                  | true -> result
@@ -67,7 +67,7 @@ let balances renderer request journal =
 
   // temporarily make a table
   let cs = [{Header = "Account"; Key = true}; {Header = "Balance"; Key = false}; {Header ="Commodity"; Key = false}]
-  let data = result |> List.collect (fun (Account a, vs) -> vs |> List.map (fun (Commodity m, q) -> [Text a; Number (q, 3); Text m]))
+  let data = result |> List.map (fun (Account a, q, Commodity c) -> [Text a; Number (q, 3); Text c])
 
   let table = Table (cs, data)
   renderer table
@@ -114,45 +114,46 @@ let journal renderer request journal =
 
   renderer table
 
-let balanceSeries renderer tenor request journal =
+let balanceSeries renderer tenor cumulative request journal =
    // define specific filters to crystalise the result
   let accountFilter xs =
     match request.account with
       | None -> xs
-      | Some r -> xs |> Map.filter (fun (Account a) _ -> regexfilter r a)
+      | Some r -> xs |> List.filter (fun (Account a, _, _) -> regexfilter r a)
 
   let commodityFilter xs =
     match request.commodity with
       | None -> xs
-      | Some r -> xs |> Map.map (fun _ m -> m |> Map.filter (fun (Commodity c) _ -> regexfilter r c))
+      | Some r -> xs |> List.filter (fun (_, _, Commodity c) -> regexfilter r c)
 
   let postfilter = match request.flexmode with
                      | true -> id
-                     | false -> Map.map (fun _ xs -> xs |> accountFilter |> commodityFilter)
+                     | false -> List.map (second (accountFilter >> commodityFilter))
 
   // run it -> filter it
-  let result = prefilter request journal |> evaluateBalances
-                                         |> postfilter
+  let j2 = prefilter request journal
+  let result = evaluateBalances j2 |> Map.toList |> postfilter
 
-  // pick each balance date <= each schedule date
-  let dates = result |> Map.toList |> List.map fst
+  let dates = result |> List.map fst
   let left, right = dates |> (List.min &&& List.max)
-  let schedule = makeSchedule tenor left right |> Set.toList
-
-  // overall there aren't _too_ many elements to either date list
-  let balances = schedule |> List.map (fun dt -> dates |> List.filter (fun d -> d <= dt) |> List.last |> fun d -> d, result.[d])
+  let schedule = makeSchedule tenor left right |> Set.add left |> Set.toList
 
   let cs = [{Header = "Date"; Key=true}
             {Header = "Account"; Key = true}
             {Header = "Amount"; Key = false}
             {Header = "Commodity"; Key = false}]
 
-  let createRow (d, m) =
-    m |> Map.toList
-      |> List.collect (fun (Account a, bs) -> bs |> Map.toList
-                                                 |> List.map (fun (Commodity m, q) -> [Date d; Text a; Number (q, 3); Text m]))
-
-  let data = balances |> List.collect createRow
-  let table = Table (cs, data)
-
-  renderer table
+  match left = right with
+    | true -> renderer (Table(cs, []))
+    | false ->
+        let balances = schedule |> List.map (fun dt -> dt, result |> List.takeWhile (fun (d,_) -> d <= dt) |> List.last |> snd)
+        match cumulative with
+          | true -> let data= balances |> List.collect (fun (dt, xs) -> xs |> List.map (fun (Account a, q, Commodity c) -> [Date dt; Text a; Number (q, 3); Text c]))
+                    Table (cs, data) |> renderer
+          | false -> let balances2 = [(DateTime.MinValue, [])] @ balances
+                                        |> List.pairwise
+                                        |> List.map (fun ((_,xs), (dt,ys)) -> let xsn = xs |> List.map (fun (a, q ,c) -> (a, -q, c))
+                                                                              let ds = summateAQCs (ys @ xsn)
+                                                                              dt, ds)
+                     let data = balances2 |> List.collect (fun (dt, xs) -> xs |> List.map (fun (Account a, q, Commodity c) -> [Date dt; Text a; Number (q, 3); Text c]))
+                     Table (cs, data) |> renderer

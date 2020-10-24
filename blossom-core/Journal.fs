@@ -100,12 +100,11 @@ let loadJournal filename =
                       |> Map.ofList
 
   let prices = elts |> List.choose (function Prices (c, m, xs) -> Some ((c, m), xs) | _ -> None)
-                    |> List.groupByApply fst snd
-                    |> List.map (second (List.collect id >> Map.ofList))
+                    |> List.groupByApply fst (List.collect snd >> Map.ofList)
                     |> Map.ofList
 
   let splits = elts |> List.choose (function Split (d, c, k1, k2) -> Some (c, (d, k1, k2)) | _ -> None)
-                    |> List.groupByApply fst snd
+                    |> List.groupByApply fst (List.map snd)
                     |> Map.ofList
 
   let assertions = elts |> List.choose (function Assertion (d,a,v) -> Some (d,a,v) | _ -> None)
@@ -143,24 +142,23 @@ let expandPosting commodityDecls account amount caccount =
            conversionsAccount, -qty1, commodity1
            conversionsAccount, qty2, commodity2] @ contra
 
-let evaluateMovements commodityDecls register =
+let evaluateMovements commodityDecls register : Map<DateTime, (Account * decimal * Commodity) list> =
   let expandEntry entry = entry.Postings |> List.collect (fun (a,b,c) -> expandPosting commodityDecls a b c)
   register |> Map.map (fun _ es -> List.collect expandEntry es)
 
+let inline summateAQCs xs =
+  xs |> List.groupByApply (fst3 &&& thd3) (List.sumBy snd3)
+     |> List.map (fun ((a,b),c) -> a,c,b)
+
 let evaluateBalances journal =
-  let movements = evaluateMovements journal.CommodityDecls journal.Register |> Map.toList
+  let movements = evaluateMovements journal.CommodityDecls journal.Register
 
-  let f pre (dt, ms) =
-    let applyMovement s (account, qty, commodity) =
-      let before = s |> Map.tryFind account |> Option.defaultValue Map.empty
-      let v = qty + (before |> Map.tryFind commodity |> Option.defaultValue 0m)
-      s |> Map.add account (before |> Map.add commodity v)
-
-    let result = ms |> List.fold applyMovement pre
-
-    (dt, result), result
-
-  movements |> List.mapFold f Map.empty |> fst |> Map.ofList
+  // Group each date first, then calculate the cumulative balances per transition
+  movements |> Map.map (fun _ es -> summateAQCs es)
+            |> Map.toList
+            |> List.scan (fun (dp, bp) (dt, xs) -> (dt, summateAQCs (bp @ xs))) (DateTime.MinValue, [])
+            |> List.tail
+            |> Map.ofList
 
 let prefilter request journal =
   let register = journal.Register
