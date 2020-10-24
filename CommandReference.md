@@ -127,14 +127,14 @@ Getting results with the specific commodity:
 
 ### Balance series query - `:s` / `series`
 ```
-] :s <tenor> <filter string>
+] :s <tenor>[+] <filter string>
 ```
-Group balances by the tenor at the account level. Currently outputs a cumulative summation.
-A tenor is defined as Y/H/Q/M (W is not yet supported). The final date is used for each period, capped/floored if there are not enough dates.
+Group balances by the tenor at the account level. The default output is on a periodic basis, add the `+` sign to run on a cumulative basis instead.
+A tenor is defined as Y/H/Q/M (W is not yet supported). The final date is used for each period, capped/floored if there are insufficent dates.
 
 ```
-] :s Q
-=> BalanceSeries (Q, "")
+] :s Q+
+=> BalanceSeries (Q+, "")
       Date                     Account   Amount   Commodity
 2020-01-06            Assets:Account 1        2       ASSET
                                             145         EUR
