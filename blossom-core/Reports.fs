@@ -61,6 +61,7 @@ let checkJournal renderer request journal =
                           | Some actual -> Some (dt, a, q, c, actual)
                           | None        -> None
                       let fails = assertions |> List.choose check1
+                                             |> List.sortBy (fun (dt, a, _, c, _) -> (dt,a,c))
                                              |> List.map (fun (dt, Account a, q, Commodity c, actual) -> [Date dt; Text a; Text c; Number (q, 3); Number (actual, 3); Number (actual-q, 3)])
                       let cs = [{Header = "Date"; Key=true}
                                 {Header = "Account"; Key = true}
