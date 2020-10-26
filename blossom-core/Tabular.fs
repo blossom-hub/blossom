@@ -58,5 +58,6 @@ let renderText (Table (hs,data)) =
 
             let combined = [headers] @ printed
             combined |> List.map (String.concat "   ") |> String.concat Environment.NewLine |> printfn "%s"
+            printfn "  (%A rows)" (List.length rs)
 
 
