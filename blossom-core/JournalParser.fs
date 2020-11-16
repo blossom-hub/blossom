@@ -62,7 +62,7 @@ type RJournalElement =
   | Account of AccountDecl
   | Commodity of CommodityDecl
   // Core entries
-  | Entry of flagged: bool * date:DateTime * payee:string option * narrative:string * xs:RPostingElement list
+  | Entry of flagged: bool * date:DateTime * payee:string option * narrative:string * tags:string Set * xs:RPostingElement list
   | Prices of commodity:Commodity * measure:Commodity * xs:(DateTime * decimal) list
   | Split of date:DateTime * commodity:Commodity * pre:int * post:int
   | Assertion of date:DateTime * account:Account * value:Value
@@ -94,7 +94,7 @@ let sstr = skipString
 let sstr1 s = skipString s >>. nSpaces1
 
 let indented p =
-  let sp n m = skipArray (n*m) (skipChar ' ') >>. p
+  let sp n m = skipArray (n*m) (skipChar ' ') >>? p
   getUserState >>= fun s -> sp s.IndentCount s.IndentSize
 
 let increaseIndent p =
@@ -210,13 +210,17 @@ let pEntry =
   // TODO: could write it as a parser later..
   let spn (n:string) = n.Split([|'|'|], 2) |> List.ofArray
                                            |> function | [x] -> (None, x) | x::xs -> (Some (x.Trim()), List.head xs) | _ -> (None, n)
-  let subitems = pPostingEntry |> indented
+  let phashline = indented (sepBy (pchar '#' >>. many1Chars (letter <|> digit)) nSpaces1 .>> newline)
+  let subitems = indented pPostingEntry
   let pflag = opt (pchar '*' .>> nSpaces1) |>> Option.isSome
-  tuple4 (pdate .>> nSpaces1) pflag (pOptLineComment (manyChars (noneOf ";\n"))) (increaseIndent (many1 subitems))
-    |>> fun (d, f, (n, cm), xs) ->
-          let p, n = spn n
-          Entry (flagged = f, date = d, payee = p, narrative = n.Trim(), xs=xs)
-            |> wrapCommented cm
+
+  pdate .>> nSpaces1 .>>. pflag .>>. (pOptLineComment (manyChars (noneOf ";\n")))
+        .>>. increaseIndent (opt phashline .>>. many1 subitems)
+        |>> fun (((d, f), (n, cm)), (hs, xs)) ->
+              let p, n = spn n
+              let tags = defaultArg hs [] |> set
+              Entry (flagged = f, date = d, payee = p, narrative = n.Trim(), tags=tags, xs=xs)
+                 |> wrapCommented cm
 
 let pPrices =
   let subitems = (pdate .>> nSpaces1 .>>. pnumber .>> nSpaces0 .>> skipNewline) |> indented |> many

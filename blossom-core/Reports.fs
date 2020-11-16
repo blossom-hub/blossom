@@ -38,6 +38,9 @@ let meta renderer request journal  =
                                                 |> List.map (fun (Commodity c, _) -> c)
           [entryCommodities; declCommodities; priceCommodities; splitCommodities] |> List.concat |> Set.ofList
       | Payees -> journal.Register |> Map.toList |> List.collect (snd >> List.choose (fun p -> p.Payee)) |> Set.ofList
+      | HashTags -> journal.Register |> Map.toList
+                                     |> List.collect (fun (_, es) -> es |> List.map (fun p -> p.HashTags))
+                                     |> Set.unionMany
 
 let checkJournal renderer request journal =
   let checkAssertion asofBalances dt account quantity commodity =

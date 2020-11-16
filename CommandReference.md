@@ -113,6 +113,12 @@ Getting results with the specific commodity:
 ] :c %JPY     ; query by those including Japanese Yen
 ```
 
+#### Hashtag: `#`
+A non-regex filter to match the exact tag; you can provide multiple tags in one request (each tag must be present for the filter to run)
+```
+] :c #ABC #DEF    ; all transactions which are tagged with ABC _and_ DEF
+```
+
 ### Expanded examples
 ```
 ] :c Income >2020 <2021 %JPY    ; All income accounts with transactions in 2020

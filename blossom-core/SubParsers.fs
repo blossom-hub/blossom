@@ -13,6 +13,7 @@ type FilterTag =
   | P of string
   | N of string
   | C of string
+  | Ht of string
   | Fx
 
 let cflag c = opt (pchar c) |>> Option.isSome
@@ -41,9 +42,10 @@ let pFilterTags =
   let pPayee = pchar '@' >>. text |>> P
   let pNarr = pchar '?' >>. text |>> N
   let pCommod = pchar '%' >>. text |>> C
+  let pHashTag = pchar '#' >>. text |>> Ht
   let pAcc = text |>> A
 
-  let pelt = choice [attempt pFlexMode; pFrom; pTo; pPayee; pNarr; pCommod; pAcc]
+  let pelt = choice [attempt pFlexMode; pFrom; pTo; pPayee; pNarr; pCommod; pHashTag; pAcc]
 
   nSpaces0 >>. sepBy pelt nSpaces1 .>> eof
 
@@ -56,6 +58,7 @@ let pFilter =
     let p = glse tags (function P v -> Some v | _ -> None)
     let n = glse tags (function N v -> Some v | _ -> None)
     let c = glse tags (function C v -> Some v | _ -> None)
+    let hs = tags |> List.choose (function Ht v -> Some v | _ -> None) |> set
 
     let fx = List.contains Fx tags
 
@@ -66,6 +69,7 @@ let pFilter =
       payee = p
       narrative = n
       commodity = c
+      hashtags = hs
     }
 
   pFilterTags |>> mk

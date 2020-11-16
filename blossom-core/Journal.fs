@@ -12,13 +12,13 @@ let internalDefaultCommodity = Types.Commodity "$"  // this is not a parsable va
 
 let stripComments = function
   | Commented (elt, _) -> elt
-  | Entry (flagged, dt, payee, narrative, xs) -> let zs = xs |> List.map    (function | PCommented (elt2, _) -> elt2 | elt2 -> elt2)
-                                                             |> List.filter (function | PComment _ -> false | _ -> true)
-                                                 Entry (flagged, dt, payee, narrative, zs)
+  | Entry (flagged, dt, payee, narrative, hs, xs) -> let zs = xs |> List.map    (function | PCommented (elt2, _) -> elt2 | elt2 -> elt2)
+                                                                 |> List.filter (function | PComment _ -> false | _ -> true)
+                                                     Entry (flagged, dt, payee, narrative, hs, zs)
   | elt -> elt
 
 let balanceEntry gdc acctDecls commodDecls = function
-  | Entry (flagged, dt, py, na, xs) ->
+  | Entry (flagged, dt, py, na, hs, xs) ->
       // Helpers
       let measureOf commodity = commodDecls |> Map.tryFind commodity
                                             |> Option.bind (fun c -> c.Measure)
@@ -66,12 +66,12 @@ let balanceEntry gdc acctDecls commodDecls = function
 
       let defaultContraAccount = List.tryHead blanks
       Some <| match List.length blanks, defaultContraAccount, List.length residual with
-                | 0, _, 0       -> {Flagged = flagged; Date = dt; Payee = py; Narrative = na;
+                | 0, _, 0       -> {Flagged = flagged; Date = dt; Payee = py; Narrative = na; HashTags = hs;
                                     Postings = postings |> List.map (second3 Option.get >> convertXs)} |> Choice1Of2
                 | 0, _, _       -> Choice2Of2 "Entry doesn't balance! Need a contra account but none specified."
                 | 1, Some _ , 0 -> Choice2Of2 "Entry balances, but a contra account has been specified."
                 | 1, Some ca, _ -> let zs = residual |> List.map (fun (c, v) -> (ca, Ve (-v, c), NoCAccount))
-                                   {Flagged = flagged; Date = dt; Payee = py; Narrative = na;
+                                   {Flagged = flagged; Date = dt; Payee = py; Narrative = na; HashTags = hs;
                                     Postings = nonBlanks @ zs |> List.map convertXs} |> Choice1Of2
                 | _, _, _       -> Choice2Of2 "Entry has more than one default contra account, there should only be one."
   | _ -> None
@@ -181,6 +181,11 @@ let prefilter request journal =
       | None -> es
       | Some r -> es |> List.filter (fun e -> regexfilter r e.Narrative)
 
+  let hashtagFilter es =
+    match Set.isEmpty request.hashtags with
+      | true  -> es
+      | false -> es |> List.filter (fun e -> Set.intersect e.HashTags request.hashtags |> Set.isEmpty |> not)
+
   let postingSemiFilter es =
     let f = match request.account with
               | None -> fun _ -> true
@@ -200,7 +205,7 @@ let prefilter request journal =
   let apply dt es =
     match dateFilter dt with
       | false -> []
-      | true -> es |> narrativeFilter |> payeeFilter |> postingSemiFilter
+      | true -> es |> narrativeFilter |> payeeFilter |> hashtagFilter |> postingSemiFilter
 
   let register2 = register |> Map.map apply
   {journal with Register = register2}

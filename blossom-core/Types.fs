@@ -30,6 +30,7 @@ type Filter = {
   payee: string option
   narrative: string option
   commodity: string option
+  hashtags: string Set
 }
 
 type JournalMeta = {
@@ -61,6 +62,7 @@ type Entry = {
   Date: DateTime
   Payee: string option
   Narrative: string
+  HashTags: string Set
   Postings: (Account * Amount * Account option) list
 }
 
@@ -75,4 +77,4 @@ type Journal = {
 }
 
 type CheckRequest = Assertions
-type MetaRequest = Accounts | Commodities | Payees
+type MetaRequest = Accounts | Commodities | Payees | HashTags

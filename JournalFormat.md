@@ -76,11 +76,12 @@ commodity {commodity}                     ; [0..] per file
 
 ### Transaction elements
 - a double space is needed between an account tree and the amount
-
+- a line of hashtags is supported straight after the main entry (no spaces in tag)
 _Basic syntax_
 - there can only be one missing (elided) amount
 ```
 {date} {payee} | {narrative}      ; payee is optional, exclude | if not using
+  #tag1 #tag2 #tag3 #...          ; optional list of hashtags, must be line 2
   {account tree one}  {amount}
   {account tree two}
 ```
@@ -130,6 +131,7 @@ This also means that the following is _technically_ correct and equivalent, but 
   Expenses:Fast food    12.99 USD
   Assets:Wallet
 ```
+
 ### Prices and splits
 ```
 prices {commodity} {unit commodity}
@@ -163,10 +165,12 @@ account Asset:Sofa Cash
 ; what did I do this year?
 
 2020-01-01 KFC | New Year Chicken Bucket
+  #nye2020
   Expense:Food:Takeaway     18.99
   Asset:Cash
 
 2020-01-05 Buy some Boeing
+  #yolo
   Asset:Brokerage:Stonks     100 BA @ 160 USD
   Asset:Brokerage:Cash
 
