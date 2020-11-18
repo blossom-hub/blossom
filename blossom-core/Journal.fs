@@ -18,7 +18,7 @@ let stripComments = function
   | elt -> elt
 
 let balanceEntry gdc acctDecls commodDecls = function
-  | Entry (flagged, dt, py, na, hs, xs) ->
+  | (posn, Entry (flagged, dt, py, na, hs, xs)) ->
       // Helpers
       let measureOf commodity = commodDecls |> Map.tryFind commodity
                                             |> Option.bind (fun c -> c.Measure)
@@ -68,29 +68,29 @@ let balanceEntry gdc acctDecls commodDecls = function
       Some <| match List.length blanks, defaultContraAccount, List.length residual with
                 | 0, _, 0       -> {Flagged = flagged; Date = dt; Payee = py; Narrative = na; HashTags = hs;
                                     Postings = postings |> List.map (second3 Option.get >> convertXs)} |> Choice1Of2
-                | 0, _, _       -> Choice2Of2 "Entry doesn't balance! Need a contra account but none specified."
-                | 1, Some _ , 0 -> Choice2Of2 "Entry balances, but a contra account has been specified."
+                | 0, _, _       -> sprintf "Entry doesn't balance! Need a contra account but none specified. %s" (posn.ToString()) |> Choice2Of2
+                | 1, Some _ , 0 -> sprintf "Entry balances, but a contra account has been specified. %s" (posn.ToString()) |> Choice2Of2
                 | 1, Some ca, _ -> let zs = residual |> List.map (fun (c, v) -> (ca, Ve (-v, c), NoCAccount))
                                    {Flagged = flagged; Date = dt; Payee = py; Narrative = na; HashTags = hs;
                                     Postings = nonBlanks @ zs |> List.map convertXs} |> Choice1Of2
-                | _, _, _       -> Choice2Of2 "Entry has more than one default contra account, there should only be one."
+                | _, _, _       -> sprintf "Entry has more than one default contra account, there should only be one. %s" (posn.ToString()) |> Choice2Of2
   | _ -> None
 
 let loadJournal filename =
-  let elts = loadRJournal filename |> List.map stripComments
+  let elts = loadRJournal filename |> List.map (second stripComments)
 
   // handle imports here, we will need to rec the load function and combine results
   // will have to split this function later to handle
-  let imports = elts |> List.choose (function Import i -> Some i | _ -> None)
+  let imports = elts |> List.choose (function (_, Import i) -> Some i | _ -> None)
 
-  let header = elts |> List.choose (function Header h -> Some h | _ -> None)
+  let header = elts |> List.choose (function (_, Header h) -> Some h | _ -> None)
                     |> List.tryHead
                     |> Option.defaultValue {Name = "Untitled"; Commodity = None; CapitalGains = None; Note = None}
 
-  let accountDecls = elts |> List.choose (function Account a -> Some (a.Account, a) | _ -> None)
+  let accountDecls = elts |> List.choose (function (_, Account a) -> Some (a.Account, a) | _ -> None)
                           |> Map.ofList
 
-  let commodityDecls = elts |> List.choose (function RJournalElement.Commodity c -> Some (c.Symbol, c) | _ -> None)
+  let commodityDecls = elts |> List.choose (function (_, RJournalElement.Commodity c) -> Some (c.Symbol, c) | _ -> None)
                             |> Map.ofList
 
   let register = elts |> List.choose (balanceEntry header.Commodity accountDecls commodityDecls)
@@ -99,15 +99,15 @@ let loadJournal filename =
                       |> List.groupBy (fun e -> e.Date)
                       |> Map.ofList
 
-  let prices = elts |> List.choose (function Prices (c, m, xs) -> Some ((c, m), xs) | _ -> None)
+  let prices = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
                     |> List.groupByApply fst (List.collect snd >> Map.ofList)
                     |> Map.ofList
 
-  let splits = elts |> List.choose (function Split (d, c, k1, k2) -> Some (c, (d, k1, k2)) | _ -> None)
+  let splits = elts |> List.choose (function (_, Split (d, c, k1, k2)) -> Some (c, (d, k1, k2)) | _ -> None)
                     |> List.groupByApply fst (List.map snd)
                     |> Map.ofList
 
-  let assertions = elts |> List.choose (function Assertion (d,a,v) -> Some (d,a,v) | _ -> None)
+  let assertions = elts |> List.choose (function (_, Assertion (d,a,v)) -> Some (d,a,v) | _ -> None)
 
   // Avengers... assemble!
   {

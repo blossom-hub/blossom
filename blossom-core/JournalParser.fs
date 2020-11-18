@@ -242,7 +242,7 @@ let pRJournal =
                   pAccountDecl; pCommodityDecl;
                   pEntry; pPrices; pSplit;
                   pAssertion]
-  many (choice parsers .>> skipMany newline) .>> eof
+  many (getPosition .>>. choice parsers .>> skipMany newline) .>> eof
 
 let loadRJournal filename =
   let result = runParser pRJournal UserState.Default (FromFile filename)
