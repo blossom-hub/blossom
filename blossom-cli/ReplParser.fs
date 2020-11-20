@@ -17,6 +17,9 @@ let ws1 = spaces1
 let str = pstring
 
 // Command Parsing
+// Flags'n'args
+let flags = opt (skipString "-" >>. many asciiLower) |>> Option.defaultValue []
+
 // Application Management
 let quit = choice [str "quit"; str ":q"] >>. preturn Quit
 let clear = str "cls" >>. preturn Clear
@@ -26,7 +29,7 @@ let load = choice [str "load"; str ":l"] >>. ws1 >>. restOfLine false |>> Load
 let reload = choice [str "reload"; str ":r"] >>. preturn Reload
 
 // Accounting
-let balances = choice [str "balances"; str "bal"; str ":b"] >>. ws >>. restOfLine false |>> Balances
+let balances = choice [str "balances"; str "bal"; str ":b"] >>. ws >>. flags .>>. restOfLine false |>> Balances
 let journal = choice [str "journal"; str ":j"] >>. ws >>. restOfLine false |>> Journal
 let series =
   let pCumulative = opt (pchar '+') |>> function Some '+' -> true | _ -> false
