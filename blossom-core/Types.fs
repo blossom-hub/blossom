@@ -17,6 +17,10 @@ type Amount =
   | T of Value * Value
   | X of Value * Value
 
+type ValuationMode =
+  | Latest
+  | Historical
+
 type CommodityClass =
   | Currency
   | Equity
@@ -42,6 +46,7 @@ type JournalMeta = {
 
 type AccountDecl = {
   Account: Account
+  ValuationMode: ValuationMode
   Commodity: Commodity option
   CapitalGains: Account option
   Note: string option

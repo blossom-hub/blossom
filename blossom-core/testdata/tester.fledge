@@ -10,10 +10,10 @@ journal Example ledger
   cg Income:Capital Gains
   commodity USD
 
-account Asset:Main      ; Predefine an asset to set some defaults
+account Asset               ; Predefine some account defaults
   note Set some default values
-  commodity GBP
   cg Income:Capital Gains 2
+  valuation Latest
 
 commodity 9984JP   ; definitely not a hedge fund
   name Softbank Group

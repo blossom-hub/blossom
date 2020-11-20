@@ -76,6 +76,7 @@ type private RSubElement =
   | SNote of string
   | SName of string
   | SCommodityClass of CommodityClass
+  | SValuationMode of ValuationMode
   | SMeasure of Commodity
   | SUnderlying of Commodity
   | SMultiplier of int
@@ -127,6 +128,10 @@ let pCommodityClass : Parser<CommodityClass, UserState> =
           stringReturn "Option"   Option
           stringReturn "Future"   Future]
 
+let pValuationMode : Parser<ValuationMode, UserState> =
+  choice [stringReturn "Latest" Latest
+          stringReturn "Historical" Historical]
+
 // Account name elements and parsing
 let accountValidChars = letter <|> digit <|> anyOf "()[]{}" <|> (pchar ' ' .>> notFollowedBy (pchar ' ') |> attempt)
 let pAccountElt = many1Chars2 letter accountValidChars
@@ -139,6 +144,7 @@ let private spCG = sstr1 "cg" >>. pAccountHierarchy |>> SCG
 let private spNote = sstr1 "note" >>. restOfLine false |>> SNote
 let private spName = sstr1 "name" >>. restOfLine false |>> SName
 let private spCommodityClass = sstr1 "class" >>. pCommodityClass |>> SCommodityClass
+let private spValuationMode = sstr1 "valuation" >>. pValuationMode |>> SValuationMode
 let private spMeasure = sstr1 "measure" >>. pCommodity |>> SMeasure
 let private spUnderlying = sstr1 "underlying" >>. pCommodity |>> SUnderlying
 let private spMultiplier = sstr1 "multiplier" >>. pint32 |>> SMultiplier
@@ -175,12 +181,14 @@ let pImport =
   sstr1 "import" >>. filename |>> Import
 
 let pAccountDecl =
-  let subitems = (choice [spCommodity; spCG; spNote] .>> nSpaces0 .>> skipNewline) |> indented |> many
+  let subitems = (choice [spCommodity; spCG; spNote; spValuationMode] .>> nSpaces0 .>> skipNewline) |> indented |> many
   sstr1 "account" >>. pOptLineComment pAccountHierarchy .>>. increaseIndent subitems
     |>> fun ((a, c), ss) -> Account {Account = a
                                      Commodity = glse ss (function (SCommodity x) -> Some x | _ -> None)
                                      Note = glse ss (function (SNote x) -> Some x | _ -> None)
-                                     CapitalGains = glse ss (function (SCG x) -> Some x | _ -> None)}
+                                     CapitalGains = glse ss (function (SCG x) -> Some x | _ -> None)
+                                     ValuationMode = glse ss (function (SValuationMode x) -> Some x | _ -> None)
+                                                        |> Option.defaultValue Historical}
                             |> wrapCommented c
 
 let pCommodityDecl =
