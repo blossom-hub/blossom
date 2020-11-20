@@ -101,7 +101,9 @@ let balances renderer request journal =
 
   // temporarily make a table
   let cs = [{Header = "Account"; Key = true}; {Header = "Balance"; Key = false}; {Header ="Commodity"; Key = false}]
-  let data = result |> List.map (fun (Account a, q, Commodity c) -> [Text a; Number (q, 3); Text c])
+  let data = result |> List.map (fun (Account a, q, Commodity c) -> (a,q,c))
+                    |> List.sortBy fst3
+                    |> List.map (fun (a,q,c) -> [Text a; Number (q, 3); Text c])
 
   let table = Table (cs, data)
   renderer table
