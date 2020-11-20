@@ -1,6 +1,7 @@
 module Journal
 
 open System
+open System.IO
 open Shared
 open Types
 open JournalParser
@@ -76,12 +77,27 @@ let balanceEntry gdc acctDecls commodDecls = function
                 | _, _, _       -> sprintf "Entry has more than one default contra account, there should only be one. %s" (posn.ToString()) |> Choice2Of2
   | _ -> None
 
-let loadJournal filename =
+let private mergeJournals j1 j2 =
+  {
+    Meta = j2.Meta
+    AccountDecls = Map.merge j1.AccountDecls j2.AccountDecls
+    CommodityDecls = Map.merge j1.CommodityDecls j2.CommodityDecls
+    Register = Map.mergeWith (fun _ v1 v2 -> v1 @ v2) j1.Register j2.Register
+    Prices = Map.mergeWith (fun _ v1 v2 -> Map.merge v1 v2) j1.Prices j2.Prices
+    Splits = Map.mergeWith (fun _ v1 v2 -> v1 @ v2) j1.Splits j2.Splits
+    Assertions = j1.Assertions @ j2.Assertions
+  }
+
+let rec loadJournal filename =
   let elts = loadRJournal filename |> List.map (second stripComments)
 
-  // handle imports here, we will need to rec the load function and combine results
-  // will have to split this function later to handle
   let imports = elts |> List.choose (function (_, Import i) -> Some i | _ -> None)
+  let cwd = Path.GetDirectoryName filename
+  let imported = imports |> List.map (fun i -> match Path.IsPathRooted(i) with
+                                                 | true -> loadJournal i
+                                                 | false -> Path.Combine (cwd, i) |> loadJournal)
+                         |> function | [] -> None
+                                     | xs -> xs |> List.reduce mergeJournals |> Some
 
   let header = elts |> List.choose (function (_, Header h) -> Some h | _ -> None)
                     |> List.tryHead
@@ -110,7 +126,7 @@ let loadJournal filename =
   let assertions = elts |> List.choose (function (_, Assertion (d,a,v)) -> Some (d,a,v) | _ -> None)
 
   // Avengers... assemble!
-  {
+  let journal = {
     Meta = header
     AccountDecls = accountDecls
     CommodityDecls = commodityDecls
@@ -119,6 +135,10 @@ let loadJournal filename =
     Splits = splits
     Assertions = assertions
   }
+
+  match imported with
+    | None    -> journal
+    | Some js -> mergeJournals js journal
 
 let multiplierOf commodityDecls c =
   commodityDecls |> Map.tryFind c

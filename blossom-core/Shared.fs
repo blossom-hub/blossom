@@ -50,6 +50,15 @@ module List =
     let projected = grouped |> List.map (second valueProjection)
     projected
 
+module Map =
+  let merge (m1 : Map<'a, 'b>) (m2 : Map<'a, 'b>) = Map.fold (fun s k v -> Map.add k v s) m2 m1
+
+  let mergeWith f (m1 : Map<'a, 'b>) (m2 : Map<'a, 'b>) =
+    let left, jointL = Map.partition (fun k _ -> not(m2.ContainsKey(k))) m1
+    let right = Map.filter (fun k _ -> not(m1.ContainsKey(k))) m2
+    let resolved = jointL |> Map.map (fun k v -> f k v (m2.[k]))
+    [left; right; resolved] |> List.collect Map.toList |> Map.ofList
+
 let makeSchedule tenor (left : DateTime) (right : DateTime) =
   let go g f x = (x, false) |> List.unfold (fun (d, flag) -> if flag then None else Some (f d, (g d, d >= right)))
                             |> Set.ofList

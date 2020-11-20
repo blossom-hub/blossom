@@ -31,7 +31,7 @@ let load state filename =
     Some {state with Journal = Some parsed; Filename = Some filename}
   with
     | :? FileNotFoundException as ex ->
-           printfn "Couldn't find file %A" filename
+           printfn "Couldn't find file %A" ex.FileName
            Some state
 
 let reload state =
