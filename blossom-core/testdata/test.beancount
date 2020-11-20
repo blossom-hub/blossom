@@ -1,0 +1,32 @@
+option "title" "Cross test file"
+option "operating_currency" "USD"
+option "operating_currency" "HKD"
+
+
+2020-01-01 * "Opening equity"
+  Equity:Opening    -100000 USD
+  Equity:Opening    -100000 HKD
+  Assets:Funding
+
+2020-01-04 *  "Basic trade 1"
+  Assets:Trading   2 NQZ20 {1135 USD}
+  Expenses:Trading  4 USD
+  Assets:Funding
+
+2020-01-04 * "Basic Trade 2"
+  Assets:Trading  2 ASSET {100 USD}
+  Assets:Funding
+
+2020-01-06 * "Basic Trade 3"
+  Assets:Trading  -1 NQZ20 {1135 USD, 2020-01-04} @ 1201 USD
+  Assets:Funding
+
+2020-01-08 * "Buy some cheese"
+  Expenses:Groceries    1250 HKD
+  Assets:Funding
+
+2020-01-04 price NQZ20  1180 USD
+2020-01-05 price NQZ20  1204 USD
+2020-01-05 price ASSET  99 USD
+2020-01-06 price USD    7.85 HKD
+2020-01-10 price USD    17.85 HKD
