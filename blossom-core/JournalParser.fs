@@ -81,6 +81,7 @@ type private RSubElement =
   | SUnderlying of Commodity
   | SMultiplier of int
   | SMTM
+  | SPropagate
 
 // TODO Add line number to parser for the root items
 
@@ -149,6 +150,7 @@ let private spMeasure = sstr1 "measure" >>. pCommodity |>> SMeasure
 let private spUnderlying = sstr1 "underlying" >>. pCommodity |>> SUnderlying
 let private spMultiplier = sstr1 "multiplier" >>. pint32 |>> SMultiplier
 let private spMTM = sstr "mtm" >>% SMTM
+let private spPropagate = sstr "propagate" >>% SPropagate
 
 let glse xs pred = xs |> List.choose pred
                       |> List.tryLast
@@ -181,14 +183,15 @@ let pImport =
   sstr1 "import" >>. filename |>> Import
 
 let pAccountDecl =
-  let subitems = (choice [spCommodity; spCG; spNote; spValuationMode] .>> nSpaces0 .>> skipNewline) |> indented |> many
+  let subitems = (choice [spCommodity; spCG; spNote; spValuationMode; spPropagate] .>> nSpaces0 .>> skipNewline) |> indented |> many
   sstr1 "account" >>. pOptLineComment pAccountHierarchy .>>. increaseIndent subitems
     |>> fun ((a, c), ss) -> Account {Account = a
                                      Commodity = glse ss (function (SCommodity x) -> Some x | _ -> None)
                                      Note = glse ss (function (SNote x) -> Some x | _ -> None)
                                      CapitalGains = glse ss (function (SCG x) -> Some x | _ -> None)
                                      ValuationMode = glse ss (function (SValuationMode x) -> Some x | _ -> None)
-                                                        |> Option.defaultValue Historical}
+                                                        |> Option.defaultValue Historical
+                                     Propagate = List.contains SPropagate ss}
                             |> wrapCommented c
 
 let pCommodityDecl =

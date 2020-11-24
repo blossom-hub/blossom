@@ -50,6 +50,7 @@ type AccountDecl = {
   Commodity: Commodity option
   CapitalGains: Account option
   Note: string option
+  Propagate: bool
 }
 
 type CommodityDecl = {
