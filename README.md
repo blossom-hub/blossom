@@ -28,7 +28,7 @@ After the initial accounting portions which are fairly standard across pta softw
 - Support for non-nav assets such as mtm futures
 - Possible future support for risk, stress reports (option evaluation, derivatives linkage to underlyings, volatility surfaces etc) for OTC products.
 
-Most of the "standard" formatting works in blossom, although there some extra helpers and formatting supported to cut down on boilerplate and monotonous copy/paste. You can see some of the format ideas at https://github.com/simonjpascoe/blossom/blob/master/JournalFormat.md.
+Most of the "standard" formatting works in blossom, although there some extra helpers and formatting supported to cut down on boilerplate and monotonous copy/paste. You can see some of the format ideas at https://github.com/blossom-hub/blossom/blob/master/JournalFormat.md.
 
 ## Plans
 I'm currently migrating a bigger codebase from my initial implementation into this repository and upgrading several features.
