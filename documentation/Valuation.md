@@ -28,12 +28,12 @@ We can thus consider that if I am paid in 2015 a salary in JPY, and hold the bal
 There is also a problem with trading over time with respect to expenses (for example)
 ```
 2020-01-04 Buy Softbank 9984JP
-  Assets:Brokerage:Stocks:JP    2000 JP9984 {6500 JPY}
+  Assets:Brokerage:Stocks:JP    2000 JP9984 @ 6500 JPY
   Expenses:Commission           1000 JPY  ; at 125 this is 8 USD
   Assets:Brokerage:Cash
 
 2020-01-06 Sell Softbank 9984JP
-  Assets:Brokerage:Stocks:JP    -1000 JP9984 {6500 JPY} @ 6950 JPY
+  Assets:Brokerage:Stocks:JP    -1000 JP9984 @ 6950 JPY
   Expenses:Commission              500 JPY   ; at 135 this is 3.7 USD
   Assets:Brokerage:Cash         6,949,500 JPY
   Income:CapitalGains
