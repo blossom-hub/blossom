@@ -7,6 +7,9 @@ Blossom is a _yet another_ plain text acount application cli similar to [Ledger-
 - blossom only reads your data, it doesn't know how to write and won't smash up your data.
 - a small eco-system of helper utilities is in the planning (pretty-print, price import, etc - rather custom)
 
+## But this breaks IFRS Rule 123-R!
+Yes. But then you should get a real accountant if you need to follow those rules to the letter. It tries to strike a balance between real accounting and common sense. You can raise a ticket if you like.
+
 ## Does it work yet?
 Yes and no. It works, but it doesn't do a whole lot and is not overly optimised. For "toy" inputs, it works fine, and I have successfully converted a ~2500 line input into the tool. But on the flip side, not all the features are there and the outputs are rather basic.
 
@@ -25,7 +28,7 @@ After the initial accounting portions which are fairly standard across pta softw
 - Support for non-nav assets such as mtm futures
 - Possible future support for risk, stress reports (option evaluation, derivatives linkage to underlyings, volatility surfaces etc) for OTC products.
 
-Most of the "standard" formatting works in blossom, although there some extra helpers and formatting supported to cut down on boilerplate and monotonous copy/paste. You can see some of the format ideas at https://github.com/simonjpascoe/blossom/blob/master/JournalFormat.md.
+Most of the "standard" formatting works in blossom, although there some extra helpers and formatting supported to cut down on boilerplate and monotonous copy/paste. You can see some of the format ideas at https://github.com/blossom-hub/blossom/blob/master/JournalFormat.md.
 
 ## Plans
 I'm currently migrating a bigger codebase from my initial implementation into this repository and upgrading several features.
