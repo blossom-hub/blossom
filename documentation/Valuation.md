@@ -8,17 +8,17 @@ Blossom is by design a multi-currency, multi-asset platform, and with this comes
 Consider the following set of transactions
 ```
 2015-01-20 Salary
-  Income:Salary     -130,000 JPY
-  Assets:Banks:HKD
+  Income:Salary     -130000 JPY
+  Assets:Banks:JPY
 
 ...
 
 2020-01-20 Salary
-  Income:Salary     -10,000 HKD
-  Assets:Banks:JPY
+  Income:Salary     -10000 HKD
+  Assets:Banks:HKD
 
 2020-01-22 Freelance remote work
-  Income:Salary     -1,000 USD
+  Income:Salary     -1000 USD
   Assets:Banks:USD
 ```
 How do we compare these sorts of balances properly over time? What if we want to view them in a base currency of `USD`? On the other hand, the valuation _now_ of these assets in the bank accounts is something different - we can readily convert the currencies at the prevailing exchange rate as of any date which these exist. We've made a gain/loss with respect to this other currency.
@@ -28,14 +28,14 @@ We can thus consider that if I am paid in 2015 a salary in JPY, and hold the bal
 There is also a problem with trading over time with respect to expenses (for example)
 ```
 2020-01-04 Buy Softbank 9984JP
-  Assets:Brokerage:Stocks:JP    2000 JP9984 @ 6500 JPY
+  Assets:Brokerage:Stocks:JP    2000 9984JP @ 6500 JPY
   Expenses:Commission           1000 JPY  ; at 125 this is 8 USD
   Assets:Brokerage:Cash
 
 2020-01-06 Sell Softbank 9984JP
-  Assets:Brokerage:Stocks:JP    -1000 JP9984 @ 6950 JPY
-  Expenses:Commission              500 JPY   ; at 135 this is 3.7 USD
-  Assets:Brokerage:Cash         6,949,500 JPY
+  Assets:Brokerage:Stocks:JP    -1000 9984JP @ 6950 JPY
+  Expenses:Commission             500 JPY   ; at 135 this is 3.7 USD
+  Assets:Brokerage:Cash         6949500 JPY
   Income:CapitalGains
 
 prices 9984JP JPY
@@ -63,3 +63,27 @@ We can thus summarise some key items.
 It can be seen that balances sheet accounts are typically "latest" or "prevailing" accounted for, whilst income/expense style accounts use mostly "historical" or "point in type" exchange rates.
 
 ## Representation
+It is possibly to _overly_ unify the above examples into a common format that would typically require more data than is necessary, as not all conversions are required, but nevertheless is a good view of the overall situation.
+
+Given a wish to value everything in USD
+- `ti` being the _spot_ transaction _time_
+- `te` being the transaction date
+- `T` being the valuation date (e.g. today)
+
+
+The following table shows how we _could_ enrich the original transaction information (note - only changes shown for the right hand columns, end of day fx rates in all cases, for balances on those dates, not present value of tradables).
+
+| Date | Description | Account | Quantity | | Commodity | Denomination | FX_te | Valuation_ti | Valuation USD_ti | Valuation_te | Valuation USD_te | FX_T | Valuation USD_T |
+|- |- |- |- |- |- |- |- |- |- |- |- |- |- |
+| 2015-01-22 | Salary | Income:Salary | -130,000 | | JPY | JPY | 150 | -130,000 | -866.67 | | | 104 | ~~-1,250~~|
+| |  | Asset:Banks:JPY | | 130,000 | JPY | JPY | 150 | 130,000 | 866.67 | | | 104 | 1,250 |
+| 2020-01-04 | Buy Softbank | Assets:Brokerage:Stocks:JP | | 2,000 | 9984JP | JPY | 125 |13,000,000 | 104,000 | 12,900,000 | 103,200 | 104 | ~~124,038~~ |
+| |  | Expenses:Commission | | 1,000 | JPY | JPY | 125 | 1,000 | 8 | | | 104 | ~~9.615~~ |
+| |  | Assets:Brokerage:Cash | -13,001,000 | | JPY | JPY | 125 | -13,001,000 | -104,008 | | | 104 | 125,009.62 |
+| 2020-01-06 | Sell Softbank | Assets:Brokerage:Stocks:JP | -1,000 | | 9984JP | JPY | 135 | -6,950,000 | -51,481.48 | 0 | 0 | 104 | 0 |
+| |  | Expenses:Commission | | 500 | JPY | JPY | 135 | 500 | 3.70 | | | 104 | ~~4.81~~ |
+| |  | Assets:Brokerage:Cash | |  6,949,500 | JPY | JPY | 135 | 6,949,500 | 51,477.77 | | | 104 | 66,822.12 |
+| 2020-01-20 | Salary | Income:Salary | -10,000 | | HKD | HKD | 7.85 | -10,000 | -1,273.88 | | | 7.8 | ~~-1,282.05~~ |
+| |  | Asset:Banks:HKD | | 10,000 | HKD | HKD | 7.85 | 10,000 | 1,273.88 | | | 7.8 | 1,282.05 |
+| 2020-01-22 | Freelance remote work | Income:Salary | -1,000 | | USD | USD | 1 | -1,000 | | | | 1 | ~~-1,000~~ |
+| |  | Asset:Banks:USD | | 1,000 | USD | USD | 1| 1,000 | | | | 1 | 1,000 |
