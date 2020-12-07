@@ -18,10 +18,12 @@ I am personally using this to capture my accounts, starting with 2020. Here's a 
 | ------------ | ------ |
 | Range        | 2020-01-01 -> 2020-12-06 |
 | Transactions | 915 |
+| Postings     | 1954 |
 | Accounts     | 113 |
 | Commodities  | 5   |
 | Payees       | 222 |
 | Hashtags     | 11  |
+| Assertions   | 144 |
 | Prices       | 0   |
 
 
