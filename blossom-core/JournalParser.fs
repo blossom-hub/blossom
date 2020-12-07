@@ -80,6 +80,7 @@ type private RSubElement =
   | SMeasure of Commodity
   | SUnderlying of Commodity
   | SMultiplier of int
+  | SExternalIdent of string * string
   | SMTM
   | SPropagate
 
@@ -149,6 +150,10 @@ let private spValuationMode = sstr1 "valuation" >>. pValuationMode |>> SValuatio
 let private spMeasure = sstr1 "measure" >>. pCommodity |>> SMeasure
 let private spUnderlying = sstr1 "underlying" >>. pCommodity |>> SUnderlying
 let private spMultiplier = sstr1 "multiplier" >>. pint32 |>> SMultiplier
+let private spExternalIdent = sstr1 "externalid" >>. many1CharsTill (letter <|> digit) (pchar ' ')
+                                                 .>> nSpaces0
+                                                 .>>. restOfLine false
+                                                 |>> SExternalIdent
 let private spMTM = sstr "mtm" >>% SMTM
 let private spPropagate = sstr "propagate" >>% SPropagate
 
@@ -195,7 +200,7 @@ let pAccountDecl =
                             |> wrapCommented c
 
 let pCommodityDecl =
-  let subitems = (choice [spName; spMeasure; spUnderlying; spCommodityClass; spMultiplier; spMTM] .>> nSpaces0 .>> skipNewline) |> indented |> many
+  let subitems = (choice [spName; spMeasure; spUnderlying; spCommodityClass; spMultiplier; spMTM; spExternalIdent] .>> nSpaces0 .>> skipNewline) |> indented |> many
   sstr1 "commodity" >>. pOptLineComment pCommodity .>>. increaseIndent subitems
     |>> fun ((t, c), ss) ->
           RJournalElement.Commodity {Symbol = t
@@ -204,6 +209,7 @@ let pCommodityDecl =
                                      Name = glse ss (function (SName n) -> Some n | _ -> None)
                                      Klass = glse ss (function (SCommodityClass c) -> Some c | _ -> None)
                                      Multiplier = glse ss (function (SMultiplier m) -> Some (decimal m) | _ -> None)
+                                     ExternalIdents = ss |> List.choose (function (SExternalIdent (a,b)) -> Some (a,b) | _ -> None) |> Map.ofList
                                      Mtm = List.contains SMTM ss}
           |> wrapCommented c
 

@@ -61,6 +61,7 @@ type CommodityDecl = {
   Klass: CommodityClass option
   Multiplier: decimal option
   Mtm: bool
+  ExternalIdents: Map<string, string>
 }
 
 type Entry = {
