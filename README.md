@@ -13,6 +13,18 @@ Yes. But then you should get a real accountant if you need to follow those rules
 ## Does it work yet?
 Yes and no. It works, but it doesn't do a whole lot and is not overly optimised. For "toy" inputs, it works fine, and I have successfully converted a ~2500 line input into the tool. But on the flip side, not all the features are there and the outputs are rather basic.
 
+I am personally using this to capture my accounts, starting with 2020. Here's a statistics output snapshot (`meta stats`) showing what's inside my core file so far:
+| Item         | Detail |
+| ------------ | ------ |
+| Range        | 2020-01-01 -> 2020-12-06 |
+| Transactions | 915 |
+| Accounts     | 113 |
+| Commodities  | 5   |
+| Payees       | 222 |
+| Hashtags     | 11  |
+| Prices       | 0   |
+
+
 ## Can I contribute?
 There's not much to contribute to right now, star the project and come back later.
 
