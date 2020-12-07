@@ -83,4 +83,18 @@ type Journal = {
 }
 
 type CheckRequest = Assertions
-type MetaRequest = Accounts | Commodities | Payees | HashTags
+
+type MetaRequest = Statistics | Accounts | Commodities | Payees | HashTags
+type MetaStatistics = {
+  Range: DateTime * DateTime
+  Transactions: int * int
+  Accounts: int
+  Commodities: int
+  Payees: int
+  Hashtags: int
+  Assertions: int
+  Prices: int
+}
+type MetaResult =
+  | Statistics of MetaStatistics
+  | MetaResultSet of string Set

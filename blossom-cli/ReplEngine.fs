@@ -58,7 +58,7 @@ let execute state input =
     | BalanceSeries (tenor, cumulative, query)
                            -> withJournal <| balanceSeries HumanReadable.renderTable tenor cumulative (getFilter query)
     | Check request        -> withJournal <| checkJournal HumanReadable.renderTable request
-    | Meta request         -> withJournal <| meta HumanReadable.seqToLines request
+    | Meta request         -> withJournal <| meta HumanReadable.renderMetaResult request
 
   try
     let result = runParser parse () (FromString input)

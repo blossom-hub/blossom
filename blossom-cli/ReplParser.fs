@@ -40,10 +40,12 @@ let series =
 let check = choice [str "check"; str ":c"] >>. ws1 >>. choice [str "assertions" >>. preturn Assertions] |>> Check
 
 // Meta
-let meta = str "meta" >>. ws1 >>. choice [str "accounts" >>. preturn Accounts
-                                          str "commodities" >>. preturn Commodities
-                                          str "payees" >>. preturn Payees
-                                          str "hashtags" >>. preturn HashTags] |>> Meta
+let meta = str "meta" >>. ws1 >>.
+            choice [str "stats" >>. preturn MetaRequest.Statistics
+                    str "accounts" >>. preturn Accounts
+                    str "commodities" >>. preturn Commodities
+                    str "payees" >>. preturn Payees
+                    str "hashtags" >>. preturn HashTags] |>> Meta
 
 let applicationCommands = [quit; clear]
 let fileCommands = [load; reload;]

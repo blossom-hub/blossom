@@ -6,7 +6,9 @@ open Shared
 open Journal
 open Tabular
 
-let meta renderer request journal  =
+let meta renderer request journal =
+  let journalList = journal.Register |> Map.toList
+
   let accountsFromEntry entry =
     entry.Postings |> List.collect (fun (Account a, _, ca) -> match ca with Some (Account x) -> [a;x] | _ -> [a])
 
@@ -18,29 +20,48 @@ let meta renderer request journal  =
   let commoditiesFromEntry entry =
     entry.Postings |> List.collect (fun (_, a, _) -> commoditiesFromAmount a)
 
+  let accounts =
+    let entryAccounts = journalList |> List.collect (snd >> List.collect accountsFromEntry)
+    let declAccounts = journal.AccountDecls |> Map.toList
+                                                  |> List.map (fun (Account a, _) -> a)
+    let assertAccounts = journal.Assertions |> List.map (fun (_, Account a, _) -> a)
+    [entryAccounts; declAccounts; assertAccounts] |> List.concat |> Set.ofList
+
+  let commodities =
+    let entryCommodities = journalList |> List.collect (snd >> List.collect commoditiesFromEntry)
+    let declCommodities = journal.CommodityDecls |> Map.toList
+                                                 |> List.map (fun (Commodity c, _) -> c)
+    let priceCommodities = journal.Prices |> Map.toList
+                                          |> List.collect (fun ((Commodity c1, Commodity c2), _) -> [c1; c2])
+    let splitCommodities = journal.Splits |> Map.toList
+                                          |> List.map (fun (Commodity c, _) -> c)
+    [entryCommodities; declCommodities; priceCommodities; splitCommodities] |> List.concat |> Set.ofList
+
+  let payees = journalList |> List.collect (snd >> List.choose (fun p -> p.Payee)) |> Set.ofList
+
+  let hashtags=
+    journalList |> List.collect (fun (_, es) -> es |> List.map (fun p -> p.HashTags))
+                |> Set.unionMany
+
+  let transactionCount = journalList |> List.collect snd |> List.length
+  let entryCount = journalList |> List.collect snd |> List.collect (fun e -> e.Postings) |> List.length
+
   renderer <|
     match request with
-      | Accounts ->
-          let entryAccounts = journal.Register |> Map.toList
-                                               |> List.collect (snd >> List.collect accountsFromEntry)
-          let declAccounts = journal.AccountDecls |> Map.toList
-                                                  |> List.map (fun (Account a, _) -> a)
-          let assertAccounts = journal.Assertions |> List.map (fun (_, Account a, _) -> a)
-          [entryAccounts; declAccounts; assertAccounts] |> List.concat |> Set.ofList
-      | Commodities ->
-          let entryCommodities = journal.Register |> Map.toList
-                                                  |> List.collect (snd >> List.collect commoditiesFromEntry)
-          let declCommodities = journal.CommodityDecls |> Map.toList
-                                                       |> List.map (fun (Commodity c, _) -> c)
-          let priceCommodities = journal.Prices |> Map.toList
-                                                |> List.collect (fun ((Commodity c1, Commodity c2), _) -> [c1; c2])
-          let splitCommodities = journal.Splits |> Map.toList
-                                                |> List.map (fun (Commodity c, _) -> c)
-          [entryCommodities; declCommodities; priceCommodities; splitCommodities] |> List.concat |> Set.ofList
-      | Payees -> journal.Register |> Map.toList |> List.collect (snd >> List.choose (fun p -> p.Payee)) |> Set.ofList
-      | HashTags -> journal.Register |> Map.toList
-                                     |> List.collect (fun (_, es) -> es |> List.map (fun p -> p.HashTags))
-                                     |> Set.unionMany
+      | MetaRequest.Statistics -> Statistics {
+            Range = journalList |> List.map fst |> (List.min &&& List.max)
+            Transactions = transactionCount, entryCount
+            Accounts = accounts |> Set.count
+            Commodities = commodities |> Set.count
+            Payees = payees |> Set.count
+            Hashtags = hashtags |> Set.count
+            Assertions = journal.Assertions |> List.length
+            Prices = journal.Prices |> Map.toList |> List.sumBy (snd >> Map.count)
+          }
+      | Accounts -> accounts |> MetaResultSet
+      | Commodities -> commodities |> MetaResultSet
+      | Payees -> payees |> MetaResultSet
+      | HashTags -> hashtags |> MetaResultSet
 
 let checkJournal renderer request journal =
   let checkAssertion asofBalances dt account quantity commodity =
