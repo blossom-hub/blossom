@@ -40,6 +40,18 @@ let reload state =
     | None    -> printfn "Cannot reload if no file loaded"
                  Some state
 
+let showHelp state =
+  printfn "  Filters"
+  printfn "    date: >/>=/</<="
+  printfn "    payee: @"
+  printfn "    narrative: ?"
+  printfn "    commodity: %%"
+  printfn "    hashtag: #"
+  printfn "    account: no symbol"
+  printfn "  Modifiers"
+  printfn "    flex-mode: *"
+  Some state
+
 let execute state input =
   let withJournal op =
     match state.Journal with
@@ -59,6 +71,7 @@ let execute state input =
                            -> withJournal <| balanceSeries HumanReadable.renderTable tenor cumulative (getFilter query)
     | Check request        -> withJournal <| checkJournal HumanReadable.renderTable request
     | Meta request         -> withJournal <| meta HumanReadable.renderMetaResult request
+    | Help                 -> showHelp state
 
   try
     let result = runParser parse () (FromString input)

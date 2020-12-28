@@ -17,5 +17,6 @@ type Command =
   | BalanceSeries of Tenor * bool * string
   // Help
   | Check of CheckRequest
+  | Help
   // Meta
   | Meta of MetaRequest

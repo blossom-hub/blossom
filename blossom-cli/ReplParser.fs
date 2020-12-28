@@ -38,6 +38,7 @@ let series =
 
 // Help
 let check = choice [str "check"; str ":c"] >>. ws1 >>. choice [str "assertions" >>. preturn Assertions] |>> Check
+let help = str "help" >>. preturn Help
 
 // Meta
 let meta = str "meta" >>. ws1 >>.
@@ -50,7 +51,7 @@ let meta = str "meta" >>. ws1 >>.
 let applicationCommands = [quit; clear]
 let fileCommands = [load; reload;]
 let accountingCommands = [balances; journal; series]
-let otherCommands = [meta; check]
+let otherCommands = [meta; check; help]
 let parse : Parser<Command> =
   let commands = [applicationCommands; fileCommands; accountingCommands; otherCommands] |> List.concat
   choice commands .>> eof
