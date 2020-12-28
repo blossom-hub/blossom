@@ -26,6 +26,8 @@ I am personally using this to capture my accounts, starting with 2020. Here's a 
 | Assertions   | 144 |
 | Prices       | 0   |
 
+### Platforms
+blossom is using F# and .net core, so it runs cross-platform. I've verified this on Windows 10 and Ubuntu 20.04 LTS.
 
 ## Can I contribute?
 There's not much to contribute to right now, star the project and come back later.
