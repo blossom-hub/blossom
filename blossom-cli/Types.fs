@@ -2,7 +2,7 @@ module Types
 
 open Types
 
-type flags = char list
+type flags = string
 
 type Command =
   // Application management
@@ -12,7 +12,7 @@ type Command =
   | Load of string
   | Reload
   // Accounting
-  | Balances of flags * string
+  | Balances of flags list * string
   | Journal of string
   | BalanceSeries of Tenor * bool * string
   // Help
