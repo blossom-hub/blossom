@@ -95,7 +95,7 @@ let checkJournal renderer request journal =
                                 {Header = "Delta"; Key = false}]
                       Table (cs, fails)
 
-let balances renderer request journal =
+let balances renderer request flags journal =
   // do pre-filter
   let j2 = prefilter request journal
 
@@ -116,9 +116,16 @@ let balances renderer request journal =
       | None -> xs
       | Some r -> xs |> List.filter (fun (_, _, Commodity c) -> regexfilter r c)
 
-  let result = match request.flexmode with
+  let result0 = match request.flexmode with
                  | true -> result
                  | false -> result |> accountFilter |> commodityFilter
+
+  // check for grouping flag (experimental)
+  let result = 
+    if List.contains "t" flags
+      then result0 |> List.map (first3 (splitAccounts >> function (AccountHierarchy xs) -> List.head xs))
+                  |> summateAQCs
+      else result0
 
   // temporarily make a table
   let cs = [{Header = "Account"; Key = true}; {Header = "Balance"; Key = false}; {Header ="Commodity"; Key = false}]

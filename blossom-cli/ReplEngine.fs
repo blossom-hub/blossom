@@ -65,7 +65,7 @@ let execute state input =
                               Some state
     | Load filename        -> load state filename
     | Reload               -> reload state
-    | Balances (fs, query) -> withJournal <| balances HumanReadable.renderTable (getFilter query)
+    | Balances (fs, query) -> withJournal <| balances HumanReadable.renderTable (getFilter query) fs
     | Journal query        -> withJournal <| journal HumanReadable.renderTable (getFilter query)
     | BalanceSeries (tenor, cumulative, query)
                            -> withJournal <| balanceSeries HumanReadable.renderTable tenor cumulative (getFilter query)

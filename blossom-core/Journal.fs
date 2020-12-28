@@ -11,6 +11,12 @@ let conversionsAccount = Types.Account "_Conversions"
 
 let internalDefaultCommodity = Types.Commodity "$"  // this is not a parsable value
 
+let splitAccounts (Types.Account a) = 
+  a.Split(':') |> List.ofArray |> List.map Types.Account |> AccountHierarchy
+
+let joinAccounts (Types.AccountHierarchy xs) = 
+  xs |> List.map (function Types.Account a -> a) |> String.concat ":" |> Types.Account
+
 let stripComments = function
   | Commented (elt, _) -> elt
   | Entry (flagged, dt, payee, narrative, hs, xs) -> let zs = xs |> List.map    (function | PCommented (elt2, _) -> elt2 | elt2 -> elt2)
