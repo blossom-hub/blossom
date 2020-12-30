@@ -44,6 +44,8 @@ let regexfilter p v =
     | FirstRegexGroup p _ -> true
     | _ -> false
 
+let iftrue b f a = if b then f a else a
+
 module List =
   let groupByApply keyProjection valueProjection list =
     let grouped = list |> List.groupBy keyProjection
@@ -58,6 +60,13 @@ module Map =
     let right = Map.filter (fun k _ -> not(m1.ContainsKey(k))) m2
     let resolved = jointL |> Map.map (fun k v -> f k v (m2.[k]))
     [left; right; resolved] |> List.collect Map.toList |> Map.ofList
+
+module Set =
+  let pop (v : 'a) (s : 'a Set) =
+    if Set.contains v s
+      then true, Set.remove v s
+      else false, s
+
 
 let makeSchedule tenor (left : DateTime) (right : DateTime) =
   let go g f x = (x, false) |> List.unfold (fun (d, flag) -> if flag then None else Some (f d, (g d, d >= right)))

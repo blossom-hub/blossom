@@ -14,7 +14,6 @@ type FilterTag =
   | N of string
   | C of string
   | Ht of string
-  | Fx
 
 let cflag c = opt (pchar c) |>> Option.isSome
 
@@ -36,7 +35,6 @@ let pFilterTags =
 
   let text  = sQ <|> dQ <|> uQ
 
-  let pFlexMode = pchar '*' >>. preturn Fx
   let pFrom = pchar '>' >>. cflag '=' .>>. pPartialDate |>> F
   let pTo   = pchar '<' >>. cflag '=' .>>. pPartialDate |>> T
   let pPayee = pchar '@' >>. text |>> P
@@ -45,7 +43,7 @@ let pFilterTags =
   let pHashTag = pchar '#' >>. text |>> Ht
   let pAcc = text |>> A
 
-  let pelt = choice [attempt pFlexMode; pFrom; pTo; pPayee; pNarr; pCommod; pHashTag; pAcc]
+  let pelt = choice [pFrom; pTo; pPayee; pNarr; pCommod; pHashTag; pAcc]
 
   nSpaces0 >>. sepBy pelt nSpaces1 .>> eof
 
@@ -60,10 +58,7 @@ let pFilter =
     let c = glse tags (function C v -> Some v | _ -> None)
     let hs = tags |> List.choose (function Ht v -> Some v | _ -> None) |> set
 
-    let fx = List.contains Fx tags
-
     {
-      flexmode = fx
       between = match (f,t) with (None, None) -> None | _ -> Some (f,t)
       account = a
       payee = p

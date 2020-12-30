@@ -18,9 +18,9 @@ let str = pstring
 
 // Command Parsing
 // Flags'n'args
-let flags = 
+let flags : Parser<flags, unit> =
   let flg = pchar '-' >>. manyChars (asciiLower <|> digit) .>> ws
-  many flg
+  many flg |>> Set.ofList
 
 // Application Management
 let quit = choice [str "quit"; str ":q"] >>. preturn Quit
@@ -31,18 +31,18 @@ let load = choice [str "load"; str ":l"] >>. ws1 >>. restOfLine false |>> Load
 let reload = choice [str "reload"; str ":r"] >>. preturn Reload
 
 // Accounting
-let balances = 
-  choice [str "balances"; str "bal"; str ":b"] 
-    >>. ws 
-    >>. flags 
+let balances =
+  choice [str "balances"; str "bal"; str ":b"]
+    >>. ws
+    >>. flags
     .>> ws
-    .>>. restOfLine false 
+    .>>. restOfLine false
     |>> Balances
-let journal = choice [str "journal"; str ":j"] >>. ws >>. restOfLine false |>> Journal
+let journal = choice [str "journal"; str ":j"] >>. ws >>. flags .>> ws .>>. restOfLine false |>> Journal
 let series =
   let pCumulative = opt (pchar '+') |>> function Some '+' -> true | _ -> false
   choice [str "series"; str ":s"] >>. ws1 >>.
-    tuple3 pTenor pCumulative (ws >>. restOfLine false) |>> BalanceSeries
+    tuple4 (ws >>. flags) pTenor pCumulative (ws >>. restOfLine false) |>> BalanceSeries
 
 // Help
 let check = choice [str "check"; str ":c"] >>. ws1 >>. choice [str "assertions" >>. preturn Assertions] |>> Check

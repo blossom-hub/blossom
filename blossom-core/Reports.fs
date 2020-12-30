@@ -6,6 +6,10 @@ open Shared
 open Journal
 open Tabular
 
+// utilities
+let groupTopn n =
+  List.map (first3 (splitAccounts >> function (AccountHierarchy xs) -> xs.[0..n-1] |> AccountHierarchy |> joinAccounts)) >> summateAQCs
+
 let meta renderer request journal =
   let journalList = journal.Register |> Map.toList
 
@@ -116,16 +120,12 @@ let balances renderer request flags journal =
       | None -> xs
       | Some r -> xs |> List.filter (fun (_, _, Commodity c) -> regexfilter r c)
 
-  let result0 = match request.flexmode with
-                 | true -> result
-                 | false -> result |> accountFilter |> commodityFilter
+  // react to flags
+  let isFlex, flags = Set.pop "flex" flags
+  let isGpTop, flags = Set.pop "t" flags
 
-  // check for grouping flag (experimental)
-  let result = 
-    if List.contains "t" flags
-      then result0 |> List.map (first3 (splitAccounts >> function (AccountHierarchy xs) -> List.head xs))
-                  |> summateAQCs
-      else result0
+  let result = result |> iftrue (not isFlex) (accountFilter >> commodityFilter)
+                      |> iftrue isGpTop (groupTopn 1)
 
   // temporarily make a table
   let cs = [{Header = "Account"; Key = true}; {Header = "Balance"; Key = false}; {Header ="Commodity"; Key = false}]
@@ -136,7 +136,7 @@ let balances renderer request flags journal =
   let table = Table (cs, data)
   renderer table
 
-let journal renderer request journal =
+let journal renderer request flags journal =
   // do pre-filter
   let j2 = prefilter request journal
 
@@ -158,9 +158,10 @@ let journal renderer request journal =
       | None -> xs
       | Some r -> xs |> List.filter (fun (_, _, _, _, _, _, Commodity c) -> regexfilter r c)
 
-  let postfilter = match request.flexmode with
-                     | true -> id
-                     | false -> accountFilter >> commodityFilter
+  // react to flags
+  let isFlex, flags = Set.pop "flex" flags
+
+  let result = items |> iftrue (not isFlex) (accountFilter >> commodityFilter)
 
   let cs = [{Header = "Date"; Key=true}
             {Header = "F"; Key = true}
@@ -173,12 +174,12 @@ let journal renderer request journal =
   let f2s = function true -> "*" | false -> ""
   let p2s = Option.defaultValue ""
   let createRow (f, d, p, n, Account a, q, Commodity c) = [Date d; f2s f |> Text; p2s p |> Text; Text n; Text a; Number(q, 3); Text c]
-  let data = items |> postfilter |> List.map createRow
+  let data = result |> List.map createRow
   let table = Table (cs, data)
 
   renderer table
 
-let balanceSeries renderer tenor cumulative request journal =
+let balanceSeries renderer tenor cumulative request flags journal =
    // define specific filters to crystalise the result
   let accountFilter xs =
     match request.account with
@@ -190,13 +191,16 @@ let balanceSeries renderer tenor cumulative request journal =
       | None -> xs
       | Some r -> xs |> List.filter (fun (_, _, Commodity c) -> regexfilter r c)
 
-  let postfilter = match request.flexmode with
-                     | true -> id
-                     | false -> List.map (second (accountFilter >> commodityFilter))
-
   // run it -> filter it
   let j2 = prefilter request journal
-  let result = evaluateBalances j2 |> Map.toList |> postfilter
+  let result = evaluateBalances j2 |> Map.toList
+
+  // react to flags
+  let isFlex, flags = Set.pop "flex" flags
+  let isGpTop, flags = Set.pop "t" flags
+
+  let result = result |> iftrue (not isFlex) (List.map (second (accountFilter >> commodityFilter)))
+                      |> iftrue isGpTop (List.map (second (groupTopn 1)))
 
   let dates = result |> List.map fst
   let left, right = dates |> (List.min &&& List.max)

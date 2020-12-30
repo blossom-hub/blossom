@@ -48,8 +48,6 @@ let showHelp state =
   printfn "    commodity: %%"
   printfn "    hashtag: #"
   printfn "    account: no symbol"
-  printfn "  Modifiers"
-  printfn "    flex-mode: *"
   Some state
 
 let execute state input =
@@ -66,9 +64,9 @@ let execute state input =
     | Load filename        -> load state filename
     | Reload               -> reload state
     | Balances (fs, query) -> withJournal <| balances HumanReadable.renderTable (getFilter query) fs
-    | Journal query        -> withJournal <| journal HumanReadable.renderTable (getFilter query)
-    | BalanceSeries (tenor, cumulative, query)
-                           -> withJournal <| balanceSeries HumanReadable.renderTable tenor cumulative (getFilter query)
+    | Journal (fs, query)  -> withJournal <| journal HumanReadable.renderTable (getFilter query) fs
+    | BalanceSeries (fs, tenor, cumulative, query)
+                           -> withJournal <| balanceSeries HumanReadable.renderTable tenor cumulative (getFilter query) fs
     | Check request        -> withJournal <| checkJournal HumanReadable.renderTable request
     | Meta request         -> withJournal <| meta HumanReadable.renderMetaResult request
     | Help                 -> showHelp state

@@ -2,7 +2,7 @@ module Types
 
 open Types
 
-type flags = string
+type flags = Set<string>
 
 type Command =
   // Application management
@@ -12,9 +12,9 @@ type Command =
   | Load of string
   | Reload
   // Accounting
-  | Balances of flags list * string
-  | Journal of string
-  | BalanceSeries of Tenor * bool * string
+  | Balances of flags * string
+  | Journal of flags * string
+  | BalanceSeries of flags * Tenor * bool * string
   // Help
   | Check of CheckRequest
   | Help

@@ -65,14 +65,23 @@ And now consider these two outputs:
 ] :b Assets
       Account   Balance   Commodity
 Assets:Wallet      -120         USD
-] :b * Assets
+] :b -flex Assets
          Account   Balance   Commodity
    Assets:Wallet      -120         USD
 Expenses:Flowers       120         USD
 ```
 In the second output, the whole of the entry is considered for reporting, whereas in the first, only the `Assets:Wallet` will be reported.
 
-This flag is controlled (as seen above) using the `*` element on the query.
+This flag is controlled (as seen above) using the `-flex` flag on the query.
+
+### Common flags
+Some commands support other flags, which must be specified near the start of the command.
+
+`-t` collapses accounts names to the top value; currently supported by balances and series.
+
+`-flex` as per above on most commands.
+
+> Excess flags do not yet provide a warning/error, but this will be added later.
 
 #### No filter symbol - filter accounts
 No symbol means that the text is applied as a regular expression on the account name.
