@@ -158,10 +158,15 @@ let journal renderer request flags journal =
       | None -> xs
       | Some r -> xs |> List.filter (fun (_, _, _, _, _, _, Commodity c) -> regexfilter r c)
 
+  let flaggedFilter xs =
+    xs |> List.filter (fun (x, _, _, _, _, _, _) -> x)
+
   // react to flags
   let isFlex, flags = Set.pop "flex" flags
+  let onlyFlagged, flags = Set.pop "f" flags
 
   let result = items |> iftrue (not isFlex) (accountFilter >> commodityFilter)
+                     |> iftrue onlyFlagged flaggedFilter
 
   let cs = [{Header = "Date"; Key=true}
             {Header = "F"; Key = true}
