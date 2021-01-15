@@ -25,6 +25,9 @@ I am personally using this to capture my accounts, starting with 2020. Here's a 
 | Hashtags     | 11  | 0 |
 | Assertions   | 144 | 0 |
 | Prices       | 0   | 20,560 |
+| Lines*       | 4837 |  22,727 |
+
+(* not part of stats, approximate)
 
 ### Platforms
 blossom is using F# and .net core, so it runs cross-platform. I've verified this on Windows 10 and Ubuntu 20.04 LTS.
