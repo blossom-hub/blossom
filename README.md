@@ -13,18 +13,18 @@ Yes. But then you should get a real accountant if you need to follow those rules
 ## Does it work yet?
 Yes and no. It works, but it doesn't do a whole lot and is not overly optimised. For "toy" inputs, it works fine, and I have successfully converted a ~2500 line input into the tool. But on the flip side, not all the features are there and the outputs are rather basic.
 
-I am personally using this to capture my accounts, starting with 2020. Here's a statistics output snapshot (`meta stats`) showing what's inside my core file so far:
-| Item         | Detail |
-| ------------ | ------ |
-| Range        | 2020-01-01 -> 2020-12-06 |
-| Transactions | 915 |
-| Postings     | 1954 |
-| Accounts     | 113 |
-| Commodities  | 5   |
-| Payees       | 222 |
-| Hashtags     | 11  |
-| Assertions   | 144 |
-| Prices       | 0   |
+I am personally using this to capture my accounts, starting with 2020. Here's a statistics output snapshot (`meta stats`) showing what's inside some of files so far:
+| Item         | Main file | Trading file |
+| ------------ | --------- | ------------ |
+| Range        | 2020-01-01 -> 2020-12-06 | 2017-07-17 -> 2021-01-07 |
+| Transactions | 915 | 460 |
+| Postings     | 1954 | 920 |
+| Accounts     | 113 | 7 |
+| Commodities  | 5   | 131 |
+| Payees       | 222 | 0 |
+| Hashtags     | 11  | 0 |
+| Assertions   | 144 | 0 |
+| Prices       | 0   | 20,560 |
 
 ### Platforms
 blossom is using F# and .net core, so it runs cross-platform. I've verified this on Windows 10 and Ubuntu 20.04 LTS.
