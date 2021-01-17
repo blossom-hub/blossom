@@ -71,7 +71,7 @@ commodity {commodity}                     ; [0..] per file
   class {Currency|Equity|Option|Future}   ; (optional) provides better treatment
   multiplier {factor}                     ; (optional) for leveraged instruments
   mtm                                     ; (optional) mark as mark-to-market treatment
-                                          ; note: this is default for Futures
+  externalid {id} {value}                 ; (optional) [0..] id for linking things together
 ```
 
 ### Transaction elements
