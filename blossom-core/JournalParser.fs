@@ -150,7 +150,7 @@ let private spValuationMode = sstr1 "valuation" >>. pValuationMode |>> SValuatio
 let private spMeasure = sstr1 "measure" >>. pCommodity |>> SMeasure
 let private spUnderlying = sstr1 "underlying" >>. pCommodity |>> SUnderlying
 let private spMultiplier = sstr1 "multiplier" >>. pint32 |>> SMultiplier
-let private spExternalIdent = sstr1 "externalid" >>. many1CharsTill (letter <|> digit) (pchar ' ')
+let private spExternalIdent = sstr1 "externalid" >>. many1CharsTill (letter <|> digit <|> anyOf ".") (pchar ' ')
                                                  .>> nSpaces0
                                                  .>>. restOfLine false
                                                  |>> SExternalIdent
