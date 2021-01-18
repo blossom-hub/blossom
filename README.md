@@ -17,15 +17,15 @@ I am personally using this to capture my accounts, starting with 2020. Here's a 
 | Item         | Main file | Trading file |
 | ------------ | --------- | ------------ |
 | Range        | 2020-01-01 -> 2020-12-06 | 2017-07-17 -> 2021-01-07 |
-| Transactions | 915 | 460 |
-| Postings     | 1954 | 920 |
-| Accounts     | 113 | 7 |
+| Transactions | 1034 | 466 |
+| Postings     | 2215 | 1466 |
+| Accounts     | 117 | 7 |
 | Commodities  | 5   | 131 |
-| Payees       | 222 | 0 |
+| Payees       | 248 | 0 |
 | Hashtags     | 11  | 0 |
-| Assertions   | 144 | 0 |
-| Prices       | 0   | 20,560 |
-| Lines*       | 4837 |  22,727 |
+| Assertions   | 164 | 0 |
+| Prices       | 0   | 20,592 |
+| Lines*       | 4837 |  24,134 |
 
 (* not part of stats, approximate)
 
