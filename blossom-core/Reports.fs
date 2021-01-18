@@ -120,12 +120,16 @@ let balances renderer request flags journal =
       | None -> xs
       | Some r -> xs |> List.filter (fun (_, _, Commodity c) -> regexfilter r c)
 
+  let zeroFilter = List.filter (fun (_, q, _) -> q <> 0M)
+
   // react to flags
   let isFlex, flags = Set.pop "flex" flags
   let isGpTop, flags = Set.pop "t" flags
+  let hideZero, flags = Set.pop "z" flags
 
   let result = result |> iftrue (not isFlex) (accountFilter >> commodityFilter)
                       |> iftrue isGpTop (groupTopn 1)
+                      |> iftrue hideZero zeroFilter
 
   // temporarily make a table
   let cs = [{Header = "Account"; Key = true}; {Header = "Balance"; Key = false}; {Header ="Commodity"; Key = false}]
@@ -195,6 +199,8 @@ let balanceSeries renderer tenor cumulative request flags journal =
     match request.commodity with
       | None -> xs
       | Some r -> xs |> List.filter (fun (_, _, Commodity c) -> regexfilter r c)
+
+  let zeroFilter = List.filter (fun (_, q, _) -> q <> 0M)
 
   // run it -> filter it
   let j2 = prefilter request journal
