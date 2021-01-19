@@ -13,7 +13,9 @@
     <Compile Include="Types.fs" />
     <Compile Include="ReplParser.fs" />
     <Compile Include="Renderers.fs" />
+    <Compile Include="WebEngine.fs" />
     <Compile Include="ReplEngine.fs" />
+    <Compile Include="LspEngine.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

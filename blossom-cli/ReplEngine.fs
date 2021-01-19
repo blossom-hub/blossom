@@ -79,9 +79,15 @@ let execute state input =
     | ex -> printfn "=> error detected %A" ex.Message
             Some state
 
-let rec go state =
+let rec repl state =
   printf "] "
   let input = Console.ReadLine()
   match execute state input with
-    | Some state2 -> go state2
+    | Some state2 -> repl state2
     | None        -> ()
+
+let rec repl1 filename =
+  let state = load State.Default filename
+  match state with
+    | Some s -> repl s
+    | None -> failwith "Unexpected load error"
