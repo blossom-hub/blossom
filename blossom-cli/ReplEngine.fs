@@ -12,18 +12,41 @@ open Journal
 
 open Reports
 
+type GlobalOptions =
+  {
+    PerformanceReporting: bool
+  }
+  with
+    static member Default = {
+      PerformanceReporting = false
+    }
+
 type State =
   {
     Filename: string option
     Journal: Journal option
+    GlobalOptions: GlobalOptions
   }
   with
     static member Default = {
       Filename = None
       Journal = None
+      GlobalOptions = GlobalOptions.Default
     }
 
+let time action =
+  let timer = Diagnostics.Stopwatch.StartNew()
+  let result = action()
+  let elapsed = timer.Elapsed
+  result, elapsed
+
 let getFilter = FromString >> runParser pFilter JournalParser.UserState.Default
+
+let set state value =
+  Some <| match value with
+            | None -> printfn "%A" state.GlobalOptions; state
+            | Some (GPerformanceReporting v)
+                -> {state with GlobalOptions = {state.GlobalOptions with PerformanceReporting = v}}
 
 let load state filename =
   try
@@ -61,6 +84,7 @@ let execute state input =
     | Quit                 -> None
     | Clear                -> Console.Clear()
                               Some state
+    | Set value            -> set state value
     | Load filename        -> load state filename
     | Reload               -> reload state
     | Balances (fs, query) -> withJournal <| balances HumanReadable.renderTable (getFilter query) fs
@@ -74,7 +98,11 @@ let execute state input =
   try
     let result = runParser parse () (FromString input)
     printfn "=> %A" result
-    action result
+    let output, duration = time (fun () -> action result)
+    match state.GlobalOptions.PerformanceReporting with
+      | true -> printfn "=> %A elapsed." duration
+      | false -> ()
+    output
   with
     | ex -> printfn "=> error detected %A" ex.Message
             Some state

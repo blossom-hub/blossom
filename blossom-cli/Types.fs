@@ -4,10 +4,14 @@ open Types
 
 type flags = Set<string>
 
+type GlobalOptionValue =
+  | GPerformanceReporting of bool
+
 type Command =
   // Application management
   | Quit
   | Clear
+  | Set of GlobalOptionValue option
   // File management
   | Load of string
   | Reload

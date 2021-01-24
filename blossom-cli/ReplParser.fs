@@ -16,6 +16,13 @@ let ws = spaces
 let ws1 = spaces1
 let str = pstring
 
+let pbool =
+  choice
+    [
+      choice [str "true"; str "t"; str "+"; str "yes"; str "y"; str "1"] >>. preturn true
+      choice [str "false"; str "f"; str "-"; str "no"; str "n"; str "0"] >>. preturn false
+    ]
+
 // Command Parsing
 // Flags'n'args
 let flags : Parser<flags, unit> =
@@ -25,6 +32,9 @@ let flags : Parser<flags, unit> =
 // Application Management
 let quit = choice [str "quit"; str ":q"] >>. preturn Quit
 let clear = str "cls" >>. preturn Clear
+let set =
+  let gpv = str "performance_reporting" >>. ws1 >>. pbool |>> GPerformanceReporting
+  str "set" >>. opt (ws1 >>. choice [gpv]) |>> Set
 
 // File management
 let load = choice [str "load"; str ":l"] >>. ws1 >>. restOfLine false |>> Load
@@ -56,7 +66,7 @@ let meta = str "meta" >>. ws1 >>.
                     str "payees" >>. preturn Payees
                     str "hashtags" >>. preturn HashTags] |>> Meta
 
-let applicationCommands = [quit; clear]
+let applicationCommands = [quit; clear; set]
 let fileCommands = [load; reload;]
 let accountingCommands = [balances; journal; series]
 let otherCommands = [meta; check; help]
