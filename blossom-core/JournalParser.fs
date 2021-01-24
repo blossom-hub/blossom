@@ -165,10 +165,10 @@ let glse xs pred = xs |> List.choose pred
 let wrapCommented c elt = match c with | Some c -> Commented(elt, c)
                                        | None   -> elt
 
-let pComment0 = pchar ';' >>. restOfLine false |>> Types.Comment
-let pComment = pComment0 |>> Comment
+let pComment0 xs = anyOf xs >>. restOfLine false |>> Types.Comment
+let pComment = pComment0 ";*" |>> Comment
 
-let pOptLineComment p = p .>> nSpaces0 .>>. opt pComment0 .>> optional newline
+let pOptLineComment p = p .>> nSpaces0 .>>. opt (pComment0 ";").>> optional newline
 
 let pIndent =
   let pval = sstr1 ".indent" >>. pint32 .>> nSpaces0 .>> skipNewline
@@ -220,7 +220,7 @@ let pPostingEntry =
   let pp = pOptLineComment (tuple3 (pAccountHierarchy .>> nSpaces0) (opt (attempt (pRAmount .>> nSpaces0))) (nSpaces0 >>. contraAccount))
                 |>> fun ((h,a,ca), cm) -> let ps = Posting (h, a, ca)
                                           match cm with | Some c -> PCommented (ps, c) | _ -> ps
-  let pc = pComment0 .>> skipNewline |>> PComment
+  let pc = pComment0 ";" .>> skipNewline |>> PComment
   choice [attempt pc; pp]
 
 let pEntry =
