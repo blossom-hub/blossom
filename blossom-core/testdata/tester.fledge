@@ -48,7 +48,7 @@ commodity NQZ20    ; Nasdaq futures
 
 2020-01-04 Basic Trade 1
   Assets:Account 1  2  NQZ20 @ 1135 ~
-  Expenses:Trading    4 USD
+  Expenses:Trading/0x12    4 USD
   Assets:Account 2
 
 2020-01-04 Basic Trade 2

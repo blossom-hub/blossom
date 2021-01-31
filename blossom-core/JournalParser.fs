@@ -138,7 +138,11 @@ let pValuationMode : Parser<ValuationMode, UserState> =
 let accountValidChars = letter <|> digit <|> anyOf "()[]{}" <|> (pchar ' ' .>> notFollowedBy (pchar ' ') |> attempt)
 let pAccountElt = many1Chars2 letter accountValidChars
 let pAccountHierarchy =
-  many1Till (pAccountElt .>> (opt (pchar ':'))) (followedBy (sstr "  " <|> skipNewline)) |>> fun ts -> String.Join(":", ts) |> Types.Account
+  let pVAccount = opt (pchar '/' >>. manyChars accountValidChars)
+  let plain = many1Till (pAccountElt .>> (opt (pchar ':'))) (followedBy (sstr "  " <|> skipNewline <|> skipChar '/'))
+  plain .>>. pVAccount |>> fun (ts, va) -> let hs = String.Join(":", ts)
+                                           match va with | Some v -> VirtualisedAccount (hs, v)
+                                                         | None   -> Types.Account hs
 
 // RSubElement Parsers
 let private spCommodity = sstr1 "commodity" >>. pCommodity |>> SCommodity

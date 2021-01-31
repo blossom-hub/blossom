@@ -10,6 +10,7 @@ type FilterTag =
   | F of bool * DateTime
   | T of bool * DateTime
   | A of string
+  | SA of string
   | P of string
   | N of string
   | C of string
@@ -41,9 +42,10 @@ let pFilterTags =
   let pNarr = pchar '?' >>. text |>> N
   let pCommod = pchar '%' >>. text |>> C
   let pHashTag = pchar '#' >>. text |>> Ht
+  let pSubAcc = pchar '/' >>. text |>> SA
   let pAcc = text |>> A
 
-  let pelt = choice [pFrom; pTo; pPayee; pNarr; pCommod; pHashTag; pAcc]
+  let pelt = choice [pFrom; pTo; pPayee; pNarr; pCommod; pHashTag; pSubAcc; pAcc]
 
   nSpaces0 >>. sepBy pelt nSpaces1 .>> eof
 
@@ -53,6 +55,7 @@ let pFilter =
     let t = glse tags (function T (e, d) -> Some (e,d) | _ -> None)
 
     let a = glse tags (function A v -> Some v | _ -> None)
+    let sa = glse tags (function SA v -> Some v | _ -> None)
     let p = glse tags (function P v -> Some v | _ -> None)
     let n = glse tags (function N v -> Some v | _ -> None)
     let c = glse tags (function C v -> Some v | _ -> None)
@@ -61,6 +64,7 @@ let pFilter =
     {
       between = match (f,t) with (None, None) -> None | _ -> Some (f,t)
       account = a
+      subaccount = sa
       payee = p
       narrative = n
       commodity = c

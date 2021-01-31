@@ -5,8 +5,8 @@ open System
 // "NewType" style definitions
 type Comment = Comment of string
 type Commodity = Commodity of string
-type Account = Account of string
-type AccountHierarchy = AccountHierarchy of Account list
+type Account = | Account of string | VirtualisedAccount of string * string
+type AccountHierarchy = AccountHierarchy of string list * string option
 
 type Value = decimal * Commodity
 
@@ -30,6 +30,7 @@ type CommodityClass =
 type Filter = {
   between: ((bool * DateTime) option * (bool * DateTime) option) option
   account: string option
+  subaccount: string option
   payee: string option
   narrative: string option
   commodity: string option

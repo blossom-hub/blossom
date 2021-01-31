@@ -11,11 +11,23 @@ let conversionsAccount = Types.Account "_Conversions"
 
 let internalDefaultCommodity = Types.Commodity "$"  // this is not a parsable value
 
-let splitAccounts (Types.Account a) =
-  a.Split(':') |> List.ofArray |> List.map Types.Account |> AccountHierarchy
+let getAccount = function | Types.VirtualisedAccount (a, s) -> a | Types.Account a -> a
 
-let joinAccounts (Types.AccountHierarchy xs) =
-  xs |> List.map (function Types.Account a -> a) |> String.concat ":" |> Types.Account
+let getVirtualAccount = function | Types.VirtualisedAccount (_, s) -> Some s | Types.Account a -> None
+
+let stripVirtualAccount =
+  function | VirtualisedAccount (a, _) -> Types.Account a
+           | x -> x
+
+let splitAccounts =
+  let f (a :string) = a.Split(':') |> List.ofArray
+  function | VirtualisedAccount (a, s) -> AccountHierarchy (f a, Some s)
+           | Types.Account a           -> AccountHierarchy (f a, None)
+
+let joinAccounts (AccountHierarchy (xs, s)) =
+  let stub = xs |> String.concat ":"
+  match s with | Some q -> VirtualisedAccount (stub, q)
+               | None   -> Types.Account stub
 
 let stripComments = function
   | Commented (elt, _) -> elt
@@ -172,17 +184,18 @@ let evaluateMovements commodityDecls register : Map<DateTime, (Account * decimal
   let expandEntry entry = entry.Postings |> List.collect (fun (a,b,c) -> expandPosting commodityDecls a b c)
   register |> Map.map (fun _ es -> List.collect expandEntry es)
 
-let inline summateAQCs xs =
-  xs |> List.groupByApply (fst3 &&& thd3) (List.sumBy snd3)
+let inline summateAQCs iv (xs : (Account * decimal * Commodity) list) =
+  let gk = match iv with | true -> (fst3 &&& thd3) | false -> ((fst3 >> stripVirtualAccount) &&& thd3)
+  xs |> List.groupByApply gk (List.sumBy snd3)
      |> List.map (fun ((a,b),c) -> a,c,b)
 
 let evaluateBalances journal =
   let movements = evaluateMovements journal.CommodityDecls journal.Register
 
   // Group each date first, then calculate the cumulative balances per transition
-  movements |> Map.map (fun _ es -> summateAQCs es)
+  movements |> Map.map (fun _ es -> summateAQCs true es)
             |> Map.toList
-            |> List.scan (fun (dp, bp) (dt, xs) -> (dt, summateAQCs (bp @ xs))) (DateTime.MinValue, [])
+            |> List.scan (fun (dp, bp) (dt, xs) -> (dt, summateAQCs true (bp @ xs))) (DateTime.MinValue, [])
             |> List.tail
             |> Map.ofList
 
@@ -215,11 +228,21 @@ let prefilter request journal =
   let postingSemiFilter es =
     let f = match request.account with
               | None -> fun _ -> true
-              | Some r -> fun (Types.Account a, _, ca) ->
-                            let q1 = regexfilter r a
-                            let q2 = match ca with Some (Types.Account c) -> regexfilter r c | _ -> true
-                            q1 && q2
-    let g = match request.commodity with
+              | Some r -> fun (acc, _, ca) ->
+                            let q1 = getAccount acc |> regexfilter r
+                            let q2 = Option.fold (fun _ t -> t |> getAccount |> regexfilter r) true ca
+                            q1 || q2
+    let g = match request.subaccount with
+              | None -> fun _ -> true
+              | Some r -> fun (acc, _, ca) ->
+                            let q1 = match acc with | Types.Account _ -> true
+                                                    | VirtualisedAccount (_, s) -> r = s
+                            let q2 = match ca with
+                                       | Some caa -> match caa with | Types.Account _ -> true
+                                                                    | VirtualisedAccount (_, s) -> r = s
+                                       | None -> true
+                            q1 || q2
+    let h= match request.commodity with
               | None -> fun _ -> true
               | Some r -> fun (_, amt, _) ->
                             match amt with
