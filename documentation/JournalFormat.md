@@ -43,6 +43,7 @@ import expenses_2019.dat
 #### Comments
 ```
 ; rest of line comment
+* top line comments can also use a star, to support org-modes
 ```
 - comments are associated with the _preceeding_ element
   - _except_ if they are not indented, and then are associated with the _following_ element
