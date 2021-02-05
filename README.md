@@ -1,7 +1,7 @@
 ![.Net](https://github.com/blossom-hub/blossom/workflows/.NET/badge.svg)
 
 # blossom
-Double entry plain text accounting for traders. For full documentation, go to [Documentation](./documentation).
+Double entry plain text accounting for traders. For full documentation, go to the [documentation](./documentation) home.
 
 Blossom is a _yet another_ plain text acount application cli similar to [Ledger-cli](https://github.com/ledger/), [Hledger](https://github.com/simonmichael/hledger) and [Beancount](https://github.com/beancount). As with the other similar implementations:
 - blossom works locally, without interacting with webs servers, banks or the like, your data stays with you.
@@ -49,7 +49,7 @@ After the initial accounting portions which are fairly standard across pta softw
 - Support for non-nav assets such as mtm futures
 - Possible future support for risk, stress reports (option evaluation, derivatives linkage to underlyings, volatility surfaces etc) for OTC products.
 
-Most of the "standard" formatting works in blossom, although there some extra helpers and formatting supported to cut down on boilerplate and monotonous copy/paste. You can see some of the format ideas at the [journal format](.documentation/JournalFormat.md) page.
+Most of the "standard" formatting works in blossom, although there some extra helpers and formatting supported to cut down on boilerplate and monotonous copy/paste. You can see some of the format ideas at the [journal format](documentation/JournalFormat.md) page.
 
 ## Plans
 I'm currently migrating a bigger codebase from my initial implementation into this repository and upgrading several features.
