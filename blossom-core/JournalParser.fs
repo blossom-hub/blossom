@@ -74,6 +74,7 @@ type private RSubElement =
   | SCommodity of Commodity
   | SCG of Account
   | SNote of string
+  | SAccountConvention of AccountConvention
   | SName of string
   | SCommodityClass of CommodityClass
   | SValuationMode of ValuationMode
@@ -134,6 +135,10 @@ let pValuationMode : Parser<ValuationMode, UserState> =
   choice [stringReturn "Latest" Latest
           stringReturn "Historical" Historical]
 
+let pAccountConvention : Parser<AccountConvention, UserState> =
+  choice [stringReturn "F5" Financial5
+          stringReturn "F5" Financial7]
+
 // Account name elements and parsing
 let accountValidChars = letter <|> digit <|> anyOf "()[]{}" <|> (pchar ' ' .>> notFollowedBy (pchar ' ') |> attempt)
 let pAccountElt = many1Chars2 letter accountValidChars
@@ -148,6 +153,7 @@ let pAccountHierarchy =
 let private spCommodity = sstr1 "commodity" >>. pCommodity |>> SCommodity
 let private spCG = sstr1 "cg" >>. pAccountHierarchy |>> SCG
 let private spNote = sstr1 "note" >>. restOfLine false |>> SNote
+let private spConvention = sstr1 "convention" >>. pAccountConvention |>> SAccountConvention
 let private spName = sstr1 "name" >>. restOfLine false |>> SName
 let private spCommodityClass = sstr1 "class" >>. pCommodityClass |>> SCommodityClass
 let private spValuationMode = sstr1 "valuation" >>. pValuationMode |>> SValuationMode
@@ -179,13 +185,14 @@ let pIndent =
   pval >>= fun i -> (updateUserState (fun u -> {u with IndentSize = i}) >>. preturn (Indent i))
 
 let pHeader =
-  let subitems = (choice [spCommodity; spCG; spNote] .>> nSpaces0 .>> skipNewline) |> indented |> many
+  let subitems = (choice [spCommodity; spCG; spNote; spConvention] .>> nSpaces0 .>> skipNewline) |> indented |> many
   sstr1 "journal" >>. restOfLine true .>>. increaseIndent subitems
     |>> fun (t, ss) ->
           Header {Name = t.Trim()
                   Commodity = glse ss (function (SCommodity x) -> Some x | _ -> None)
                   CapitalGains = glse ss (function (SCG x) -> Some x | _ -> None)
-                  Note = glse ss (function (SNote x) -> Some x | _ -> None)}
+                  Note = glse ss (function (SNote x) -> Some x | _ -> None)
+                  Convention = glse ss (function (SAccountConvention x) -> Some x | _ -> None)}
 
 let pImport =
   let filename = restOfLine true

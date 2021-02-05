@@ -9,6 +9,7 @@ journal Example ledger
   note This is purely for parser testing
   cg Income:Capital Gains
   commodity USD
+  convention F5
 
 account Asset               ; Predefine some account defaults
   note Set some default values

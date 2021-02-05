@@ -119,7 +119,7 @@ let rec loadJournal filename =
 
   let header = elts |> List.choose (function (_, Header h) -> Some h | _ -> None)
                     |> List.tryHead
-                    |> Option.defaultValue {Name = "Untitled"; Commodity = None; CapitalGains = None; Note = None}
+                    |> Option.defaultValue {Name = "Untitled"; Commodity = None; CapitalGains = None; Note = None; Convention = None}
 
   let accountDecls = elts |> List.choose (function (_, Account a) -> Some (a.Account, a) | _ -> None)
                           |> Map.ofList
