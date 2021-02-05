@@ -21,9 +21,13 @@ jobs:
       run: dotnet tool install -g paket
     - name: Install paket
       run: paket install
-    - name: Restore dependencies
+    - name: Restore dependencies (CLI)
       run: dotnet restore ./blossom-cli
-    - name: Build
+    - name: Restore dependencies (Tests)
+      run: dotnet restore ./blossom-test
+    - name: Build (CLI)
       run: dotnet build --no-restore ./blossom-cli
-  #  - name: Test
-  #    run: dotnet test --no-build --verbosity normal
+    - name: Build (Tests)
+      run: dotnet build --no-restore ./blossom-tests
+    - name: Run tests
+      run: dotnet test --no-build --verbosity normal
