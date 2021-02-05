@@ -24,7 +24,7 @@ jobs:
     - name: Restore dependencies (CLI)
       run: dotnet restore ./blossom-cli
     - name: Restore dependencies (Tests)
-      run: dotnet restore ./blossom-test
+      run: dotnet restore ./blossom-tests
     - name: Build (CLI)
       run: dotnet build --no-restore ./blossom-cli
     - name: Build (Tests)
