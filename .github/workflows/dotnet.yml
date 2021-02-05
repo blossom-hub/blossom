@@ -1,0 +1,33 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Setup paket
+      run: dotnet tool install -g paket
+    - name: Install paket
+      run: paket install
+    - name: Restore dependencies (CLI)
+      run: dotnet restore ./blossom-cli
+    - name: Restore dependencies (Tests)
+      run: dotnet restore ./blossom-tests
+    - name: Build (CLI)
+      run: dotnet build --no-restore ./blossom-cli
+    - name: Build (Tests)
+      run: dotnet build --no-restore ./blossom-tests
+    - name: Run tests
+      run: dotnet test --no-build --verbosity normal ./blossom-tests
