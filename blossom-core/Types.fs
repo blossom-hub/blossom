@@ -2,6 +2,8 @@ module Types
 
 open System
 
+type AccountConvention =  Financial5 | Financial7
+
 // "NewType" style definitions
 type Comment = Comment of string
 type Commodity = Commodity of string
@@ -42,6 +44,7 @@ type JournalMeta = {
   Commodity: Commodity option
   CapitalGains: Account option
   Note: string option
+  Convention: AccountConvention option
 }
 
 type AccountDecl = {

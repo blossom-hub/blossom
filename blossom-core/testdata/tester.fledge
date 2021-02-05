@@ -9,6 +9,7 @@ journal Example ledger
   note This is purely for parser testing
   cg Income:Capital Gains
   commodity USD
+  convention F7
 
 account Asset               ; Predefine some account defaults
   note Set some default values
@@ -35,32 +36,32 @@ commodity NQZ20    ; Nasdaq futures
 
 2020-01-01 Me | Basic Transfer 1   ; but comments ok here
   #ABC #DEF
-  Assets:Account 1   100 USD ~Assets:Settlement Alpha
+  Asset:Account 1   100 USD ~Asset:Settlement Alpha
   ; test comment 0
 
 2020-01-02 * SO | Basic Transfer 2
-  Assets:Account 1  100 USD ~
+  Asset:Account 1  100 USD ~
 
 2020-01-03 Basic Transfer 3
   ; indented comments now okay
-  Assets:Account 1  100
-  Assets:Account 2  ; test posting line comment
+  Asset:Account 1  100
+  Asset:Account 2  ; test posting line comment
 
 2020-01-04 Basic Trade 1
-  Assets:Account 1  2  NQZ20 @ 1135 ~
-  Expenses:Trading/0x12    4 USD
-  Assets:Account 2
+  Asset:Account 1  2  NQZ20 @ 1135 ~
+  Expense:Trading/0x12    4 USD
+  Asset:Account 2
 
 2020-01-04 Basic Trade 2
-  Assets:Account 1  2 ASSET @ 100 USD
-  Assets:Settlement Trading
+  Asset:Account 1  2 ASSET @ 100 USD
+  Asset:Settlement Trading
 
 2020-01-05 Basic Exchanges 1
-  Assets:Account 1  145 EUR <- 100 GBP ~
+  Asset:Account 1  145 EUR <- 100 GBP ~
 
 2020-01-06 Basic Exchanges 2
-  Assets:Account 1  100 GBP -> 135 USD
-  Assets:Account 1  145 EUR -> 110 GBP
-  Assets:Account 2
+  Asset:Account 1  100 GBP -> 135 USD
+  Asset:Account 1  145 EUR -> 110 GBP
+  Asset:Account 2
 
-assert 2020-02-01 Assets:Account 2  -106 USD    ; actually incorrect (it is 104)
+assert 2020-02-01 Asset:Account 2  -106 USD    ; actually incorrect (it is 104)

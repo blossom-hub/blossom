@@ -6,17 +6,20 @@ open FParsec
 
 open Shared
 open Types
+open Definitions
 open ParserShared
 
 type UserState =
   {
     IndentSize : int
     IndentCount : int
+    AccountConvention: AccountConvention option
   }
   with
     static member Default = {
       IndentCount = 0
       IndentSize = 2
+      AccountConvention = None
     }
 
 (*
@@ -74,6 +77,7 @@ type private RSubElement =
   | SCommodity of Commodity
   | SCG of Account
   | SNote of string
+  | SAccountConvention of AccountConvention
   | SName of string
   | SCommodityClass of CommodityClass
   | SValuationMode of ValuationMode
@@ -134,13 +138,26 @@ let pValuationMode : Parser<ValuationMode, UserState> =
   choice [stringReturn "Latest" Latest
           stringReturn "Historical" Historical]
 
+
 // Account name elements and parsing
+let pAccountConvention : Parser<AccountConvention, UserState> =
+  choice [stringReturn "F5" Financial5
+          stringReturn "F7" Financial7]
+
 let accountValidChars = letter <|> digit <|> anyOf "()[]{}" <|> (pchar ' ' .>> notFollowedBy (pchar ' ') |> attempt)
 let pAccountElt = many1Chars2 letter accountValidChars
+let pAcccountElts = many1Till (pAccountElt .>> (opt (pchar ':'))) (followedBy (sstr "  " <|> skipNewline <|> skipChar '/'))
 let pAccountHierarchy =
   let pVAccount = opt (pchar '/' >>. manyChars accountValidChars)
-  let plain = many1Till (pAccountElt .>> (opt (pchar ':'))) (followedBy (sstr "  " <|> skipNewline <|> skipChar '/'))
-  plain .>>. pVAccount |>> fun (ts, va) -> let hs = String.Join(":", ts)
+  let plain =
+    // Parsing depends upon the convention. If no convention, anything goes.
+    // A convention mandates that the stub is part of a hierarchy (no 1 level accounts)
+    getUserState >>=
+      fun st -> match st.AccountConvention with
+                  | None -> pAcccountElts
+                  | Some ac -> let pStub = ac |> getAccountConventionStubs |> List.map (fun x -> pstring x .>> pchar ':') |> choice
+                               pipe2 pStub pAcccountElts (fun a b -> [a] @ b)
+  plain .>>. pVAccount |>> fun (ts, va) -> let hs = String.concat ":" ts
                                            match va with | Some v -> VirtualisedAccount (hs, v)
                                                          | None   -> Types.Account hs
 
@@ -148,6 +165,7 @@ let pAccountHierarchy =
 let private spCommodity = sstr1 "commodity" >>. pCommodity |>> SCommodity
 let private spCG = sstr1 "cg" >>. pAccountHierarchy |>> SCG
 let private spNote = sstr1 "note" >>. restOfLine false |>> SNote
+let private spConvention = sstr1 "convention" >>. pAccountConvention |>> SAccountConvention
 let private spName = sstr1 "name" >>. restOfLine false |>> SName
 let private spCommodityClass = sstr1 "class" >>. pCommodityClass |>> SCommodityClass
 let private spValuationMode = sstr1 "valuation" >>. pValuationMode |>> SValuationMode
@@ -179,13 +197,17 @@ let pIndent =
   pval >>= fun i -> (updateUserState (fun u -> {u with IndentSize = i}) >>. preturn (Indent i))
 
 let pHeader =
-  let subitems = (choice [spCommodity; spCG; spNote] .>> nSpaces0 .>> skipNewline) |> indented |> many
+  let getConvention x = glse x (function (SAccountConvention x) -> Some x | _ -> None)
+  let subitems = (choice [spCommodity; spCG; spNote; spConvention] .>> nSpaces0 .>> skipNewline) |> indented |> many
   sstr1 "journal" >>. restOfLine true .>>. increaseIndent subitems
+    >>= fun (t, ss) -> (updateUserState (fun u -> {u with AccountConvention = getConvention ss}) >>. preturn (t, ss))
     |>> fun (t, ss) ->
           Header {Name = t.Trim()
                   Commodity = glse ss (function (SCommodity x) -> Some x | _ -> None)
                   CapitalGains = glse ss (function (SCG x) -> Some x | _ -> None)
-                  Note = glse ss (function (SNote x) -> Some x | _ -> None)}
+                  Note = glse ss (function (SNote x) -> Some x | _ -> None)
+                  Convention = getConvention ss}
+
 
 let pImport =
   let filename = restOfLine true
@@ -193,7 +215,8 @@ let pImport =
 
 let pAccountDecl =
   let subitems = (choice [spCommodity; spCG; spNote; spValuationMode; spPropagate] .>> nSpaces0 .>> skipNewline) |> indented |> many
-  sstr1 "account" >>. pOptLineComment pAccountHierarchy .>>. increaseIndent subitems
+  let accountHierarchy = pAcccountElts |>> (String.concat ":" >> Types.Account)
+  sstr1 "account" >>. pOptLineComment accountHierarchy .>>. increaseIndent subitems
     |>> fun ((a, c), ss) -> Account {Account = a
                                      Commodity = glse ss (function (SCommodity x) -> Some x | _ -> None)
                                      Note = glse ss (function (SNote x) -> Some x | _ -> None)

@@ -4,12 +4,8 @@ open System
 open System.IO
 open Shared
 open Types
+open Definitions
 open JournalParser
-
-let marketAccount = Types.Account "_Market"
-let conversionsAccount = Types.Account "_Conversions"
-
-let internalDefaultCommodity = Types.Commodity "$"  // this is not a parsable value
 
 let getAccount = function | Types.VirtualisedAccount (a, s) -> a | Types.Account a -> a
 
@@ -119,7 +115,7 @@ let rec loadJournal filename =
 
   let header = elts |> List.choose (function (_, Header h) -> Some h | _ -> None)
                     |> List.tryHead
-                    |> Option.defaultValue {Name = "Untitled"; Commodity = None; CapitalGains = None; Note = None}
+                    |> Option.defaultValue {Name = "Untitled"; Commodity = None; CapitalGains = None; Note = None; Convention = None}
 
   let accountDecls = elts |> List.choose (function (_, Account a) -> Some (a.Account, a) | _ -> None)
                           |> Map.ofList
