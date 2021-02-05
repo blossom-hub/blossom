@@ -30,4 +30,4 @@ jobs:
     - name: Build (Tests)
       run: dotnet build --no-restore ./blossom-tests
     - name: Run tests
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal ./blossom-tests
