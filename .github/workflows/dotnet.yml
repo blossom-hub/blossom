@@ -17,6 +17,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+    - name: Setup paket
+      run: dotnet tool install paket
+    - name: Install paket
+      run: paket install
     - name: Restore dependencies
       run: dotnet restore ./blossom-cli
     - name: Build
