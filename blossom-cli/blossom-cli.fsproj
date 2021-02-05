@@ -14,6 +14,8 @@
     <Compile Include="ReplParser.fs" />
     <Compile Include="Renderers.fs" />
     <Compile Include="ReplEngine.fs" />
+    <Compile Include="LspEngine.fs" />
+    <Compile Include="PrettyPrint.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

@@ -1,0 +1,4200 @@
+option "title" "Untitled"
+option "operating_currency" "USD"
+option "name_assets" "Asset"
+option "name_expenses" "Expense"
+option "name_liabilities" "Liability"
+option "name_expenses" "Expense"
+2020-01-01 open Asset:Barclays-Bank:Current-Account
+2020-01-01 open Asset:Barclays-Bank:Investment-Funding
+2020-01-01 open Asset:Coupons:Harbour-City
+2020-01-01 open Asset:Coupons:Nespresso
+2020-01-01 open Asset:Deposits:Dining:HAKU
+2020-01-01 open Asset:Friends-Provident:Cash
+2020-01-01 open Asset:HSBC:HK:Joanne:Investments:WGI-II:Cash
+2020-01-01 open Asset:HSBC:HK:Joint:Current
+2020-01-01 open Asset:HSBC:HK:Joint:Savings
+2020-01-01 open Asset:HSBC:HK:Payme
+2020-01-01 open Asset:HSBC:HK:Payme:Qipao
+2020-01-01 open Asset:HSBC:HK:Sole:Current
+2020-01-01 open Asset:HSBC:HK:Sole:Investments
+2020-01-01 open Asset:HSBC:HK:Sole:Savings
+2020-01-01 open Asset:HSBC:ORSO
+2020-01-01 open Asset:HSBC:UK:Online-Bonus-Saver
+2020-01-01 open Asset:HSBC:UK:Premier-Banking
+2020-01-01 open Asset:HSBC:UK:Premier-Savings
+2020-01-01 open Asset:HSBC:USA:Checking
+2020-01-01 open Asset:IB:Cash
+2020-01-01 open Asset:Octopus0
+2020-01-01 open Asset:Octopus1
+2020-01-01 open Asset:OctopusJ
+2020-01-01 open Asset:Standard-Chartered:Current
+2020-01-01 open Asset:Standard-Chartered:Priority-Banking
+2020-01-01 open Asset:Starbucks-Card
+2020-01-01 open Asset:Wallet
+2020-01-01 open Equity:E2019
+2020-01-01 open Equity:FAKE-GOLD
+2020-01-01 open Expense:Banking:Fees
+2020-01-01 open Expense:Bills:Electric
+2020-01-01 open Expense:Bills:Gas
+2020-01-01 open Expense:Bills:Income-Tax
+2020-01-01 open Expense:Bills:Mobile-phone
+2020-01-01 open Expense:Bills:Rent
+2020-01-01 open Expense:Bills:Subscriptions:Games
+2020-01-01 open Expense:Bills:Subscriptions:News
+2020-01-01 open Expense:Bills:Subscriptions:Software
+2020-01-01 open Expense:Bills:Water
+2020-01-01 open Expense:Car-Hire
+2020-01-01 open Expense:Clothing
+2020-01-01 open Expense:Computer
+2020-01-01 open Expense:Computer:Software
+2020-01-01 open Expense:Covid19:Masks
+2020-01-01 open Expense:Dining-Out:Afternoon-Tea
+2020-01-01 open Expense:Dining-Out:Breakfast
+2020-01-01 open Expense:Dining-Out:Dessert
+2020-01-01 open Expense:Dining-Out:Dinner
+2020-01-01 open Expense:Dining-Out:Drinks
+2020-01-01 open Expense:Dining-Out:Junk
+2020-01-01 open Expense:Dining-Out:Lunch
+2020-01-01 open Expense:Dining-Out:Other
+2020-01-01 open Expense:Dining-Out:Other-Food
+2020-01-01 open Expense:Dining-Out:Snacks
+2020-01-01 open Expense:Dry-Cleaning
+2020-01-01 open Expense:Education:Languages:Books
+2020-01-01 open Expense:Education:Music
+2020-01-01 open Expense:Education:Newspapers
+2020-01-01 open Expense:Food:Breakfast
+2020-01-01 open Expense:Food:Dessert
+2020-01-01 open Expense:Food:Desserts
+2020-01-01 open Expense:Food:Groceries
+2020-01-01 open Expense:Food:Groceries:Coffee
+2020-01-01 open Expense:Food:Groceries:Tea
+2020-01-01 open Expense:Food:Household
+2020-01-01 open Expense:Food:Junk
+2020-01-01 open Expense:Food:Lunch
+2020-01-01 open Expense:Food:Other
+2020-01-01 open Expense:Food:Wine
+2020-01-01 open Expense:Gifts
+2020-01-01 open Expense:Group-Events:Qipao-Club
+2020-01-01 open Expense:Household
+2020-01-01 open Expense:Interest
+2020-01-01 open Expense:Lottery
+2020-01-01 open Expense:Medicine:Chinese-Medicine
+2020-01-01 open Expense:Medicine:OTC
+2020-01-01 open Expense:Medicine:Prescriptions
+2020-01-01 open Expense:Mobile-Phone:Handset
+2020-01-01 open Expense:Personal-Care
+2020-01-01 open Expense:Personal-Care:Dentist
+2020-01-01 open Expense:Personal-Care:Massage
+2020-01-01 open Expense:Personal-Care:Tips
+2020-01-01 open Expense:Postage
+2020-01-01 open Expense:Rental-Apartments:Fixtures
+2020-01-01 open Expense:Settlements
+2020-01-01 open Expense:Sporting-Activities:Fencing
+2020-01-01 open Expense:Sporting-Activities:Gym
+2020-01-01 open Expense:Sporting-Activities:Yoga
+2020-01-01 open Expense:TO-FOLLOW-UP
+2020-01-01 open Expense:Team-Event:Lunch
+2020-01-01 open Expense:Travel:Accommodation
+2020-01-01 open Expense:Travel:Airfare
+2020-01-01 open Expense:Travel:Insurance
+2020-01-01 open Expense:Travel:Visa-Fees
+2020-01-01 open Income:Coupons
+2020-01-01 open Income:Credit-Card-Promotions
+2020-01-01 open Income:FSA-Reimbursement
+2020-01-01 open Income:Foodpanda-Discount
+2020-01-01 open Income:Government-Subsidy
+2020-01-01 open Income:Gross-Bonus
+2020-01-01 open Income:Gross-Salary
+2020-01-01 open Income:Group-Award
+2020-01-01 open Income:HSBC:USA:Travel-Rewards-Credit
+2020-01-01 open Income:Holiday-Adjustment
+2020-01-01 open Income:Interest
+2020-01-01 open Income:RSU-Dividend
+2020-01-01 open Income:Rebates
+2020-01-01 open Income:Red-Pocket
+2020-01-01 open Income:Retirement:Employer-Contributions
+2020-01-01 open Income:Savings-Bonus-Incentives
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x1
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x10
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x11
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x12
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x2
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x3
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x4
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x5
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x6
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x7
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x8
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-20x9
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-21x1
+2020-01-01 open Liability:American-Express:Cathay-Pacific-Elite-21x2
+2020-01-01 open Liability:DBS:Black-Card
+2020-01-01 open Liability:DBS:Black-Card-2012
+2020-01-01 open Liability:DBS:Black-Card-20x12
+2020-01-01 open Liability:HSBC:HK:Premier-Credit-Card
+2020-01-01 open Liability:HSBC:HSBC-Premier-Credit-Card:Joanne
+2020-01-01 open Liability:HSBC:USA:Premier-Credit-Card
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x1
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x10
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x11
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x12
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x2
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x3
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x4
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x5
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x6
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x7
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x8
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-20x9
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-21x1
+2020-01-01 open Liability:Standard-Chartered:Asia-Miles-21x2
+2020-01-01 open Liability:Standard-Chartered:Executive-Platinum
+2020-01-01 open Payable:American-Express:Cathay-Pacific-Elite
+2020-01-01 open Payable:DBS:Black-Card
+2020-01-01 open Payable:HSBC:HK:Premier-Credit-Card
+2020-01-01 open Payable:HSBC:USA:Premier-Credit-Card
+2020-01-01 open Payable:Joanne
+2020-01-01 open Payable:Standard-Chartered:Asia-Miles
+2020-01-01 open Receivable:Group-Events:Qipao-Club
+2020-01-01 open Receivable:Standard-Chartered:Executive-Platinum
+2020-01-01 * "Opening Equity 2020" ""
+  Asset:Barclays-Bank:Current-Account    557.86 GBP
+  Asset:Barclays-Bank:Investment-Funding    295 GBP
+  Asset:HSBC:HK:Joint:Current    28388.36 HKD
+  Asset:HSBC:HK:Joint:Savings    0.01 GBP
+  Asset:HSBC:HK:Joint:Savings    120.01 USD
+  Asset:HSBC:HK:Joint:Savings    670 THB
+  Asset:HSBC:HK:Joint:Savings    207646.13 HKD
+  Asset:HSBC:HK:Sole:Current    9657.8 HKD
+  Asset:HSBC:HK:Sole:Investments    200 MACE
+  Asset:HSBC:HK:Sole:Savings    0.03 GBP
+  Asset:HSBC:HK:Sole:Savings    30247.8 HKD
+  Asset:HSBC:UK:Online-Bonus-Saver    4535.74 GBP
+  Asset:HSBC:UK:Premier-Banking    152.33 GBP
+  Asset:HSBC:UK:Premier-Savings    482.82 GBP
+  Asset:HSBC:USA:Checking    12423.31 USD
+  Asset:Standard-Chartered:Current    12064.69 HKD
+  Asset:Standard-Chartered:Priority-Banking    17006.84 GBP
+  Asset:Standard-Chartered:Priority-Banking    1372521.55 HKD
+  Liability:Standard-Chartered:Asia-Miles    -10062.4 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -4568.9 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    -1032 HKD
+  Payable:HSBC:USA:Premier-Credit-Card    -2956.11 USD
+  Payable:Standard-Chartered:Asia-Miles    -2877.39 HKD
+  Equity:E2019    -23030.63 GBP
+  Equity:E2019    -1641985.64 HKD
+  Equity:E2019    -9587.21 USD
+  Equity:E2019    -670 THB
+  Equity:E2019    -200 MACE
+2020-01-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    1.86 GBP
+  Income:Interest    -1.86 GBP
+2020-01-01 * "Pure Wagyu Yakiniku" "New Years Day Lunch"
+  Expense:Dining-Out:Lunch    484 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x1    -484 HKD
+2020-01-01 * "Check Check Cin" "Drinks"
+  Expense:Dining-Out:Drinks    68 HKD
+  Liability:DBS:Black-Card    -68 HKD
+2020-01-01 * "Ebisoba Ichigen" "Dinner"
+  Expense:Dining-Out:Dinner    232 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x1    -232 HKD
+2020-01-01 * "Reebok" "Shoes"
+  Expense:Clothing    315 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x1    -315 HKD
+2020-01-01 * "Marks & Spencer" "Suit"
+  Expense:Clothing    1411.98 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x1    -1411.98 HKD
+2020-01-02 * "Oliver's Super Sandwiches" "Joanne Lunch"
+  Expense:Dining-Out:Lunch    67 HKD
+  Liability:HSBC:HSBC-Premier-Credit-Card:Joanne    -67 HKD
+2020-01-02 * "Oliver's" "Lunch and feed husky"
+  Expense:Dining-Out:Lunch    74.5 HKD
+  Expense:Food:Groceries    416 HKD
+  Income:Coupons    -50 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x1    -440.5 HKD
+2020-01-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x1    -68.68 HKD
+2020-01-03 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x1    -250 HKD
+2020-01-03 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Payme    2000 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x1    -2000 HKD
+2020-01-03 * "Vincent Chau" "Personal Training at Sportifit x10"
+  Expense:Sporting-Activities:Gym    6000 HKD
+  Asset:HSBC:HK:Payme    -6000 HKD
+2020-01-03 * "Five Guys" "Lunch"
+  Expense:Dining-Out:Lunch    135 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x1    -135 HKD
+2020-01-04 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    25 HKD
+  Asset:Wallet    -25 HKD
+2020-01-04 * "Fund Friends Provident" ""
+  Asset:HSBC:UK:Online-Bonus-Saver    -3000 GBP
+  Asset:HSBC:UK:Premier-Banking    3000 GBP
+2020-01-04 * "Fund Friends Provident" ""
+  Asset:HSBC:UK:Premier-Banking    -3000 GBP
+  Asset:Barclays-Bank:Investment-Funding    3000 GBP
+2020-01-04 * "Pokka Cafe" "Afternoon Tea"
+  Expense:Dining-Out:Afternoon-Tea    149.6 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x1    -149.6 HKD
+2020-01-04 * "Panash" "Breakfast"
+  Expense:Food:Groceries    21 HKD
+  Asset:Octopus0    -21 HKD
+2020-01-04 * "Aeon" "Groceries"
+  Expense:Food:Groceries    203.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x1    -203.9 HKD
+2020-01-04 * "Pay SC Asia Miles December 2019" ""
+  Asset:Standard-Chartered:Priority-Banking    -2877.39 HKD
+  Payable:Standard-Chartered:Asia-Miles    2877.39 HKD
+2020-01-05 * "Ten Ren's Tea" "Hot tea"
+  Expense:Dining-Out:Drinks    23 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -23 HKD
+2020-01-05 * "McDonalds" "Ice cream cone"
+  Expense:Dining-Out:Dessert    10 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x1    -10 HKD
+2020-01-06 * "Pho Mot Vietnamese" "Lunch"
+  Expense:Dining-Out:Lunch    214 HKD
+  Asset:Wallet    -214 HKD
+2020-01-06 * "Pat Leung" "Lunch with Joanne"
+  Expense:Dining-Out:Lunch    -78 HKD
+  Asset:HSBC:HK:Payme    78 HKD
+2020-01-06 * "Pret-a-Manger" "Lunch"
+  Expense:Dining-Out:Lunch    90 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -90 HKD
+2020-01-06 * "Japan Home Centre" "Lightbulb for kitchen"
+  Expense:Rental-Apartments:Fixtures    11.5 HKD
+  Liability:HSBC:HSBC-Premier-Credit-Card:Joanne    -11.5 HKD
+2020-01-06 * "Pizza Express" "Dinner"
+  Expense:Dining-Out:Dinner    369.6 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -369.6 HKD
+2020-01-06 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -100 HKD
+  Asset:HSBC:HK:Payme    100 HKD
+2020-01-07 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    264 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -264 HKD
+2020-01-07 * "Maxim's" "Lunch"
+  Expense:Dining-Out:Lunch    386 HKD
+  Liability:DBS:Black-Card    -386 HKD
+2020-01-07 * "FAKE GOLD XFER for BALANCING *REVISIT*" ""
+  Asset:HSBC:HK:Sole:Savings    289860 HKD
+  Equity:FAKE-GOLD    -289860 HKD
+2020-01-08 * "Pay HSBC HK Premier December 2019" ""
+  Asset:HSBC:HK:Joint:Savings    -1032 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    1032 HKD
+2020-01-08 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    59.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -59.8 HKD
+2020-01-08 * "food le parc" "Breakfast"
+  Expense:Food:Groceries    16.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -16.4 HKD
+2020-01-08 * "Pay HSBC USA Premier December 2019" ""
+  Asset:HSBC:USA:Checking    -2956.11 USD
+  Payable:HSBC:USA:Premier-Credit-Card    2956.11 USD
+2020-01-08 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x1    -250 HKD
+2020-01-09 * "Pacific Coffee" "Top up Perfect Cup Card"
+  Expense:Dining-Out:Drinks    200 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -200 HKD
+2020-01-09 * "food le parc" "Lunch"
+  Expense:Dining-Out:Lunch    88 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -88 HKD
+2020-01-10 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -32000 HKD
+  Expense:Bills:Rent    32000 HKD
+2020-01-10 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-01-10 * "Load up Octopus" ""
+  Asset:Wallet    -500 HKD
+  Asset:Octopus1    500 HKD
+2020-01-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    14949.06 HKD
+  Payable:Standard-Chartered:Asia-Miles    -14949.06 HKD
+2020-01-10 * "Cafe Habitu" "Dinner"
+  Expense:Dining-Out:Dinner    216 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -216 HKD
+2020-01-10 * "Check Check Cin" "Drink"
+  Expense:Dining-Out:Drinks    34 HKD
+  Liability:DBS:Black-Card    -34 HKD
+2020-01-10 * "Haagen-Daz" "Cute Panda & Fairy Seal"
+  Expense:Dining-Out:Dessert    69 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -69 HKD
+2020-01-10 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.1 USD
+  Income:Interest    -0.1 USD
+2020-01-10 * "Casa Lisboa" "Promotion Team Lunch (Deposit)"
+  Expense:Team-Event:Lunch    1000 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -1000 HKD
+2020-01-10 * "Pay DBS for Joanne" ""
+  Payable:DBS:Black-Card    986 HKD
+  Asset:Standard-Chartered:Priority-Banking    -986 HKD
+2020-01-11 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    18 HKD
+  Asset:Wallet    -18 HKD
+2020-01-11 * "Ten Ren's Tea" "Silky roll offer"
+  Expense:Food:Dessert    148 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -148 HKD
+2020-01-11 * "Aeon Living Plaza" "Spongy"
+  Expense:Household    10.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -10.8 HKD
+2020-01-11 * "Aeon" "Groceries"
+  Expense:Food:Groceries    66.6 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -66.6 HKD
+2020-01-11 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    15 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -15 HKD
+2020-01-12 * "Saigon Pho" "Afternoon tea for 2"
+  Expense:Dining-Out:Afternoon-Tea    129 HKD
+  Asset:Wallet    -129 HKD
+2020-01-12 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    88 HKD
+  Asset:Wallet    -88 HKD
+2020-01-12 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    20.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -20.5 HKD
+2020-01-12 * "Cafe Idea" "Dinner"
+  Expense:Dining-Out:Dinner    78 HKD
+  Asset:Wallet    -78 HKD
+2020-01-12 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Premier-Savings    0.08 GBP
+  Income:Interest    -0.08 GBP
+2020-01-13 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    100 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -100 HKD
+2020-01-14 * "Casa Lisboa" "Promotion Team Lunch"
+  Expense:Team-Event:Lunch    2634 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -2634 HKD
+2020-01-14 * "Dodam Chicken" "Dinner"
+  Expense:Dining-Out:Dinner    313 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -313 HKD
+2020-01-15 * "Hong Kong Inland Revenue" "Pay Tax"
+  Expense:Bills:Income-Tax    249822 HKD
+  Asset:Standard-Chartered:Priority-Banking    -249822 HKD
+2020-01-15 * "Pacific Coffee" "Drink"
+  Expense:Dining-Out:Drinks    17 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -17 HKD
+2020-01-15 * "food le parc" "Lunch"
+  Expense:Dining-Out:Lunch    62 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -62 HKD
+2020-01-15 * "Aeon" "Groceries"
+  Expense:Food:Groceries    162 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -162 HKD
+2020-01-15 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -250 HKD
+2020-01-15 * "food le parc" "Breakfast/Lunch"
+  Expense:Dining-Out:Lunch    88 HKD
+  Expense:Food:Groceries    32.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x1    -120.9 HKD
+2020-01-16 * "Mark6" "Lottery ticket"
+  Expense:Lottery    40 HKD
+  Asset:Wallet    -40 HKD
+2020-01-16 * "Chachawan" "Joanne team lunch"
+  Expense:Dining-Out:Lunch    740 HKD
+  Liability:DBS:Black-Card    -740 HKD
+2020-01-16 * "Lydia Tsang" "Joanne team lunch at Chachawan"
+  Expense:Dining-Out:Lunch    -78 HKD
+  Asset:HSBC:HK:Payme    78 HKD
+2020-01-16 * "Vlad Tanasescu" "Joanne team lunch at Chachawan"
+  Expense:Dining-Out:Lunch    -78 HKD
+  Asset:HSBC:HK:Payme    78 HKD
+2020-01-16 * "Julie Yee" "Joanne team lunch at Chachawan"
+  Expense:Dining-Out:Lunch    -78 HKD
+  Asset:HSBC:HK:Payme    78 HKD
+2020-01-16 * "Cdeline Chan" "Joanne team lunch at Chachawan"
+  Expense:Dining-Out:Lunch    -78 HKD
+  Asset:HSBC:HK:Payme    78 HKD
+2020-01-16 * "Watson's Wine" "Wine for Lunar New Year"
+  Expense:Food:Wine    198 HKD
+  Liability:DBS:Black-Card    -198 HKD
+2020-01-17 * "Oliver's" "Lasagne"
+  Expense:Food:Lunch    73.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -73.8 HKD
+2020-01-18 * "Marco Shek" "Fencing (Clandestine Class)"
+  Expense:Sporting-Activities:Fencing    800 HKD
+  Asset:HSBC:HK:Payme    -800 HKD
+2020-01-18 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    125 HKD
+  Asset:Wallet    -125 HKD
+2020-01-18 * "LY Bakery" "Groceries"
+  Expense:Food:Groceries    32 HKD
+  Asset:Octopus0    -32 HKD
+2020-01-19 * "McDonalds" "Dinner"
+  Expense:Dining-Out:Dinner    48.5 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -48.5 HKD
+2020-01-19 * "Uniqlo" "Womens Drape Pants"
+  Expense:Clothing    59 HKD
+  Liability:DBS:Black-Card    -59 HKD
+2020-01-19 * "Donq" "Breakfast"
+  Expense:Food:Groceries    33 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -33 HKD
+2020-01-19 * "NOC" "Cafe Latte"
+  Expense:Dining-Out:Drinks    45 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -45 HKD
+2020-01-20 * "Simply Life" "Lunch"
+  Expense:Dining-Out:Lunch    66 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -66 HKD
+2020-01-20 * "Red pocket money extraction for CNY 2020" ""
+  Asset:HSBC:HK:Joint:Savings    -10500 HKD
+  Asset:Wallet    10500 HKD
+2020-01-20 * "Watson's Wine" "Wine for Lunar New Year"
+  Expense:Food:Wine    148 HKD
+  Liability:DBS:Black-Card    -148 HKD
+2020-01-20 * "food le parc" "Groceries"
+  Expense:Food:Groceries    20 HKD
+  Expense:Food:Junk    11.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -31.5 HKD
+2020-01-21 * "Pacific Coffee" "Top up Perfect Cup Card"
+  Expense:Dining-Out:Drinks    200 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -200 HKD
+2020-01-22 * "food le parc" "Breakfast"
+  Expense:Food:Groceries    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -20 HKD
+2020-01-22 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -250 HKD
+2020-01-22 * "food le parc" "Lunch"
+  Expense:Dining-Out:Lunch    112.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -112.9 HKD
+2020-01-23 * "Bank of America" "Salary"
+  Income:Gross-Salary    -133333.33 HKD
+  Income:Holiday-Adjustment    -339.16 HKD
+  Income:FSA-Reimbursement    -4118 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Asset:Standard-Chartered:Priority-Banking    131290.49 HKD
+2020-01-23 * "Adeline Chan" "Piano Kitchen Qipao Club"
+  Receivable:Group-Events:Qipao-Club    -177 HKD
+  Asset:HSBC:HK:Payme:Qipao    177 HKD
+2020-01-23 * "Silva Tomescu" "Piano Kitchen Qipao Club"
+  Receivable:Group-Events:Qipao-Club    -177 HKD
+  Asset:HSBC:HK:Payme:Qipao    177 HKD
+2020-01-23 * "Lydia Tsang" "Piano Kitchen Qipao Club"
+  Receivable:Group-Events:Qipao-Club    -177 HKD
+  Asset:HSBC:HK:Payme:Qipao    177 HKD
+2020-01-23 * "Winnie Chan" "Piano Kitchen Qipao Club"
+  Receivable:Group-Events:Qipao-Club    -177 HKD
+  Asset:HSBC:HK:Payme:Qipao    177 HKD
+2020-01-23 * "Green Common" "Milk tea"
+  Expense:Dining-Out:Drinks    26 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -26 HKD
+2020-01-23 * "food le parc" "Lunch"
+  Expense:Dining-Out:Lunch    85 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -85 HKD
+2020-01-23 * "food le parc" "Breakfast"
+  Expense:Food:Groceries    18 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -18 HKD
+2020-01-23 * "Pay Amex December 2019" ""
+  Asset:Standard-Chartered:Current    -4568.9 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    4568.9 HKD
+2020-01-24 * "Neeti Dahiya" "Piano Kitchen Qipao Club"
+  Receivable:Group-Events:Qipao-Club    -177 HKD
+  Asset:HSBC:HK:Payme:Qipao    177 HKD
+2020-01-24 * "Carol Chan" "Piano Kitchen Qipao Club"
+  Receivable:Group-Events:Qipao-Club    -177 HKD
+  Asset:HSBC:HK:Payme:Qipao    177 HKD
+2020-01-24 * "Triple O's" "Lunch"
+  Expense:Dining-Out:Lunch    88 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -88 HKD
+2020-01-24 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.14 HKD
+  Asset:HSBC:HK:Sole:Savings    0.16 HKD
+  Income:Interest    -0.30 HKD
+2020-01-25 * "Piano Kitchen" "Qipao Club Event"
+  Expense:Group-Events:Qipao-Club    354 HKD
+  Receivable:Group-Events:Qipao-Club    1946 HKD
+  Asset:HSBC:HK:Payme:Qipao    -2300 HKD
+2020-01-25 * "Yuan Shan Restaurant" "CNY Lunch with In-laws"
+  Expense:Dining-Out:Lunch    308 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -308 HKD
+2020-01-25 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -2000 HKD
+  Asset:HSBC:HK:Payme    2000 HKD
+2020-01-26 * "Nichigyu" "Dinner"
+  Expense:Dining-Out:Dinner    413.6 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -413.6 HKD
+2020-01-26 * "Quality of Life Products" "Hong Fuk Tong Turtle"
+  Expense:Food:Desserts    523 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -523 HKD
+2020-01-27 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    85 HKD
+  Asset:Wallet    -85 HKD
+2020-01-28 * "June Ho" "Personal Training  x10"
+  Expense:Sporting-Activities:Gym    6100 HKD
+  Asset:HSBC:HK:Payme    -6100 HKD
+2020-01-28 * "A-1 Bakery" "Breakfast/Snack"
+  Expense:Food:Groceries    56 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -56 HKD
+2020-01-28 * "Qantas" "Perth-Learmonth March 2020"
+  Expense:Travel:Airfare    684.02 USD
+  Liability:HSBC:USA:Premier-Credit-Card    -684.02 USD
+2020-01-28 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -8000 HKD
+  Asset:HSBC:HK:Payme    8000 HKD
+2020-01-29 * "Five Guys" "Lunch"
+  Expense:Dining-Out:Lunch    135 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -135 HKD
+2020-01-29 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    65 HKD
+  Asset:Wallet    -65 HKD
+2020-01-29 * "Aeon" "Groceries"
+  Expense:Food:Groceries    86.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -86.9 HKD
+2020-01-30 * "Ella Chiu" "Piano Kitchen Qipao Club"
+  Receivable:Group-Events:Qipao-Club    -177 HKD
+  Asset:HSBC:HK:Payme:Qipao    177 HKD
+2020-01-30 * "Kowloon City Beef Brisket" "Lunch"
+  Expense:Dining-Out:Lunch    104 HKD
+  Asset:Wallet    -104 HKD
+2020-01-30 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    34 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -34 HKD
+2020-01-30 * "Transfer rent from SC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-01-30 * "CLP Power" "Bills"
+  Asset:Standard-Chartered:Priority-Banking    -421 HKD
+  Expense:Bills:Electric    421 HKD
+2020-01-31 * "Maggie Yu" "Piano Kitchen Qipao Club"
+  Receivable:Group-Events:Qipao-Club    -177 HKD
+  Asset:HSBC:HK:Payme:Qipao    177 HKD
+2020-01-31 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    24 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -24 HKD
+2020-01-31 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    0.14 GBP
+  Asset:Standard-Chartered:Priority-Banking    1077.6 HKD
+  Income:Interest    -0.14 GBP
+  Income:Interest    -1077.6 HKD
+2020-02-01 * "Fishball noodles" "Lunch"
+  Expense:Dining-Out:Lunch    76 HKD
+  Asset:Wallet    -76 HKD
+2020-02-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.16 GBP
+  Income:Interest    -0.16 GBP
+2020-02-01 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    22 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -22 HKD
+2020-02-01 * "Chiu Fat Dispensary" "Hair Gel"
+  Expense:Personal-Care    23 HKD
+  Asset:Octopus0    -23 HKD
+2020-02-01 * "Park'n'Shop" "Groceries"
+  Expense:Household    23.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -23.9 HKD
+2020-02-01 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -250 HKD
+2020-02-01 * "MSIG" "Insurance for Australia Trip"
+  Expense:Travel:Insurance    464.48 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -464.48 HKD
+2020-02-02 * "King of Soyabeans" "Afternoon tea"
+  Expense:Dining-Out:Afternoon-Tea    74 HKD
+  Asset:Octopus0    -74 HKD
+2020-02-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -68.68 HKD
+2020-02-03 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    22 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -22 HKD
+2020-02-04 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    22 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -22 HKD
+2020-02-05 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    264 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -264 HKD
+2020-02-05 * "American Express Statement" ""
+  Liability:American-Express:Cathay-Pacific-Elite    2976.6 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -2976.6 HKD
+2020-02-05 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    24 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -24 HKD
+2020-02-05 * "Aeon" "Groceries"
+  Expense:Food:Groceries    396 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -396 HKD
+2020-02-05 * "Wellcome" "Cooking Oil"
+  Expense:Food:Groceries    59.9 HKD
+  Income:Coupons    -50 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -9.9 HKD
+2020-02-06 * "Food le parc" "Breakfast + mints"
+  Expense:Food:Breakfast    20 HKD
+  Expense:Food:Other    11.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x2    -31.9 HKD
+2020-02-06 * "Oliver's" "Lunch"
+  Expense:Dining-Out:Lunch    109.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -109.2 HKD
+2020-02-06 * "Pay HSBC HK Premier" ""
+  Asset:HSBC:HK:Joint:Savings    -835 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    835 HKD
+2020-02-06 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -250 HKD
+2020-02-07 * "Pay SC Asia Miles January 2020" ""
+  Asset:Standard-Chartered:Priority-Banking    -14949.06 HKD
+  Payable:Standard-Chartered:Asia-Miles    14949.06 HKD
+2020-02-07 * "Great" "Turkey Lunch Set B"
+  Expense:Dining-Out:Lunch    65 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -65 HKD
+2020-02-08 * "Chiu Chow Goose" ""
+  Expense:Dining-Out:Dinner    133 HKD
+  Asset:Wallet    -133 HKD
+2020-02-08 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    37 HKD
+  Asset:Wallet    -37 HKD
+2020-02-08 * "Ten Ren's Tea" "Drinks"
+  Expense:Dining-Out:Drinks    58 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x2    -58 HKD
+2020-02-08 * "Spare-time Study Centre" "Intermediate Fencing Course (refund)"
+  Expense:Sporting-Activities:Fencing    -720 HKD
+  Asset:Wallet    720 HKD
+2020-02-08 * "Wah Yuen Dessert" "Desserts"
+  Expense:Dining-Out:Dessert    103 HKD
+  Asset:Wallet    -103 HKD
+2020-02-09 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    205 HKD
+  Asset:Wallet    -205 HKD
+2020-02-09 * "Saigon Pho" "Afternoon tea x1"
+  Expense:Dining-Out:Afternoon-Tea    86 HKD
+  Asset:Wallet    -86 HKD
+2020-02-09 * "Queen Sophie" "Egg tarts"
+  Expense:Dining-Out:Snacks    20 HKD
+  Asset:Wallet    -20 HKD
+2020-02-09 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    22 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -22 HKD
+2020-02-09 * "Aeon" "Groceries"
+  Expense:Food:Groceries    155 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -155 HKD
+2020-02-10 * "Food le parc" "Breakfast + Junk"
+  Expense:Food:Breakfast    20 HKD
+  Expense:Food:Junk    11.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -31.5 HKD
+2020-02-10 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-02-10 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -32000 HKD
+  Expense:Bills:Rent    32000 HKD
+2020-02-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    7462.26 HKD
+  Payable:Standard-Chartered:Asia-Miles    -7462.26 HKD
+2020-02-10 * "Simply Life" "Lunch"
+  Expense:Dining-Out:Lunch    66 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x3    -66 HKD
+2020-02-10 * "Pay DBS for Joanne" ""
+  Payable:DBS:Black-Card    1270.1 HKD
+  Asset:Standard-Chartered:Priority-Banking    -1270.1 HKD
+2020-02-11 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -20 HKD
+2020-02-11 * "HSBC USA CC Statement" ""
+  Liability:HSBC:USA:Premier-Credit-Card    684.02 USD
+  Payable:HSBC:USA:Premier-Credit-Card    -684.02 USD
+2020-02-12 * "Food le parc" "Breakfast + Junk"
+  Expense:Food:Breakfast    19 HKD
+  Expense:Food:Junk    16.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -35.9 HKD
+2020-02-12 * "Food le parc" "Set lunch Gourmand"
+  Expense:Dining-Out:Lunch    87 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -87 HKD
+2020-02-12 * "Park'n'Shop" "Breakfast"
+  Expense:Food:Breakfast    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -40 HKD
+2020-02-12 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Premier-Savings    0.08 GBP
+  Income:Interest    -0.08 GBP
+2020-02-13 * "Ruth Kelly" "Piano Kitchen Qipao Club"
+  Receivable:Group-Events:Qipao-Club    -177 HKD
+  Asset:HSBC:HK:Payme:Qipao    177 HKD
+2020-02-13 * "Pacific Coffee" "Top up Perfect Cup Card"
+  Expense:Dining-Out:Drinks    200 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -200 HKD
+2020-02-13 * "Park'n'Shop" "Groceries"
+  Expense:Food:Breakfast    34.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -34.9 HKD
+2020-02-13 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.08 USD
+  Income:Interest    -0.08 USD
+2020-02-14 * "Food le parc" "Groceries"
+  Expense:Food:Groceries    84 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -84 HKD
+2020-02-14 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x3    -250 HKD
+2020-02-15 * "Thai Palace" "Lime beef and pork neck"
+  Expense:Dining-Out:Dinner    190 HKD
+  Asset:Wallet    -190 HKD
+2020-02-15 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    23 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -23 HKD
+2020-02-16 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    33 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -33 HKD
+2020-02-17 * "Simply Life" "Lunch"
+  Expense:Food:Lunch    62 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -62 HKD
+2020-02-17 * "Piano Kitchen" "Refund for cancelled event"
+  Asset:HSBC:HK:Joint:Savings    2300 HKD
+  Expense:Group-Events:Qipao-Club    -354 HKD
+  Receivable:Group-Events:Qipao-Club    -1946 HKD
+2020-02-17 * "Load up Octopus" ""
+  Asset:Wallet    -500 HKD
+  Asset:Octopus1    500 HKD
+2020-02-18 * "Great" "Lunch"
+  Expense:Food:Lunch    108 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -108 HKD
+2020-02-18 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    31.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -31.9 HKD
+2020-02-19 * "Food le parc" "Chicken Sandwich"
+  Expense:Dining-Out:Lunch    62 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -62 HKD
+2020-02-20 * "QHMS" "Nasal Medicine"
+  Expense:Medicine:Prescriptions    196 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -196 HKD
+2020-02-20 * "Pacific Coffee" "Top up Perfect Cup Card"
+  Expense:Dining-Out:Drinks    200 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -200 HKD
+2020-02-20 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -40 HKD
+2020-02-20 * "Nespresso" "Ispirazine Italian Limited Edition"
+  Expense:Food:Groceries:Coffee    80 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -80 HKD
+2020-02-20 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    100 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x3    -100 HKD
+2020-02-21 * "Bank of America" "Salary & Bonus"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Gross-Bonus    -459052 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Asset:Standard-Chartered:Priority-Banking    631718.67 HKD
+2020-02-21 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x3    -250 HKD
+2020-02-22 * "Kowloon City Beef Brisket" "Afternoon tea set"
+  Expense:Dining-Out:Lunch    104 HKD
+  Asset:Wallet    -104 HKD
+2020-02-22 * "Ruth Kelly" "Piano Kitchen Qipao Club (Refund)"
+  Asset:HSBC:HK:Payme:Qipao    -177 HKD
+  Receivable:Group-Events:Qipao-Club    177 HKD
+2020-02-22 * "Maggie Yu" "Piano Kitchen Qipao Club (Refund)"
+  Asset:HSBC:HK:Payme:Qipao    -177 HKD
+  Receivable:Group-Events:Qipao-Club    177 HKD
+2020-02-22 * "Ella Chiu" "Piano Kitchen Qipao Club (Refund)"
+  Asset:HSBC:HK:Payme:Qipao    -177 HKD
+  Receivable:Group-Events:Qipao-Club    177 HKD
+2020-02-22 * "Carol Chan" "Piano Kitchen Qipao Club (Refund)"
+  Asset:HSBC:HK:Payme:Qipao    -177 HKD
+  Receivable:Group-Events:Qipao-Club    177 HKD
+2020-02-22 * "Neeti Dahiya" "Piano Kitchen Qipao Club (Refund)"
+  Asset:HSBC:HK:Payme:Qipao    -177 HKD
+  Receivable:Group-Events:Qipao-Club    177 HKD
+2020-02-22 * "Winnie Chan" "Piano Kitchen Qipao Club (Refund)"
+  Asset:HSBC:HK:Payme:Qipao    -177 HKD
+  Receivable:Group-Events:Qipao-Club    177 HKD
+2020-02-22 * "Lydia Tsang" "Piano Kitchen Qipao Club (Refund)"
+  Asset:HSBC:HK:Payme:Qipao    -177 HKD
+  Receivable:Group-Events:Qipao-Club    177 HKD
+2020-02-22 * "Silvia Tomescu" "Piano Kitchen Qipao Club (Refund)"
+  Asset:HSBC:HK:Payme:Qipao    -177 HKD
+  Receivable:Group-Events:Qipao-Club    177 HKD
+2020-02-22 * "Adeline Chan" "Piano Kitchen Qipao Club (Refund)"
+  Asset:HSBC:HK:Payme:Qipao    -177 HKD
+  Receivable:Group-Events:Qipao-Club    177 HKD
+2020-02-22 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    13.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -13.5 HKD
+2020-02-22 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    100 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x3    -100 HKD
+2020-02-23 * "Hea" "Afternoon Tea"
+  Expense:Dining-Out:Dinner    92 HKD
+  Asset:Wallet    -92 HKD
+2020-02-23 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    168 HKD
+  Asset:Wallet    -168 HKD
+2020-02-23 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    13.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -13.5 HKD
+2020-02-23 * "Tseun Shing" "BBQ Pork takeout"
+  Expense:Dining-Out:Dinner    55 HKD
+  Asset:Wallet    -55 HKD
+2020-02-23 * "Wellcome" "Groceries"
+  Expense:Food:Groceries    56.9 HKD
+  Income:Coupons    -50 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -6.9 HKD
+2020-02-24 * "Amber Coffee Brewery" "Caffe Latte"
+  Expense:Dining-Out:Drinks    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -40 HKD
+2020-02-24 * "Simply Life" "Lunch"
+  Expense:Food:Lunch    77 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -77 HKD
+2020-02-24 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    22 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -22 HKD
+2020-02-25 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    30 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -30 HKD
+2020-02-25 * "Five Guys" "Lunch"
+  Expense:Dining-Out:Lunch    135 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -135 HKD
+2020-02-25 * "Sal Salis" "Two-night stay (balance)"
+  Expense:Travel:Accommodation    1794.99 USD
+  Liability:HSBC:USA:Premier-Credit-Card    -1794.99 USD
+2020-02-26 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -20 HKD
+2020-02-26 * "Oliver's" "Lunch"
+  Expense:Dining-Out:Lunch    88 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -88 HKD
+2020-02-26 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    41.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -41.9 HKD
+2020-02-26 * "Transfer to IB (post collateral)" ""
+  Asset:Standard-Chartered:Priority-Banking    -200000 HKD
+  Asset:IB:Cash    200000 HKD
+2020-02-27 * "Hong Kong & China Gas" "Gas Bill"
+  Expense:Bills:Gas    478 HKD
+  Asset:Standard-Chartered:Priority-Banking    -478 HKD
+2020-02-27 * "Pacific Coffee" "Top up Perfect Cup Card"
+  Expense:Dining-Out:Drinks    200 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -200 HKD
+2020-02-27 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -20 HKD
+2020-02-28 * "Oliver's" "Lunch and feed husky"
+  Expense:Dining-Out:Lunch    78 HKD
+  Expense:Food:Groceries    382.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -460.2 HKD
+2020-02-28 * "Green Common" "Milk tea"
+  Expense:Dining-Out:Drinks    26 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x3    -26 HKD
+2020-02-28 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    16.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -16.4 HKD
+2020-02-28 * "Pay Amex February 2020" ""
+  Asset:Standard-Chartered:Current    -2976.6 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    2976.6 HKD
+2020-02-28 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.16 HKD
+  Asset:HSBC:HK:Sole:Savings    0.3 HKD
+  Income:Interest    -0.46 HKD
+2020-02-29 * "Sai Kung Chicken" "Chicken"
+  Expense:Dining-Out:Dinner    90 HKD
+  Asset:Wallet    -90 HKD
+2020-02-29 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    20 HKD
+  Asset:Wallet    -20 HKD
+2020-02-29 * "Marco Shek" "Fencing (Refund for class)"
+  Expense:Sporting-Activities:Fencing    -733.33 HKD
+  Asset:HSBC:HK:Payme    733.33 HKD
+2020-02-29 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    1105.39 HKD
+  Income:Interest    -1105.39 HKD
+2020-02-29 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    0.13 GBP
+  Income:Interest    -0.13 GBP
+2020-02-29 * "Panash" "Breakfast"
+  Expense:Food:Breakfast    21 HKD
+  Asset:Octopus0    -21 HKD
+2020-02-29 * "Teawood" "Afternoon tea set"
+  Expense:Dining-Out:Afternoon-Tea    138 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -138 HKD
+2020-02-29 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x3    -250 HKD
+2020-03-01 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    160 HKD
+  Asset:Wallet    -160 HKD
+2020-03-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.49 GBP
+  Income:Interest    -0.49 GBP
+2020-03-01 * "Aeon" "Groceries"
+  Expense:Food:Groceries    102.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -102.9 HKD
+2020-03-02 * "QHMS" "Nasal Medicine"
+  Expense:Medicine:Prescriptions    368 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -368 HKD
+2020-03-02 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -20 HKD
+2020-03-02 * "Food le parc" "Sandwiches"
+  Expense:Dining-Out:Lunch    54 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -54 HKD
+2020-03-02 * "Transfer rent to HSBC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-03-03 * "Great" "Corso Italia Pasta Lunch"
+  Expense:Dining-Out:Lunch    88 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -88 HKD
+2020-03-03 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -20 HKD
+2020-03-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x3    -68.68 HKD
+2020-03-04 * "AIA International" "Insurance refund for prescriptions"
+  Expense:Medicine:Prescriptions    -196 HKD
+  Asset:Standard-Chartered:Priority-Banking    196 HKD
+2020-03-04 * "Oliver's" "Lunch"
+  Expense:Dining-Out:Lunch    88.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -88.2 HKD
+2020-03-04 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -20 HKD
+2020-03-05 * "American Express" "Annual fee"
+  Expense:Banking:Fees    1800 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -1800 HKD
+2020-03-05 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -20 HKD
+2020-03-05 * "American Express Statement" ""
+  Liability:American-Express:Cathay-Pacific-Elite    6065.7 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -6065.7 HKD
+2020-03-06 * "Oliver's" "Lunch"
+  Expense:Dining-Out:Lunch    93 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -93 HKD
+2020-03-07 * "Green Common" "Omni lunch delivery"
+  Expense:Food:Groceries    415.1 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -415.1 HKD
+2020-03-07 * "Sowergift Kitchen" "Dinner"
+  Expense:Dining-Out:Dinner    622 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x3    -622 HKD
+2020-03-07 * "Harbour City Bazaar" "Towels for Puji/Sharku"
+  Expense:Household    230 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x3    -230 HKD
+2020-03-07 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    57 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x3    -57 HKD
+2020-03-08 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    190 HKD
+  Asset:Wallet    -190 HKD
+2020-03-08 * "Park'n'Shop" "Chocolate"
+  Expense:Food:Junk    14 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -14 HKD
+2020-03-08 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    16 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -16 HKD
+2020-03-08 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x3    -250 HKD
+2020-03-08 * "Aeon" "Groceries"
+  Expense:Food:Groceries    35.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -35.2 HKD
+2020-03-09 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    264 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -264 HKD
+2020-03-09 * "Simply Life" "Lunch"
+  Expense:Dining-Out:Lunch    77 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -77 HKD
+2020-03-09 * "Pay SC Asia Miles February 2020" ""
+  Asset:Standard-Chartered:Priority-Banking    -7462.26 HKD
+  Payable:Standard-Chartered:Asia-Miles    7462.26 HKD
+2020-03-09 * "Vida Coffee Stand" "Caffe Latte & Americano"
+  Expense:Dining-Out:Drinks    76 HKD
+  Asset:Octopus0    -76 HKD
+2020-03-09 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -20 HKD
+2020-03-09 * "Pay HSBC USA Premier February 2020" ""
+  Asset:HSBC:USA:Checking    -684.02 USD
+  Payable:HSBC:USA:Premier-Credit-Card    684.02 USD
+2020-03-09 * "Pay HSBC HK Premier" ""
+  Asset:HSBC:HK:Joint:Savings    -5949.1 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    5949.1 HKD
+2020-03-10 * "AIA International" "Insurance refund for prescriptions"
+  Expense:Medicine:Prescriptions    -368 HKD
+  Asset:Standard-Chartered:Priority-Banking    368 HKD
+2020-03-10 * "Pay DBS for Joanne" ""
+  Payable:DBS:Black-Card    5156 HKD
+  Asset:Standard-Chartered:Priority-Banking    -5156 HKD
+2020-03-10 * "Great" "Turkey Lunch Set B"
+  Expense:Dining-Out:Lunch    65 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -65 HKD
+2020-03-10 * "Food le parc" "Breakfast"
+  Expense:Food:Breakfast    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -40 HKD
+2020-03-10 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-03-10 * "AUS Visa Services" "Joanne Australia entry"
+  Expense:Travel:Visa-Fees    13.28 USD
+  Liability:HSBC:USA:Premier-Credit-Card    -13.28 USD
+2020-03-10 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -32000 HKD
+  Expense:Bills:Rent    32000 HKD
+2020-03-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    2212.68 HKD
+  Payable:Standard-Chartered:Asia-Miles    -2212.68 HKD
+2020-03-11 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x4    -250 HKD
+2020-03-11 * "Park'n'Shop" "AJAX Anti-bac wipes"
+  Expense:Household    58.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -58.9 HKD
+2020-03-12 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    50 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -50 HKD
+2020-03-12 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Premier-Savings    0.08 GBP
+  Income:Interest    -0.08 GBP
+2020-03-13 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.07 USD
+  Income:Interest    -0.07 USD
+2020-03-13 * "HSBC USA CC Statement" ""
+  Liability:HSBC:USA:Premier-Credit-Card    1808.27 USD
+  Payable:HSBC:USA:Premier-Credit-Card    -1808.27 USD
+2020-03-13 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    100 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x4    -100 HKD
+2020-03-14 * "Panash" "Breakfast"
+  Expense:Food:Breakfast    21 HKD
+  Asset:Octopus0    -21 HKD
+2020-03-14 * "Spare-time Study Centre" "Intermediate Fencing Course"
+  Expense:Sporting-Activities:Fencing    720 HKD
+  Asset:Standard-Chartered:Priority-Banking    -720 HKD
+2020-03-14 * "McDonalds" "Test out the Chicken"
+  Expense:Dining-Out:Lunch    72 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x4    -72 HKD
+2020-03-14 * "Friendship Thai" "Beef lemonade"
+  Expense:Dining-Out:Dinner    128 HKD
+  Asset:Wallet    -128 HKD
+2020-03-15 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    145 HKD
+  Asset:Wallet    -145 HKD
+2020-03-15 * "Aeon" "Food"
+  Expense:Food:Groceries    62.3 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -62.3 HKD
+2020-03-15 * "Airbnb" "Refund for Shanti Gardens Retreat"
+  Expense:Travel:Accommodation    -80.35 USD
+  Liability:HSBC:USA:Premier-Credit-Card    80.35 USD
+2020-03-15 * "Airbnb" "Refund for Preachers Cottage"
+  Expense:Travel:Accommodation    -85.87 USD
+  Liability:HSBC:USA:Premier-Credit-Card    85.87 USD
+2020-03-15 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x4    -250 HKD
+2020-03-16 * "Food le parc" "Junk food"
+  Expense:Food:Junk    24.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -24.9 HKD
+2020-03-16 * "Five Guys" "Lunch"
+  Expense:Dining-Out:Lunch    120 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x4    -120 HKD
+2020-03-16 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    28 HKD
+  Asset:Octopus0    -28 HKD
+2020-03-17 * "Food le parc" "Chicken sandwich set"
+  Expense:Dining-Out:Lunch    90 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -90 HKD
+2020-03-17 * "Hong Kong Inland Revenue" "Joanne Tax"
+  Expense:Bills:Income-Tax    52089 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -52089 HKD
+2020-03-18 * "Agoda" "Refund for Exmouth Escape Resort"
+  Expense:Travel:Accommodation    -823.82 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    823.82 HKD
+2020-03-18 * "Food le parc" "Himawari Bento & cheese"
+  Expense:Dining-Out:Lunch    55.76 HKD
+  Expense:Food:Groceries    31.64 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -87.40 HKD
+2020-03-18 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -3521.48 HKD
+  Asset:HSBC:HK:Payme    3521.48 HKD
+2020-03-19 * "Lydia Tsang" "Joanne lunch"
+  Expense:Dining-Out:Lunch    100 HKD
+  Asset:HSBC:HK:Payme    -100 HKD
+2020-03-19 * "Simply Life" "Lunch"
+  Expense:Dining-Out:Lunch    77 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -77 HKD
+2020-03-19 * "Vincent Chau" "Personal Training at Sportifit x10"
+  Expense:Sporting-Activities:Gym    6000 HKD
+  Asset:HSBC:HK:Payme    -6000 HKD
+2020-03-19 * "Pay Amex March 2020" ""
+  Asset:Standard-Chartered:Current    -6065.7 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    6065.7 HKD
+2020-03-19 * "banchan & cook" "Dinner"
+  Expense:Dining-Out:Dinner    248.5 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x4    -248.5 HKD
+2020-03-19 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -100 HKD
+  Asset:HSBC:HK:Payme    100 HKD
+2020-03-19 * "Dental Service Centre" "Checkups"
+  Expense:Personal-Care:Dentist    2080 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -2080 HKD
+2020-03-20 * "Pacific Coffee" "Top up Perfect Cup Card"
+  Expense:Dining-Out:Drinks    200 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -200 HKD
+2020-03-20 * "Transfer to Current account" ""
+  Asset:Standard-Chartered:Priority-Banking    -15000 HKD
+  Asset:Standard-Chartered:Current    15000 HKD
+2020-03-20 * "Transfer to IB (post collateral)" ""
+  Asset:Standard-Chartered:Priority-Banking    -200000 HKD
+  Asset:IB:Cash    200000 HKD
+2020-03-20 * "Times Square Bazaar" "Replacement casual shoes"
+  Expense:Clothing    290 HKD
+  Asset:Wallet    -290 HKD
+2020-03-20 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x4    -250 HKD
+2020-03-20 * "Qantas" "Perth-Learmonth reschedule June 2020"
+  Expense:Travel:Airfare    52.88 USD
+  Liability:HSBC:USA:Premier-Credit-Card    -52.88 USD
+2020-03-21 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    36 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -36 HKD
+2020-03-21 * "Aeon" "Groceries"
+  Expense:Food:Groceries    34.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -34.4 HKD
+2020-03-22 * "Fishball Noodles" "Lunch"
+  Expense:Dining-Out:Lunch    76 HKD
+  Asset:Wallet    -76 HKD
+2020-03-22 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    203 HKD
+  Asset:Wallet    -203 HKD
+2020-03-22 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    59.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -59.9 HKD
+2020-03-22 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    18 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -18 HKD
+2020-03-22 * "Nam Kee" "Chicken takeout"
+  Expense:Dining-Out:Dinner    108 HKD
+  Asset:Wallet    -108 HKD
+2020-03-23 * "Bank of America" "Salary"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Income:RSU-Dividend    -650.69 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Asset:Standard-Chartered:Priority-Banking    173317.36 HKD
+2020-03-25 * "Aeon" "Groceries"
+  Expense:Food:Groceries    349.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -349.8 HKD
+2020-03-25 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    46 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -46 HKD
+2020-03-25 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x4    -250 HKD
+2020-03-28 * "Hangry Baby" ""
+  Expense:Dining-Out:Dinner    66 HKD
+  Asset:Wallet    -66 HKD
+2020-03-28 * "Thai Vegetarian Food" "Pomelo salad"
+  Expense:Dining-Out:Dinner    70 HKD
+  Asset:Wallet    -70 HKD
+2020-03-28 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    19 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -19 HKD
+2020-03-28 * "Aeon" "Groceries"
+  Expense:Food:Groceries    22 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -22 HKD
+2020-03-28 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.14 HKD
+  Asset:HSBC:HK:Sole:Savings    0.24 HKD
+  Income:Interest    -0.38 HKD
+2020-03-28 * "Q Dry Cleaning" "Dry cleaning"
+  Expense:Dry-Cleaning    63 HKD
+  Asset:Wallet    -63 HKD
+2020-03-29 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    185 HKD
+  Asset:Wallet    -185 HKD
+2020-03-29 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    24 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -24 HKD
+2020-03-29 * "Wellcome" "Groceries"
+  Expense:Food:Groceries    54.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -54.8 HKD
+2020-03-30 * "Nespresso" "Coffee Capsules"
+  Expense:Food:Groceries:Coffee    504 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -504 HKD
+2020-03-30 * "CLP Power" "Bills"
+  Asset:Standard-Chartered:Priority-Banking    -367 HKD
+  Expense:Bills:Electric    367 HKD
+2020-03-30 * "Transfer rent to HSBC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-03-30 * "Fund Friends Provident" ""
+  Asset:HSBC:UK:Premier-Banking    -3000 GBP
+  Asset:Barclays-Bank:Investment-Funding    3000 GBP
+2020-03-31 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    1336.75 HKD
+  Income:Interest    -1336.75 HKD
+2020-03-31 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    0.14 GBP
+  Income:Interest    -0.14 GBP
+2020-03-31 * "Standard Chartered" "Debit Interest"
+  Asset:Standard-Chartered:Current    -0.17 HKD
+  Expense:Interest    0.17 HKD
+2020-03-31 * "Q Dry Cleaning" "Dry cleaning"
+  Expense:Dry-Cleaning    42 HKD
+  Asset:Wallet    -42 HKD
+2020-04-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.52 GBP
+  Income:Interest    -0.52 GBP
+2020-04-01 * "Q Dry Cleaning" "Dry cleaning (suits etc)"
+  Expense:Dry-Cleaning    227.5 HKD
+  Asset:Wallet    -227.5 HKD
+2020-04-01 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    44 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -44 HKD
+2020-04-01 * "Aeon" "Groceries"
+  Expense:Food:Groceries    131 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -131 HKD
+2020-04-01 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -40 HKD
+2020-04-01 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x4    -250 HKD
+2020-04-02 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    15 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -15 HKD
+2020-04-02 * "Wellcome" "Groceries"
+  Expense:Food:Groceries    57.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -57.8 HKD
+2020-04-03 * "Outback Oasis" "Refund for Outback Oasis (1)"
+  Expense:Travel:Accommodation    -39.49 USD
+  Liability:HSBC:USA:Premier-Credit-Card    39.49 USD
+2020-04-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x4    -68.68 HKD
+2020-04-05 * "American Express Statement" ""
+  Liability:American-Express:Cathay-Pacific-Elite    2398.68 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -2398.68 HKD
+2020-04-05 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    198 HKD
+  Asset:Wallet    -198 HKD
+2020-04-05 * "Aeon" "Groceries"
+  Expense:Food:Groceries    155 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -155 HKD
+2020-04-05 * "Wellcome" "Groceries"
+  Expense:Food:Groceries    16 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -16 HKD
+2020-04-05 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x4    -250 HKD
+2020-04-05 * "Chiu Fat Dispensary" "Household"
+  Expense:Personal-Care    23 HKD
+  Expense:Household    78 HKD
+  Asset:Octopus0    -101 HKD
+2020-04-05 * "Panash" "Breakfast"
+  Expense:Food:Groceries    54 HKD
+  Asset:Octopus0    -54 HKD
+2020-04-06 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    264 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -264 HKD
+2020-04-06 * "Pay SC Asia Miles March 2020" ""
+  Asset:Standard-Chartered:Priority-Banking    -2212.68 HKD
+  Payable:Standard-Chartered:Asia-Miles    2212.68 HKD
+2020-04-07 * "Ikea" "Lunch (Scallops, pork knuckle)"
+  Expense:Dining-Out:Lunch    112 HKD
+  Liability:DBS:Black-Card    -112 HKD
+2020-04-07 * "Pay HSBC HK Premier" ""
+  Asset:HSBC:HK:Joint:Savings    -559.4 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    559.4 HKD
+2020-04-08 * "Saigon Pho" "Lunch set x2"
+  Expense:Dining-Out:Lunch    103 HKD
+  Asset:Wallet    -103 HKD
+2020-04-08 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    18 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -18 HKD
+2020-04-08 * "Aeon" "Groceries"
+  Expense:Food:Groceries    103.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -103.9 HKD
+2020-04-08 * "Pay HSBC USA Premier March 2020" ""
+  Asset:HSBC:USA:Checking    -1655.44 USD
+  Liability:HSBC:USA:Premier-Credit-Card    -152.83 USD
+  Payable:HSBC:USA:Premier-Credit-Card    1808.27 USD
+2020-04-09 * "Aeon" "Groceries"
+  Expense:Food:Groceries    274.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -274.8 HKD
+2020-04-09 * "Hong Kong Water" "Bills"
+  Asset:Standard-Chartered:Priority-Banking    -570.3 HKD
+  Expense:Bills:Water    570.3 HKD
+2020-04-09 * "Pay DBS for Joanne" ""
+  Payable:DBS:Black-Card    10000 HKD
+  Asset:Standard-Chartered:Priority-Banking    -10000 HKD
+2020-04-10 * "Cafe & Meal Muji" "Afternoon Tea"
+  Expense:Dining-Out:Afternoon-Tea    136 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -136 HKD
+2020-04-10 * "Nespresso" "Barista Creations"
+  Expense:Food:Groceries:Coffee    231 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -231 HKD
+2020-04-10 * "Shake Shack" "Milk tea concrete"
+  Expense:Dining-Out:Dessert    42 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -42 HKD
+2020-04-10 * "Liu Liang San" "Dinner"
+  Expense:Dining-Out:Dinner    170 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -170 HKD
+2020-04-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    2109.18 HKD
+  Payable:Standard-Chartered:Asia-Miles    -2109.18 HKD
+2020-04-12 * "Aeon" "Groceries"
+  Expense:Food:Groceries    19.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -19.5 HKD
+2020-04-12 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Premier-Savings    0.08 GBP
+  Income:Interest    -0.08 GBP
+2020-04-13 * "18g" "Coffee Beans"
+  Expense:Food:Groceries:Coffee    158 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x4    -158 HKD
+2020-04-13 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.07 USD
+  Income:Interest    -0.07 USD
+2020-04-14 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -32000 HKD
+  Expense:Bills:Rent    32000 HKD
+2020-04-14 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-04-14 * "Stella Pascoe" "International Driving Permit (obo)"
+  Asset:Barclays-Bank:Current-Account    -12.8 GBP
+  Expense:Car-Hire    12.8 GBP
+2020-04-15 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    46 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -46 HKD
+2020-04-15 * "Aeon" "Groceries"
+  Expense:Food:Groceries    259.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -259.5 HKD
+2020-04-15 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x5    -250 HKD
+2020-04-16 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -40 HKD
+2020-04-19 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    146 HKD
+  Asset:Wallet    -146 HKD
+2020-04-19 * "Teawood" "Afternoon tea set"
+  Expense:Dining-Out:Afternoon-Tea    138 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -138 HKD
+2020-04-19 * "Tseun Shing" "BBQ Pork takeout"
+  Expense:Dining-Out:Dinner    55 HKD
+  Asset:Wallet    -55 HKD
+2020-04-19 * "Kai Tak Noodles" "Tomato dried noodles"
+  Expense:Food:Groceries    30 HKD
+  Asset:Wallet    -30 HKD
+2020-04-19 * "Aeon" "Groceries"
+  Expense:Food:Groceries    236.1 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -236.1 HKD
+2020-04-19 * "Panash" "Breakfast"
+  Expense:Food:Groceries    39 HKD
+  Asset:Octopus0    -39 HKD
+2020-04-19 * "Starwars TOR" "6month game Subscription"
+  Expense:Bills:Subscriptions:Games    615.97 HKD
+  Liability:Standard-Chartered:Asia-Miles    -615.97 HKD
+2020-04-22 * "Marugame Seimen" "Afternoon Tea"
+  Expense:Dining-Out:Afternoon-Tea    104 HKD
+  Asset:Octopus0    -104 HKD
+2020-04-23 * "Bank of America" "Salary"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Asset:Standard-Chartered:Priority-Banking    172666.67 HKD
+2020-04-25 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Breakfast    16 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -16 HKD
+2020-04-25 * "Aeon" "Groceries"
+  Expense:Food:Groceries    83.3 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -83.3 HKD
+2020-04-25 * "DCH Electrical" "Replacement filters for vacuum"
+  Expense:Household    190 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x5    -190 HKD
+2020-04-25 * "Congeodle" "Lunch"
+  Expense:Dining-Out:Lunch    233 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x5    -233 HKD
+2020-04-26 * "Kai Tak Noodles" "Spinach dried noodles"
+  Expense:Food:Groceries    28 HKD
+  Asset:Wallet    -28 HKD
+2020-04-26 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    200 HKD
+  Asset:Wallet    -200 HKD
+2020-04-26 * "Pokka Cafe" "Afternoon Tea"
+  Expense:Dining-Out:Afternoon-Tea    180.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -180.4 HKD
+2020-04-26 * "Panash" "Breakfast"
+  Expense:Food:Groceries    41 HKD
+  Asset:Octopus0    -41 HKD
+2020-04-26 * "Aeon" "Groceries"
+  Expense:Food:Groceries    57.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -57.8 HKD
+2020-04-28 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.14 HKD
+  Asset:HSBC:HK:Sole:Savings    0.26 HKD
+  Income:Interest    -0.40 HKD
+2020-04-28 * "Transfer rent to HSBC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-04-29 * "Hong Kong & China Gas" "Gas Bill"
+  Expense:Bills:Gas    442 HKD
+  Asset:Standard-Chartered:Priority-Banking    -442 HKD
+2020-04-30 * "Knockbox Coffee" "Nicaragua coffee beans"
+  Expense:Food:Groceries:Coffee    188 HKD
+  Asset:Wallet    -188 HKD
+2020-04-30 * "Halfway Coffee" "Coffee and cake x2"
+  Expense:Dining-Out:Afternoon-Tea    160 HKD
+  Asset:Wallet    -160 HKD
+2020-04-30 * "Kowloon City Beef Brisket" "Dinner"
+  Expense:Dining-Out:Dinner    110 HKD
+  Asset:Wallet    -110 HKD
+2020-04-30 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    44 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -44 HKD
+2020-04-30 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    0.13 GBP
+  Asset:Standard-Chartered:Priority-Banking    1278.77 HKD
+  Income:Interest    -0.13 GBP
+  Income:Interest    -1278.77 HKD
+2020-04-30 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x5    -250 HKD
+2020-05-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.51 GBP
+  Income:Interest    -0.51 GBP
+2020-05-01 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    16 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -16 HKD
+2020-05-01 * "Aeon" "Groceries"
+  Expense:Food:Groceries    44.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -44.9 HKD
+2020-05-01 * "Aeon" "Meyer 28-cm Skillet"
+  Expense:Household    199 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -199 HKD
+2020-05-02 * "Beans" "Afternoon Tea"
+  Expense:Dining-Out:Afternoon-Tea    220 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -220 HKD
+2020-05-02 * "Hangry Baby" ""
+  Expense:Dining-Out:Dinner    124 HKD
+  Asset:Wallet    -124 HKD
+2020-05-03 * "Rings Coffee" "Lunch"
+  Expense:Dining-Out:Lunch    154 HKD
+  Asset:Wallet    -154 HKD
+2020-05-03 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    168 HKD
+  Asset:Wallet    -168 HKD
+2020-05-03 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    32 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -32 HKD
+2020-05-03 * "Aeon" "Groceries"
+  Expense:Food:Groceries    30.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -30.2 HKD
+2020-05-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x5    -68.68 HKD
+2020-05-04 * "Financial Times" "Yearly Subscription"
+  Expense:Bills:Subscriptions:News    1918.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x5    -1918.5 HKD
+2020-05-04 * "Pay Amex April 2020" ""
+  Asset:HSBC:HK:Joint:Current    -2398.68 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    2398.68 HKD
+2020-05-05 * "American Express Statement" ""
+  Liability:American-Express:Cathay-Pacific-Elite    5149.9 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -5149.9 HKD
+2020-05-06 * "Thai Palace" "Lunch sets A, M"
+  Expense:Dining-Out:Lunch    90 HKD
+  Asset:Wallet    -90 HKD
+2020-05-06 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    38 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -38 HKD
+2020-05-06 * "Aeon" "Groceries"
+  Expense:Food:Groceries    312.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -312.8 HKD
+2020-05-07 * "Pay SC Asia Miles April 2020" ""
+  Payable:Standard-Chartered:Asia-Miles    2109.18 HKD
+  Asset:Standard-Chartered:Priority-Banking    -2109.18 HKD
+2020-05-08 * "Mee Heung Cheun Tea Co." "Chinese Tea"
+  Expense:Food:Groceries:Tea    160 HKD
+  Asset:Wallet    -160 HKD
+2020-05-08 * "Check Check Cin" "Drinks"
+  Expense:Dining-Out:Drinks    38 HKD
+  Liability:DBS:Black-Card    -38 HKD
+2020-05-08 * "MJ Health Screening" "Joanne Health Checkup"
+  Expense:Dining-Out:Drinks    3100 HKD
+  Liability:DBS:Black-Card    -3100 HKD
+2020-05-08 * "Wing On" "3M disinfecting wipes pack (tub x3)"
+  Expense:Household    95 HKD
+  Liability:DBS:Black-Card    -95 HKD
+2020-05-08 * "Aeon" "Groceries"
+  Expense:Food:Groceries    36.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -36.8 HKD
+2020-05-08 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    18 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -18 HKD
+2020-05-08 * "Pay HSBC HK Premier" ""
+  Asset:HSBC:HK:Joint:Savings    -54234.8 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    54234.8 HKD
+2020-05-09 * "Spare-time Study Centre" "Intermediate Fencing Course (refund)"
+  Expense:Sporting-Activities:Fencing    -720 HKD
+  Asset:Wallet    720 HKD
+2020-05-09 * "Aeon" "Groceries"
+  Expense:Food:Groceries    167.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -167.5 HKD
+2020-05-09 * "Spare-time Study Centre" "Intermediate Fencing Course (refund)"
+  Expense:Sporting-Activities:Fencing    -720 HKD
+  Asset:Wallet    720 HKD
+2020-05-09 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    210 HKD
+  Asset:Wallet    -210 HKD
+2020-05-09 * "Castella Cake" "Cake"
+  Expense:Food:Dessert    65 HKD
+  Asset:Wallet    -65 HKD
+2020-05-10 * "Aeon" "Groceries"
+  Expense:Food:Groceries    52 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -52 HKD
+2020-05-10 * "Sogo" "Japanese rice supply (24kg)"
+  Expense:Food:Groceries    879.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -879.2 HKD
+2020-05-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    1607.65 HKD
+  Payable:Standard-Chartered:Asia-Miles    -1607.65 HKD
+2020-05-10 * "Studio Caffeine" "Lunch at Second Sip"
+  Expense:Dining-Out:Lunch    294 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -294 HKD
+2020-05-10 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -250 HKD
+2020-05-10 * "Octopus reload" ""
+  Asset:Octopus1    500 HKD
+  Asset:Wallet    -500 HKD
+2020-05-11 * "Times Square Bazaar" ""
+  Expense:Clothing    240 HKD
+  Asset:Wallet    -240 HKD
+2020-05-11 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    264 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -264 HKD
+2020-05-11 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -32000 HKD
+  Expense:Bills:Rent    32000 HKD
+2020-05-11 * "Pay DBS for Joanne" ""
+  Payable:DBS:Black-Card    30059.8 HKD
+  Asset:Standard-Chartered:Priority-Banking    -30059.8 HKD
+2020-05-11 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-05-12 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    15 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -15 HKD
+2020-05-12 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Premier-Savings    0.08 GBP
+  Income:Interest    -0.08 GBP
+2020-05-13 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.06 USD
+  Income:Interest    -0.06 USD
+2020-05-13 * "American Express" "Refund Annual fee"
+  Expense:Banking:Fees    -1800 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    1800 HKD
+2020-05-14 * "Cathay Pacific" "Hong Kong - Sydney"
+  Expense:Travel:Airfare    1930 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -1930 HKD
+2020-05-15 * "Ten Ren's Tea" "Post hike bubble tea"
+  Expense:Dining-Out:Drinks    64 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -64 HKD
+2020-05-15 * "banchan & cook" "Dinner"
+  Expense:Dining-Out:Dinner    226.5 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -226.5 HKD
+2020-05-15 * "Qantas" "Sydney - Santiago - Punta Arenas"
+  Expense:Travel:Airfare    10208.67 USD
+  Liability:HSBC:USA:Premier-Credit-Card    -10208.67 USD
+2020-05-15 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -250 HKD
+2020-05-16 * "King of Soyabeans" "Afternoon Tea"
+  Expense:Dining-Out:Afternoon-Tea    76 HKD
+  Asset:Octopus0    -76 HKD
+2020-05-16 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    180 HKD
+  Asset:Wallet    -180 HKD
+2020-05-16 * "Aeon" "Groceries"
+  Expense:Food:Groceries    80.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -80.4 HKD
+2020-05-17 * "Sister Wah Beef Brisket" "Lunch"
+  Expense:Dining-Out:Lunch    142 HKD
+  Asset:Wallet    -142 HKD
+2020-05-17 * "Ten Ren's Tea" "Tea"
+  Expense:Dining-Out:Drinks    47 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -47 HKD
+2020-05-17 * "Marco Shek" "Fencing"
+  Expense:Sporting-Activities:Fencing    67 HKD
+  Asset:HSBC:HK:Payme    -67 HKD
+2020-05-18 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -67 HKD
+  Asset:HSBC:HK:Payme    67 HKD
+2020-05-20 * "Hiyori House" "Lunch x2"
+  Expense:Dining-Out:Lunch    94 HKD
+  Asset:Wallet    -94 HKD
+2020-05-20 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    43 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -43 HKD
+2020-05-20 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -250 HKD
+2020-05-21 * "Bank of America" "Salary"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Income:Group-Award    -39.17 HKD
+  Asset:Standard-Chartered:Priority-Banking    172705.84 HKD
+2020-05-21 * "Transfer from IB" ""
+  Asset:IB:Cash    -6000 USD
+  Asset:HSBC:USA:Checking    6000 USD
+2020-05-21 * "HSBC USA" "Reward points to Travel Credit"
+  Liability:HSBC:USA:Premier-Credit-Card    400 USD
+  Income:HSBC:USA:Travel-Rewards-Credit    -400 USD
+2020-05-22 * "A-1 Bakery" "Breakfast and snacks"
+  Expense:Food:Groceries    83 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -83 HKD
+2020-05-22 * "Pause It" "Coffee"
+  Expense:Dining-Out:Drinks    42 HKD
+  Asset:Octopus0    -42 HKD
+2020-05-23 * "Knockbox Coffee Co" "Afternoon Tea and Coffee beans"
+  Expense:Dining-Out:Afternoon-Tea    173 HKD
+  Expense:Food:Groceries:Coffee    135 HKD
+  Liability:Standard-Chartered:Asia-Miles    -308 HKD
+2020-05-23 * "Wing On" "New Kettle"
+  Expense:Household    378.1 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -378.1 HKD
+2020-05-23 * "Jimmy's Kitchen" "Last dinner call"
+  Expense:Dining-Out:Dinner    2345 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -2345 HKD
+2020-05-23 * "Kakure" "Happy Hour drinks"
+  Expense:Dining-Out:Drinks    198 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -198 HKD
+2020-05-23 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    180 HKD
+  Asset:Wallet    -180 HKD
+2020-05-24 * "Citysuper" "Breakfast"
+  Expense:Food:Groceries    27 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -27 HKD
+2020-05-24 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    28.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -28.5 HKD
+2020-05-24 * "Cloud Nine" "Lunch"
+  Expense:Dining-Out:Lunch    217 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -217 HKD
+2020-05-24 * "Check Check Cin" "BOGOF"
+  Expense:Dining-Out:Drinks    28 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -28 HKD
+2020-05-24 * "Nichigyu" "Dinner"
+  Expense:Dining-Out:Dinner    413.6 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -413.6 HKD
+2020-05-25 * "Knockbox Coffee" "Flat White"
+  Expense:Dining-Out:Drinks    40 HKD
+  Asset:Wallet    -40 HKD
+2020-05-25 * "Lassana at Port 33" "Lunch for JP"
+  Expense:Dining-Out:Lunch    42 HKD
+  Asset:Octopus0    -42 HKD
+2020-05-25 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -250 HKD
+2020-05-27 * "Health Bricks Medical" "Ear medicine"
+  Expense:Medicine:Prescriptions    180 HKD
+  Asset:Wallet    -180 HKD
+2020-05-27 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    42 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -42 HKD
+2020-05-27 * "Aeon" "Groceries"
+  Expense:Food:Groceries    252.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -252.8 HKD
+2020-05-28 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.11 HKD
+  Asset:HSBC:HK:Sole:Savings    0.25 HKD
+  Income:Interest    -0.36 HKD
+2020-05-28 * "MSIG" "Refund of insurance for Australia Trip"
+  Expense:Travel:Insurance    -464.48 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    464.48 HKD
+2020-05-29 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    148.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -148.4 HKD
+2020-05-29 * "Aeon" "Groceries"
+  Expense:Food:Groceries    24.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -24.2 HKD
+2020-05-29 * "Meka" "Shower Gel"
+  Expense:Household    464.4 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -464.4 HKD
+2020-05-29 * "Yata" "Fish etc"
+  Expense:Food:Groceries    325 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -325 HKD
+2020-05-29 * "Transfer rent from SC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-05-29 * "Oliver's" "Groceries"
+  Expense:Food:Groceries    94.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -94.5 HKD
+2020-05-29 * "CLP Power" "Bills"
+  Asset:Standard-Chartered:Priority-Banking    -548 HKD
+  Expense:Bills:Electric    548 HKD
+2020-05-29 * "Hiyori House" "Lunch x2"
+  Expense:Dining-Out:Lunch    106 HKD
+  Asset:Wallet    -106 HKD
+2020-05-30 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    130 HKD
+  Asset:Wallet    -130 HKD
+2020-05-30 * "Nespresso" "Reviving Origins Uganda"
+  Expense:Food:Groceries:Coffee    201 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -201 HKD
+2020-05-30 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    100 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -100 HKD
+2020-05-30 * "Donq" "Breakfast"
+  Expense:Food:Groceries    30.6 HKD
+  Liability:DBS:Black-Card    -30.6 HKD
+2020-05-31 * "Sheep and Pig" "Lunch"
+  Expense:Dining-Out:Lunch    138 HKD
+  Asset:Wallet    -138 HKD
+2020-05-31 * "Fishball Noodles" "Lunch"
+  Expense:Dining-Out:Lunch    38 HKD
+  Asset:Wallet    -38 HKD
+2020-05-31 * "Sogo" "Breakfast"
+  Expense:Food:Groceries    72 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -72 HKD
+2020-05-31 * "Ten Ren's Tea" "Drinks"
+  Expense:Dining-Out:Drinks    50 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -50 HKD
+2020-05-31 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -67 HKD
+  Asset:HSBC:HK:Payme    67 HKD
+2020-05-31 * "McDonalds" "Dinner"
+  Expense:Dining-Out:Dinner    49 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -49 HKD
+2020-05-31 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    1428.02 HKD
+  Income:Interest    -1428.02 HKD
+2020-05-31 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    0.14 GBP
+  Income:Interest    -0.14 GBP
+2020-05-31 * "Marco Shek" "Fencing"
+  Expense:Sporting-Activities:Fencing    67 HKD
+  Asset:HSBC:HK:Payme    -67 HKD
+2020-06-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.52 GBP
+  Income:Interest    -0.52 GBP
+2020-06-01 * "Pay Amex May 2020" ""
+  Asset:HSBC:HK:Joint:Current    -5149.9 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    5149.9 HKD
+2020-06-01 * "Transfer to IB (post collateral)" ""
+  Asset:Standard-Chartered:Priority-Banking    -200000 HKD
+  Asset:IB:Cash    200000 HKD
+2020-06-03 * "Saigon Pho" "Lunch x2"
+  Expense:Dining-Out:Lunch    140 HKD
+  Asset:Wallet    -140 HKD
+2020-06-03 * "Yata" "Groceries, or Ten Ren"
+  Expense:Food:Groceries    37.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -37.8 HKD
+2020-06-03 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -250 HKD
+2020-06-03 * "Yata" "Japanese Milk (24L)"
+  Expense:Food:Groceries    523.2 HKD
+  Expense:Food:Groceries    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -543.2 HKD
+2020-06-03 * "7-Eleven" "Snacks"
+  Expense:Dining-Out:Other    30 HKD
+  Asset:Octopus0    -30 HKD
+2020-06-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -68.68 HKD
+2020-06-04 * "Cathay Pacific" "Refund for Hong Kong - Perth"
+  Expense:Travel:Airfare    -3892 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    3892 HKD
+2020-06-04 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    244 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x6    -244 HKD
+2020-06-05 * "American Express Statement" ""
+  Liability:American-Express:Cathay-Pacific-Elite    6728 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -6728 HKD
+2020-06-05 * "Blue Origin" "FORGOTTEN"
+  Asset:HSBC:HK:Joint:Savings    -580 HKD
+  Expense:TO-FOLLOW-UP    580 HKD
+2020-06-05 * "Alternative" "Breakfast"
+  Expense:Dining-Out:Breakfast    52 HKD
+  Asset:Octopus0    -52 HKD
+2020-06-05 * "Big Grains" "Breakfast"
+  Expense:Food:Groceries    97 HKD
+  Asset:Octopus0    -97 HKD
+2020-06-06 * "Health Bricks Medical" "Ear medicine"
+  Expense:Medicine:Prescriptions    280 HKD
+  Asset:Wallet    -280 HKD
+2020-06-06 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    100 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x6    -100 HKD
+2020-06-06 * "Pay SC Asia Miles May 2020" ""
+  Payable:Standard-Chartered:Asia-Miles    1607.65 HKD
+  Asset:Standard-Chartered:Priority-Banking    -1607.65 HKD
+2020-06-06 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    150 HKD
+  Asset:Wallet    -150 HKD
+2020-06-07 * "Cafe & Meal Muji" "Lunch"
+  Expense:Dining-Out:Lunch    196 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -196 HKD
+2020-06-07 * "Donq" "Breakfast"
+  Expense:Food:Groceries    38.7 HKD
+  Liability:DBS:Black-Card    -38.7 HKD
+2020-06-08 * "Pay HSBC HK Premier" ""
+  Asset:HSBC:HK:Joint:Savings    -3110 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    3110 HKD
+2020-06-08 * "NOT Coffee" "Iced Cafe Latte"
+  Expense:Dining-Out:Drinks    32 HKD
+  Asset:Wallet    -32 HKD
+2020-06-09 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -500 HKD
+  Asset:HSBC:HK:Payme    500 HKD
+2020-06-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    3025.7 HKD
+  Payable:Standard-Chartered:Asia-Miles    -3025.7 HKD
+2020-06-10 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    56.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -56.8 HKD
+2020-06-10 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -40 HKD
+2020-06-10 * "Aeon" "Groceries"
+  Expense:Food:Groceries    247.8 HKD
+  Income:Credit-Card-Promotions    -20 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -247.8 HKD
+2020-06-10 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -31000 HKD
+  Expense:Bills:Rent    31000 HKD
+2020-06-10 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-06-10 * "Pay DBS for Joanne" ""
+  Payable:DBS:Black-Card    133 HKD
+  Asset:Standard-Chartered:Priority-Banking    -133 HKD
+2020-06-10 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -250 HKD
+2020-06-11 * "Hong Kong Government" "Anti-epidemic fund Securities Subsidy"
+  Asset:HSBC:HK:Sole:Savings    2000 HKD
+  Income:Government-Subsidy    -2000 HKD
+2020-06-12 * "La Creation" "Breakfast"
+  Expense:Food:Groceries    18.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -18.5 HKD
+2020-06-12 * "HSBC USA Premier Credit Statement Jun 2020" ""
+  Liability:HSBC:USA:Premier-Credit-Card    9808.67 USD
+  Payable:HSBC:USA:Premier-Credit-Card    -9808.67 USD
+2020-06-12 * "Courage Eighteen" "Afternoon Tea"
+  Expense:Dining-Out:Afternoon-Tea    145 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -145 HKD
+2020-06-12 * "Liu Liang San" "Dinner"
+  Expense:Dining-Out:Dinner    180 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -180 HKD
+2020-06-12 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Premier-Savings    0.08 GBP
+  Income:Interest    -0.08 GBP
+2020-06-13 * "Yata" "Groceries"
+  Expense:Food:Groceries    96 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -96 HKD
+2020-06-13 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    160 HKD
+  Asset:Wallet    -160 HKD
+2020-06-14 * "A-1" "Breakfast"
+  Expense:Food:Groceries    31 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -31 HKD
+2020-06-15 * "Mini Bangkok" "Tea sets"
+  Expense:Dining-Out:Afternoon-Tea    80 HKD
+  Asset:Wallet    -80 HKD
+2020-06-15 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.11 USD
+  Income:Interest    -0.11 USD
+2020-06-16 * "Hiyori House" "Lunch x2"
+  Expense:Dining-Out:Lunch    90 HKD
+  Asset:Wallet    -90 HKD
+2020-06-16 * "Hangry Baby" "Dinner"
+  Expense:Dining-Out:Dinner    157.2 HKD
+  Income:Coupons    -150 HKD
+  Liability:Standard-Chartered:Asia-Miles    -7.2 HKD
+2020-06-16 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    100 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -100 HKD
+2020-06-16 * "Watsons" "Anusoil OTC medicine"
+  Expense:Medicine:OTC    47.9 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -47.9 HKD
+2020-06-17 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    681.84 HKD
+  Income:Interest    -681.84 HKD
+2020-06-19 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -250 HKD
+2020-06-19 * "Yata" "Groceries or Ten Ren"
+  Expense:Food:Groceries    59 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -59 HKD
+2020-06-20 * "Saigon Pho" "Lunch set x2"
+  Expense:Dining-Out:Lunch    106 HKD
+  Asset:Wallet    -106 HKD
+2020-06-20 * "The Continental" "Pre-dinner drinks"
+  Expense:Dining-Out:Drinks    171 HKD
+  Liability:DBS:Black-Card    -171 HKD
+2020-06-20 * "Ye Shanghai" "Family Dinner"
+  Expense:Dining-Out:Dinner    1106 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -1106 HKD
+2020-06-20 * "Omotesando Coffee" "Cold Brew"
+  Expense:Dining-Out:Drinks    50 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -50 HKD
+2020-06-21 * "Spare-time Study Centre" "Intermediate Fencing Course & Yoga"
+  Expense:Sporting-Activities:Fencing    720 HKD
+  Expense:Sporting-Activities:Yoga    1422 HKD
+  Asset:Standard-Chartered:Priority-Banking    -2142 HKD
+2020-06-21 * "Black Sugar" "Lunch & Coffee Beans"
+  Expense:Dining-Out:Lunch    693 HKD
+  Expense:Food:Groceries:Coffee    1 HKD
+  Liability:Standard-Chartered:Asia-Miles    -694 HKD
+2020-06-21 * "Standard Chartered" "Annual Fee Debit"
+  Expense:Banking:Fees    2000 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -2000 HKD
+2020-06-21 * "Marco Shek" "Fencing"
+  Expense:Sporting-Activities:Fencing    67 HKD
+  Asset:HSBC:HK:Payme    -67 HKD
+2020-06-21 * "Triple O's" "Dinner"
+  Expense:Dining-Out:Dinner    88 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -88 HKD
+2020-06-22 * "Bank of America" "Salary"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Asset:Standard-Chartered:Priority-Banking    172666.67 HKD
+2020-06-23 * "A-1" "Breakfast"
+  Expense:Food:Groceries    42.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -42.5 HKD
+2020-06-23 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -250 HKD
+2020-06-25 * "Panash" "Breakfast"
+  Expense:Food:Groceries    44 HKD
+  Asset:Octopus0    -44 HKD
+2020-06-25 * "Yau Lei Fong" "Dinner"
+  Expense:Dining-Out:Lunch    138 HKD
+  Asset:Wallet    -138 HKD
+2020-06-25 * "Shalom" "Dessert"
+  Expense:Dining-Out:Dessert    78 HKD
+  Asset:Wallet    -78 HKD
+2020-06-25 * "TwentyOne-Eight" "Afternoon tea"
+  Expense:Dining-Out:Afternoon-Tea    105 HKD
+  Asset:Wallet    -105 HKD
+2020-06-26 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    58.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -58.9 HKD
+2020-06-26 * "Nutmad" "Lunch"
+  Expense:Dining-Out:Lunch    228 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -228 HKD
+2020-06-26 * "Nam Kee" "Dinner"
+  Expense:Dining-Out:Dinner    128 HKD
+  Asset:Wallet    -128 HKD
+2020-06-27 * "Aeon" "Groceries"
+  Expense:Food:Groceries    208 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -208 HKD
+2020-06-27 * "Aeon" "Groceries"
+  Expense:Food:Groceries    -33.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    33.5 HKD
+2020-06-27 * "Xia Mian Guan" "Afternoon tea"
+  Expense:Dining-Out:Afternoon-Tea    139 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -139 HKD
+2020-06-27 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.09 HKD
+  Asset:HSBC:HK:Sole:Savings    0.25 HKD
+  Income:Interest    -0.34 HKD
+2020-06-27 * "GAC Home" "Lunch"
+  Expense:Dining-Out:Lunch    256 HKD
+  Asset:Wallet    -256 HKD
+2020-06-28 * "Ten Ren's Tea" "Drinks"
+  Expense:Dining-Out:Drinks    61 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -61 HKD
+2020-06-28 * "Triple O's" "Dinner"
+  Expense:Dining-Out:Dinner    98 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -98 HKD
+2020-06-28 * "Qantas" "Perth - Learmonth Refund"
+  Expense:Travel:Airfare    -759.12 USD
+  Liability:HSBC:USA:Premier-Credit-Card    759.12 USD
+2020-06-28 * "Marco Shek" "Fencing"
+  Expense:Sporting-Activities:Fencing    67 HKD
+  Asset:HSBC:HK:Payme    -67 HKD
+2020-06-28 * "Donq" "Dinner (snack for JP)"
+  Expense:Food:Groceries    11 HKD
+  Asset:Octopus0    -11 HKD
+2020-06-29 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -250 HKD
+2020-06-29 * "Transfer Joanne money back from SC" ""
+  Asset:Standard-Chartered:Priority-Banking    -3000 GBP
+  Asset:HSBC:HK:Joint:Savings    3000 GBP
+2020-06-29 * "Transfer rent from SC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-06-30 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    100 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -100 HKD
+2020-06-30 * "Pay Amex June 2020" ""
+  Asset:HSBC:HK:Joint:Current    -6728 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    6728 HKD
+2020-06-30 * "Oliver's" "Groceries"
+  Expense:Food:Groceries    157.7 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -157.7 HKD
+2020-06-30 * "The Upper House" "June Staycation"
+  Expense:Travel:Accommodation    3850 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -3850 HKD
+2020-06-30 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    79.58 HKD
+  Income:Interest    -79.58 HKD
+2020-06-30 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    0.01 GBP
+  Income:Interest    -0.01 GBP
+2020-06-30 * "Hong Kong & China Gas" "Gas Bill"
+  Expense:Bills:Gas    345 HKD
+  Asset:Standard-Chartered:Priority-Banking    -345 HKD
+2020-06-30 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -250 HKD
+2020-06-30 * "A-1 Bakery" "Groceries"
+  Expense:Food:Groceries    24 HKD
+  Asset:Octopus0    -24 HKD
+2020-07-01 * "Fishball Noodles" "Lunch"
+  Expense:Dining-Out:Lunch    76 HKD
+  Asset:Wallet    -76 HKD
+2020-07-01 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    28 HKD
+  Asset:Wallet    -28 HKD
+2020-07-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.3 GBP
+  Income:Interest    -0.3 GBP
+2020-07-01 * "McDonalds" "Mango Ice Cream"
+  Expense:Dining-Out:Dessert    10 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -10 HKD
+2020-07-01 * "Transfer from IB (for Joanne HK HSBC Wealthplan)" ""
+  Asset:IB:Cash    -60000 USD
+  Asset:HSBC:USA:Checking    60000 USD
+2020-07-01 * "Fund Friends Provident" ""
+  Asset:HSBC:UK:Premier-Banking    -2000 GBP
+  Asset:Barclays-Bank:Investment-Funding    2000 GBP
+2020-07-01 * "Aeon" "Groceries"
+  Expense:Food:Groceries    433.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -433.2 HKD
+2020-07-01 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    200 HKD
+  Asset:Wallet    -200 HKD
+2020-07-02 * "Transfer to HSBC HK (for Joanne HK HSBC Wealthplan)" ""
+  Asset:HSBC:USA:Checking    -54000 USD
+  Asset:HSBC:HK:Joint:Savings    54000 USD
+2020-07-02 * "Transfer to IB (post collateral)" ""
+  Asset:Standard-Chartered:Priority-Banking    -200000 HKD
+  Asset:IB:Cash    200000 HKD
+2020-07-03 * "Fund Wealthplan Year 1" ""
+  Asset:HSBC:HK:Joint:Savings    -54010.72 USD
+  Asset:HSBC:HK:Joanne:Investments:WGI-II:Cash    54010.72 USD
+2020-07-03 * "HSBC HK" "Wealth Goal Insurance Bonus"
+  Asset:HSBC:HK:Joanne:Investments:WGI-II:Cash    6000 USD
+  Income:Savings-Bonus-Incentives    -6000 USD
+2020-07-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -68.68 HKD
+2020-07-04 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    10 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -10 HKD
+2020-07-04 * "Q Dry Cleaning" "Silk purple dress"
+  Expense:Dry-Cleaning    65 HKD
+  Asset:Wallet    -65 HKD
+2020-07-04 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    165 HKD
+  Asset:Wallet    -165 HKD
+2020-07-04 * "Ikea" "Soft-serve Ice-cream"
+  Expense:Dining-Out:Snacks    9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -9 HKD
+2020-07-04 * "Muji" "Drinks"
+  Expense:Dining-Out:Drinks    20 HKD
+  Liability:DBS:Black-Card    -20 HKD
+2020-07-05 * "American Express Statement" ""
+  Liability:American-Express:Cathay-Pacific-Elite    3270.1 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -3270.1 HKD
+2020-07-05 * "Marco Shek" "Fencing"
+  Expense:Sporting-Activities:Fencing    67 HKD
+  Asset:HSBC:HK:Payme    -67 HKD
+2020-07-05 * "Jiu Wu Beef Noodles" "Lunch"
+  Expense:Dining-Out:Lunch    165 HKD
+  Income:Credit-Card-Promotions    -50 HKD
+  Liability:DBS:Black-Card    -88 HKD
+  Payable:DBS:Black-Card    25 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x7    -77 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    25 HKD
+2020-07-05 * "Donq" "Breakfast"
+  Expense:Food:Groceries    24.3 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -24.3 HKD
+2020-07-05 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x7    -250 HKD
+2020-07-05 * "Uniqlo" "Red bra dress"
+  Expense:Clothing    199 HKD
+  Liability:DBS:Black-Card    -199 HKD
+2020-07-06 * "Ella Chiu" "Drinks for Joanne"
+  Asset:HSBC:HK:Payme    -55 HKD
+  Expense:Dining-Out:Drinks    55 HKD
+2020-07-07 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    294 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -294 HKD
+2020-07-07 * "Pay SC Asia Miles June 2020" ""
+  Payable:Standard-Chartered:Asia-Miles    3025.7 HKD
+  Asset:Standard-Chartered:Priority-Banking    -3025.7 HKD
+2020-07-08 * "Pay HSBC USA Premier June 2020" ""
+  Asset:HSBC:USA:Checking    -9049.55 USD
+  Liability:HSBC:USA:Premier-Credit-Card    -759.12 USD
+  Payable:HSBC:USA:Premier-Credit-Card    9808.67 USD
+2020-07-08 * "Pay HSBC HK Premier" ""
+  Asset:HSBC:HK:Joint:Savings    -290.6 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    290.6 HKD
+2020-07-09 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    46 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -46 HKD
+2020-07-10 * "Aeon" "Groceries"
+  Expense:Food:Groceries    22.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -22.2 HKD
+2020-07-10 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -20 HKD
+2020-07-10 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -31000 HKD
+  Expense:Bills:Rent    31000 HKD
+2020-07-10 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-07-10 * "Pay DBS for Joanne" ""
+  Payable:DBS:Black-Card    69.3 HKD
+  Asset:Standard-Chartered:Priority-Banking    -69.3 HKD
+2020-07-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    5464.78 HKD
+  Payable:Standard-Chartered:Asia-Miles    -5464.78 HKD
+2020-07-11 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    160 HKD
+  Asset:Wallet    -160 HKD
+2020-07-11 * "Ten Ren's Tea" "Tea for 2"
+  Expense:Dining-Out:Drinks    44 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x8    -44 HKD
+2020-07-11 * "Chung" "Account for large red pocket income"
+  Asset:Wallet    4000 HKD
+  Income:Red-Pocket    -4000 HKD
+2020-07-11 * "Deposit excess red pocket" ""
+  Asset:Wallet    -4000 HKD
+  Asset:HSBC:HK:Joint:Savings    4000 HKD
+2020-07-12 * "Eight Treasures" "Lunch"
+  Expense:Dining-Out:Lunch    150 HKD
+  Asset:Wallet    -150 HKD
+2020-07-12 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    100 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -100 HKD
+2020-07-12 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x8    -250 HKD
+2020-07-12 * "18g" "Coffee Beans"
+  Expense:Food:Groceries:Coffee    168 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -168 HKD
+2020-07-12 * "Uniqlo" "Clothing"
+  Expense:Clothing    27 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -27 HKD
+2020-07-12 * "Family Store" "Bamboo Toilet roll"
+  Expense:Household    28 HKD
+  Asset:Octopus0    -28 HKD
+2020-07-12 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Premier-Savings    0.02 GBP
+  Income:Interest    -0.02 GBP
+2020-07-13 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.11 USD
+  Income:Interest    -0.11 USD
+2020-07-15 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    42 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -42 HKD
+2020-07-15 * "Aeon" "Groceries"
+  Expense:Food:Groceries    264.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -264.9 HKD
+2020-07-15 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    24 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -24 HKD
+2020-07-17 * "Transfer for paying Amex" ""
+  Asset:HSBC:HK:Joint:Savings    -4000 HKD
+  Asset:HSBC:HK:Joint:Current    4000 HKD
+2020-07-17 * "McDonalds" "McDonalds Double Mango sundae"
+  Expense:Dining-Out:Snacks    5 HKD
+  Asset:Wallet    -5 HKD
+2020-07-17 * "Hong Kong Inland Revenue" "Pay Tax"
+  Expense:Bills:Income-Tax    77116 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x8    -77116 HKD
+2020-07-17 * "Korea Hanyinhong" "Typhoon Chicken"
+  Expense:Food:Groceries    65 HKD
+  Asset:Octopus0    -65 HKD
+2020-07-18 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    70 HKD
+  Asset:Wallet    -70 HKD
+2020-07-18 * "Aeon" "Groceries"
+  Expense:Food:Groceries    48.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -48.9 HKD
+2020-07-18 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x8    -250 HKD
+2020-07-18 * "P&J Foods" "Pork Mince Pack"
+  Expense:Food:Groceries    51.9 HKD
+  Income:Rebates    -25 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -26.9 HKD
+2020-07-19 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    62 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -62 HKD
+2020-07-19 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    50 HKD
+  Asset:Wallet    -50 HKD
+2020-07-19 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    160 HKD
+  Asset:Wallet    -160 HKD
+2020-07-19 * "Chiu Fat Dispensary" "Kao Bleach 1.5L"
+  Expense:Household    14 HKD
+  Asset:Octopus0    -14 HKD
+2020-07-19 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    56.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -56.5 HKD
+2020-07-22 * "Bank of America" "Salary"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Asset:Standard-Chartered:Priority-Banking    172666.67 HKD
+2020-07-24 * "Nespresso" "Barista Ice & Others (Syrups/glasses as gift)"
+  Expense:Food:Groceries:Coffee    965 HKD
+  Asset:Coupons:Nespresso    -50 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -915 HKD
+2020-07-24 * "Mee Heung Cheun Tea Co." "Chinese Tea"
+  Expense:Food:Groceries:Tea    160 HKD
+  Asset:Wallet    -160 HKD
+2020-07-24 * "Oliver's" "Groceries"
+  Expense:Food:Groceries    166.3 HKD
+  Expense:Food:Groceries    468 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -634.3 HKD
+2020-07-24 * "Food le parc" "Lunch and Breakfast"
+  Expense:Food:Groceries    20 HKD
+  Expense:Dining-Out:Lunch    116 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -136 HKD
+2020-07-26 * "Watson's" "Liners with coupon"
+  Expense:Personal-Care    6.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -6.9 HKD
+2020-07-26 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    200 HKD
+  Asset:Wallet    -200 HKD
+2020-07-26 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -40 HKD
+2020-07-26 * "Aeon" "Groceries"
+  Expense:Food:Groceries    23 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -23 HKD
+2020-07-26 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    35.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -35.9 HKD
+2020-07-26 * "Tseun Shing" "Char Siu takeout"
+  Expense:Dining-Out:Dinner    55 HKD
+  Asset:Wallet    -55 HKD
+2020-07-27 * "CLP Power" "Bills"
+  Asset:Standard-Chartered:Priority-Banking    -501 HKD
+  Expense:Bills:Electric    501 HKD
+2020-07-28 * "Aeon" "Groceries"
+  Expense:Food:Groceries    306.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -306.8 HKD
+2020-07-28 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.09 HKD
+  Asset:HSBC:HK:Sole:Savings    0.26 HKD
+  Income:Interest    -0.35 HKD
+2020-07-28 * "Transfer rent to HSBC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-07-29 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    38 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -38 HKD
+2020-07-30 * "Pay Amex July 2020" ""
+  Asset:HSBC:HK:Joint:Current    -3270.1 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    3270.1 HKD
+2020-07-31 * "Black Sugar" "Coffee Beans"
+  Expense:Food:Groceries:Coffee    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x8    -250 HKD
+2020-07-31 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    6.38 HKD
+  Income:Interest    -6.38 HKD
+2020-07-31 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    0.01 GBP
+  Income:Interest    -0.01 GBP
+2020-07-31 * "Cova" "Dome Mango Cake"
+  Expense:Food:Dessert    238 HKD
+  Asset:Coupons:Harbour-City    -100 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -138 HKD
+2020-08-01 * "Blackpaper (TV Most Mall)" "Cantonese.jpg 101 and 102"
+  Asset:Standard-Chartered:Current    -156.8 HKD
+  Expense:Education:Languages:Books    156.8 HKD
+2020-08-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.06 GBP
+  Income:Interest    -0.06 GBP
+2020-08-02 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    36 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -36 HKD
+2020-08-02 * "Aeon" "Groceries"
+  Expense:Food:Groceries    159 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -159 HKD
+2020-08-02 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    59.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -59.9 HKD
+2020-08-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x8    -68.68 HKD
+2020-08-04 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    294.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x8    -294.5 HKD
+2020-08-05 * "LY Bakery" "Groceries"
+  Expense:Food:Groceries    42 HKD
+  Asset:Octopus0    -42 HKD
+2020-08-05 * "AIA International" "Insurance refund for prescriptions"
+  Expense:Medicine:Prescriptions    -460 HKD
+  Asset:Standard-Chartered:Priority-Banking    460 HKD
+2020-08-05 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    10.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -10.5 HKD
+2020-08-05 * "American Express Statement" ""
+  Liability:American-Express:Cathay-Pacific-Elite    4152 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -4152 HKD
+2020-08-06 * "Pay HSBC HK Premier July 2020" ""
+  Asset:HSBC:HK:Joint:Savings    -8250 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    8250 HKD
+2020-08-06 * "Pay SC Asia Miles July 2020" ""
+  Asset:Standard-Chartered:Priority-Banking    -5464.78 HKD
+  Payable:Standard-Chartered:Asia-Miles    5464.78 HKD
+2020-08-07 * "Cafe de Coral" "Pork Chop x2 + Milk tea (10% off)"
+  Expense:Dining-Out:Lunch    87 HKD
+  Asset:Octopus0    -87 HKD
+2020-08-07 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x8    -250 HKD
+2020-08-07 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    44 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -44 HKD
+2020-08-08 * "We are here" "Delivery charges for Cantonese.jpg 1/2"
+  Expense:Education:Languages:Books    25 HKD
+  Asset:Wallet    -25 HKD
+2020-08-09 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    300 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x8    -300 HKD
+2020-08-09 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    44 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -44 HKD
+2020-08-09 * "Chiu Fat Dispensary" "Swipe washing up liquid"
+  Expense:Household    26 HKD
+  Asset:Octopus0    -26 HKD
+2020-08-09 * "Chiu Chow Dispensary" "Darlie toothpaste"
+  Expense:Household    21 HKD
+  Asset:Wallet    -21 HKD
+2020-08-09 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    180 HKD
+  Asset:Wallet    -180 HKD
+2020-08-09 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    10.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -10.5 HKD
+2020-08-10 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -31000 HKD
+  Expense:Bills:Rent    31000 HKD
+2020-08-10 * "Pay DBS for Joanne" ""
+  Payable:DBS:Black-Card    647 HKD
+  Asset:Standard-Chartered:Priority-Banking    -647 HKD
+2020-08-10 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-08-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    78528.68 HKD
+  Payable:Standard-Chartered:Asia-Miles    -78528.68 HKD
+2020-08-11 * "Hong Kong Water" "Bills"
+  Asset:Standard-Chartered:Priority-Banking    -720.3 HKD
+  Expense:Bills:Water    720.3 HKD
+2020-08-12 * "Hiyori House" "Lunch x2, plus $10 Apple Daily support"
+  Expense:Dining-Out:Lunch    92 HKD
+  Expense:Education:Newspapers    10 HKD
+  Asset:Wallet    -102 HKD
+2020-08-12 * "LY Bakery" "Groceries"
+  Expense:Food:Groceries    42 HKD
+  Expense:Dining-Out:Snacks    18 HKD
+  Asset:Octopus0    -60 HKD
+2020-08-13 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.09 USD
+  Income:Interest    -0.09 USD
+2020-08-14 * "Nespresso" "Coffee Capsules"
+  Expense:Food:Groceries:Coffee    475 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -475 HKD
+2020-08-15 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    18 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -18 HKD
+2020-08-15 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    180 HKD
+  Asset:Wallet    -180 HKD
+2020-08-15 * "LY Bakery" "Groceries"
+  Expense:Food:Groceries    51 HKD
+  Expense:Dining-Out:Snacks    50 HKD
+  Asset:Octopus0    -101 HKD
+2020-08-15 * "Nuttea" "Drinks"
+  Expense:Dining-Out:Drinks    68 HKD
+  Asset:Octopus0    -68 HKD
+2020-08-15 * "Aeon" "Groceries"
+  Expense:Food:Groceries    150.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -150.4 HKD
+2020-08-15 * "Tseun Shing" "Roast pork takeout"
+  Expense:Dining-Out:Dinner    50 HKD
+  Asset:Wallet    -50 HKD
+2020-08-15 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x9    -250 HKD
+2020-08-16 * "Backstreet Steak" "Lunch"
+  Expense:Dining-Out:Lunch    414 HKD
+  Expense:Dining-Out:Lunch    -20 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -414 HKD
+  Asset:Wallet    20 HKD
+2020-08-16 * "Pricerite" "Flower anti-mold spray"
+  Expense:Household    49 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -49 HKD
+2020-08-16 * "Oliver's" "Lamb tenderloin"
+  Expense:Food:Groceries    166.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -166.4 HKD
+2020-08-16 * "IKEA" "Blaska dustpan/brush"
+  Expense:Household    14.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -14.9 HKD
+2020-08-16 * "Friendship Thai" "Pork Neck"
+  Expense:Dining-Out:Dinner    80 HKD
+  Asset:Wallet    -80 HKD
+2020-08-16 * "Cova" "Dome Lamponi Cake"
+  Expense:Food:Dessert    238 HKD
+  Asset:Coupons:Harbour-City    -100 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -138 HKD
+2020-08-17 * "Green Common" "Lunch"
+  Expense:Dining-Out:Lunch    102.9 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x9    -102.9 HKD
+2020-08-17 * "Compukit Electronics Company" "Logitech G604 Wireless Gaming Mouse"
+  Expense:Computer    599 HKD
+  Asset:Wallet    -599 HKD
+2020-08-17 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    24 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -24 HKD
+2020-08-17 * "QHMS" "Medical things"
+  Expense:Medicine:Prescriptions    -109 HKD
+  Liability:DBS:Black-Card    109 HKD
+2020-08-18 * "Cafe de Coral" "Pork Chop x2 + Milk tea (10% off)"
+  Expense:Dining-Out:Lunch    92 HKD
+  Asset:Octopus0    -92 HKD
+2020-08-18 * "McDonalds" "Ice milk tea using in-app coupon"
+  Expense:Dining-Out:Drinks    1 HKD
+  Asset:Wallet    -1 HKD
+2020-08-18 * "McDonalds" "Chicken Nuggets using coupon"
+  Expense:Dining-Out:Snacks    10 HKD
+  Asset:Octopus0    -10 HKD
+2020-08-19 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    140 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -140 HKD
+2020-08-19 * "Aeon" "Groceries"
+  Expense:Food:Groceries    120.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -120.9 HKD
+2020-08-19 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    34 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -34 HKD
+2020-08-20 * "Transfer back Joanne GBP" ""
+  Asset:HSBC:HK:Joint:Savings    -3000 GBP
+  Payable:Joanne    3000 GBP
+2020-08-21 * "Spare-time Study Centre" "Intermediate Fencing Course (refund)"
+  Expense:Sporting-Activities:Fencing    -720 HKD
+  Asset:Wallet    720 HKD
+2020-08-21 * "Urban Coffee Roasters" "No 24 Panama Geisha beans"
+  Expense:Food:Groceries:Coffee    198 HKD
+  Asset:Wallet    -198 HKD
+2020-08-21 * "L'Occitance" "SLS Fee Verbena Shea Hand wash"
+  Expense:Household    360 HKD
+  Asset:Coupons:Harbour-City    -100 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -260 HKD
+2020-08-21 * "Cafe de Coral" "Afternoon tea"
+  Expense:Dining-Out:Afternoon-Tea    62 HKD
+  Asset:Octopus0    -62 HKD
+2020-08-21 * "Cova" "Fruit Baked Cheesecake"
+  Expense:Food:Dessert    258 HKD
+  Asset:Coupons:Harbour-City    -100 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -158 HKD
+2020-08-22 * "Bank of America" "Salary"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Asset:Standard-Chartered:Priority-Banking    172666.67 HKD
+2020-08-22 * "McDonalds" "Coupon run for dinner"
+  Expense:Dining-Out:Dinner    66 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x9    -66 HKD
+2020-08-22 * "Panash" "Breakfast"
+  Expense:Food:Groceries    41 HKD
+  Asset:Octopus0    -41 HKD
+2020-08-22 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x9    -250 HKD
+2020-08-22 * "Aeon" "Groceries"
+  Expense:Food:Groceries    34.3 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -34.3 HKD
+2020-08-22 * "McDonalds" "Coupon run for food"
+  Expense:Dining-Out:Dinner    15 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x9    -15 HKD
+2020-08-23 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    200 HKD
+  Asset:Wallet    -200 HKD
+2020-08-23 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    58 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -58 HKD
+2020-08-23 * "Cafe de Coral" "Wintermelon soup takeout + pork + sweet'n'sour"
+  Expense:Dining-Out:Dinner    124.2 HKD
+  Asset:Octopus0    -124.2 HKD
+2020-08-23 * "Charles Tea" "Amber white bubble tea"
+  Expense:Dining-Out:Drinks    20 HKD
+  Asset:Octopus0    -20 HKD
+2020-08-26 * "Hiyori House" "Lunch x2 (11+6)"
+  Expense:Dining-Out:Lunch    92 HKD
+  Asset:Wallet    -92 HKD
+2020-08-26 * "Aeon" "Groceries"
+  Expense:Food:Groceries    141.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -141.8 HKD
+2020-08-26 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    42 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -42 HKD
+2020-08-26 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    24.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -24.5 HKD
+2020-08-27 * "Hong Kong & China Gas" "Gas Bill"
+  Expense:Bills:Gas    335 HKD
+  Asset:Standard-Chartered:Priority-Banking    -335 HKD
+2020-08-28 * "Cafe de Coral" "Pork Chop x2"
+  Expense:Dining-Out:Lunch    86 HKD
+  Asset:Octopus0    -86 HKD
+2020-08-28 * "A-1 Bakery" "Twist Danish"
+  Expense:Dining-Out:Snacks    16 HKD
+  Asset:Octopus0    -16 HKD
+2020-08-28 * "Transfer rent to HSBC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-08-28 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.09 HKD
+  Asset:HSBC:HK:Sole:Savings    0.27 HKD
+  Income:Interest    -0.36 HKD
+2020-08-28 * "Fund Friends Provident" ""
+  Asset:HSBC:HK:Joint:Savings    4000 GBP
+  Asset:IB:Cash    -4000 GBP
+2020-08-28 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x9    -250 HKD
+2020-08-29 * "Fund Friends Provident" ""
+  Asset:HSBC:HK:Joint:Savings    -4000 GBP
+  Asset:HSBC:UK:Premier-Banking    4000 GBP
+2020-08-29 * "Fund Friends Provident" ""
+  Asset:HSBC:UK:Premier-Banking    -4000 GBP
+  Asset:Barclays-Bank:Investment-Funding    4000 GBP
+2020-08-29 * "Cova" "Tiramisu Cake"
+  Expense:Food:Dessert    238 HKD
+  Asset:Coupons:Harbour-City    -100 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -138 HKD
+2020-08-30 * "Fishball Noodles" "Lunch"
+  Expense:Dining-Out:Lunch    76 HKD
+  Asset:Wallet    -76 HKD
+2020-08-30 * "McDonalds" "Ice milk tea using in-app coupon"
+  Expense:Dining-Out:Drinks    1 HKD
+  Asset:Octopus0    -1 HKD
+2020-08-30 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    150 HKD
+  Asset:Wallet    -150 HKD
+2020-08-30 * "Aeon Living Plaza" "Sponges"
+  Expense:Food:Household    24 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -24 HKD
+2020-08-30 * "Aeon" "Groceries"
+  Expense:Food:Groceries    145.7 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -145.7 HKD
+2020-08-30 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    16 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -16 HKD
+2020-08-31 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    52 HKD
+  Asset:Octopus0    -52 HKD
+2020-08-31 * "McDonalds" "Ice milk tea using in-app coupon"
+  Expense:Dining-Out:Drinks    1 HKD
+  Asset:Octopus0    -1 HKD
+2020-08-31 * "QHMS" "Medical things"
+  Expense:Medicine:Prescriptions    -110 HKD
+  Liability:DBS:Black-Card    110 HKD
+2020-08-31 * "Green Common" "Lunch"
+  Expense:Dining-Out:Lunch    79.1 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x9    -79.1 HKD
+2020-08-31 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    1.43 HKD
+  Asset:Standard-Chartered:Priority-Banking    0.01 GBP
+  Income:Interest    -1.43 HKD
+  Income:Interest    -0.01 GBP
+2020-08-31 * "Pay Amex August 2020" ""
+  Asset:HSBC:HK:Joint:Current    -4102 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    4102 HKD
+2020-09-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.06 GBP
+  Income:Interest    -0.06 GBP
+2020-09-02 * "McDonalds" "McDonalds Double Mango sundae"
+  Expense:Dining-Out:Snacks    5 HKD
+  Asset:Wallet    -5 HKD
+2020-09-02 * "7-11" "Puccho"
+  Expense:Dining-Out:Snacks    14 HKD
+  Asset:Wallet    -14 HKD
+2020-09-02 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    36 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -36 HKD
+2020-09-03 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    294 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -294 HKD
+2020-09-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x9    -68.68 HKD
+2020-09-04 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    46 HKD
+  Asset:Octopus0    -46 HKD
+2020-09-04 * "Hiyori House" "Lunch x2 (11+4)"
+  Expense:Dining-Out:Lunch    90 HKD
+  Asset:Wallet    -90 HKD
+2020-09-04 * "McDonalds" "Ice milk tea using in-app coupon"
+  Expense:Dining-Out:Drinks    1 HKD
+  Asset:Wallet    -1 HKD
+2020-09-04 * "Ban Chiu Hin" "Roast Goose (Take-away)"
+  Expense:Dining-Out:Dinner    148 HKD
+  Liability:DBS:Black-Card    -148 HKD
+2020-09-04 * "China Bright" "Hong Kong Historical Font (via GoGetFunding)"
+  Expense:Computer:Software    950 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -950 HKD
+2020-09-05 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    150 HKD
+  Asset:Wallet    -150 HKD
+2020-09-05 * "HAKU" "Lunch date deposit (via Tock)"
+  Asset:Deposits:Dining:HAKU    400 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x9    -400 HKD
+2020-09-05 * "Aeon" "Groceries"
+  Expense:Food:Groceries    92.1 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -92.1 HKD
+2020-09-05 * "American Express Statement" ""
+  Liability:American-Express:Cathay-Pacific-Elite    4575.9 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -4575.9 HKD
+2020-09-06 * "Black Sugar" "Double-Espresso"
+  Expense:Dining-Out:Drinks    34 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x9    -34 HKD
+2020-09-06 * "Donq" "Breakfast"
+  Expense:Food:Groceries    45 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -45 HKD
+2020-09-06 * "Ebisoba Ichigen" "Dinner"
+  Expense:Dining-Out:Dinner    232 HKD
+  Asset:Coupons:Harbour-City    -100 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -132 HKD
+2020-09-06 * "Venchi" "Take-away 750g family gelato tub"
+  Expense:Food:Dessert    280 HKD
+  Expense:Food:Other    22 HKD
+  Asset:Coupons:Harbour-City    -150 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -152 HKD
+2020-09-07 * "Pay SC Asia Miles August 2020" ""
+  Asset:Standard-Chartered:Priority-Banking    -78528.68 HKD
+  Payable:Standard-Chartered:Asia-Miles    78528.68 HKD
+2020-09-08 * "Fairwood" "Pork chop cutlet x2"
+  Expense:Dining-Out:Lunch    96 HKD
+  Asset:Octopus0    -96 HKD
+2020-09-08 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    42.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -42.5 HKD
+2020-09-08 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    59 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -59 HKD
+2020-09-09 * "Muji" "Dinner"
+  Expense:Dining-Out:Afternoon-Tea    196 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x9    -196 HKD
+2020-09-09 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -31000 HKD
+  Expense:Bills:Rent    31000 HKD
+2020-09-10 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    16 HKD
+  Asset:Octopus0    -16 HKD
+2020-09-10 * "Aeon" "Groceries"
+  Expense:Food:Groceries    47.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -47.9 HKD
+2020-09-10 * "Mee Heung Cheun Tea Co." "White peony 1/2 catty"
+  Expense:Food:Groceries:Tea    240 HKD
+  Asset:Wallet    -240 HKD
+2020-09-10 * "Mee Heung Cheun Tea Co." "Pu'erh tea"
+  Expense:Food:Groceries:Tea    80 HKD
+  Asset:Wallet    -80 HKD
+2020-09-10 * "Cafe de Coral" "Pork Chop x1"
+  Expense:Dining-Out:Lunch    43 HKD
+  Asset:Octopus0    -43 HKD
+2020-09-10 * "Share Tea" "Milk tea"
+  Expense:Dining-Out:Drinks    21 HKD
+  Asset:Octopus0    -21 HKD
+2020-09-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    1311.68 HKD
+  Payable:Standard-Chartered:Asia-Miles    -1311.68 HKD
+2020-09-10 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-09-10 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x10    -250 HKD
+2020-09-11 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    28.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -28.9 HKD
+2020-09-11 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    56 HKD
+  Asset:Octopus0    -56 HKD
+2020-09-11 * "HAKU" "Lunch"
+  Expense:Dining-Out:Lunch    1936 HKD
+  Asset:Deposits:Dining:HAKU    -400 HKD
+  Asset:Coupons:Harbour-City    -500 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -1036 HKD
+2020-09-11 * "Venchi" "Take-away 750g family gelato tub"
+  Expense:Food:Dessert    280 HKD
+  Expense:Food:Other    20 HKD
+  Asset:Coupons:Harbour-City    -150 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -150 HKD
+2020-09-12 * "Kowloon City Beef Brisket" "Lunch with daikon side ($23)"
+  Expense:Dining-Out:Lunch    129 HKD
+  Asset:Wallet    -129 HKD
+2020-09-12 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    185 HKD
+  Asset:Wallet    -185 HKD
+2020-09-12 * "Aeon" "Groceries"
+  Expense:Food:Groceries    101.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -101.8 HKD
+2020-09-13 * "Sheep and Pig" "Lunch"
+  Expense:Dining-Out:Lunch    209 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x10    -209 HKD
+2020-09-13 * "Aeon" "Groceries"
+  Expense:Food:Groceries    34.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -34.4 HKD
+2020-09-13 * "NOT" "Cafe Latte"
+  Expense:Dining-Out:Drinks    32 HKD
+  Asset:Octopus0    -32 HKD
+2020-09-13 * "Donq" "Breakfast"
+  Expense:Food:Groceries    52 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -52 HKD
+2020-09-14 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.09 USD
+  Income:Interest    -0.09 USD
+2020-09-14 * "Green Common" "Groceries (lunches)"
+  Expense:Food:Groceries    446.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -446.4 HKD
+2020-09-15 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    42 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -42 HKD
+2020-09-15 * "Fairwood" "Pork Chop x1"
+  Expense:Dining-Out:Lunch    43 HKD
+  Asset:Octopus0    -43 HKD
+2020-09-15 * "DHL" "Courier fee for intl. driving permit to mum"
+  Asset:Standard-Chartered:Current    -73.68 HKD
+  Expense:Postage    73.68 HKD
+2020-09-15 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x10    -250 HKD
+2020-09-16 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    20.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -20.5 HKD
+2020-09-16 * "Aeon" "Groceries"
+  Expense:Food:Groceries    115.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -115.5 HKD
+2020-09-16 * "Fairwood" "Pork cutlet x1"
+  Expense:Dining-Out:Lunch    48 HKD
+  Asset:Octopus0    -48 HKD
+2020-09-19 * "Aeon" "Groceries"
+  Expense:Food:Groceries    85.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -85.2 HKD
+2020-09-19 * "Cafe de Coral" "Afternoon tea"
+  Expense:Dining-Out:Afternoon-Tea    62 HKD
+  Asset:Octopus0    -62 HKD
+2020-09-19 * "McDonalds" "McDonalds Double Mango sundae"
+  Expense:Dining-Out:Snacks    5 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x10    -5 HKD
+2020-09-19 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    130 HKD
+  Asset:Wallet    -130 HKD
+2020-09-20 * "Aeon" "Groceries"
+  Expense:Food:Groceries    38.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -38.4 HKD
+2020-09-20 * "Sister Wah Beef Brisket" "Lunch"
+  Expense:Dining-Out:Lunch    128 HKD
+  Asset:Wallet    -128 HKD
+2020-09-20 * "Delifrance" "Coffee in library"
+  Expense:Dining-Out:Drinks    28 HKD
+  Asset:Octopus0    -28 HKD
+2020-09-20 * "Muji" "Drinks"
+  Expense:Dining-Out:Drinks    10 HKD
+  Liability:Standard-Chartered:Asia-Miles    -10 HKD
+2020-09-20 * "Donq" "Breakfast"
+  Expense:Food:Groceries    63 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -63 HKD
+2020-09-21 * "Green Common" "Lunch"
+  Expense:Dining-Out:Lunch    153 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x10    -153 HKD
+2020-09-21 * "Knockbox Coffee Co" "Cafe Latte"
+  Expense:Dining-Out:Drinks    40 HKD
+  Asset:Wallet    -40 HKD
+2020-09-21 * "Marketplace" "Groceries (Salmon for S dinner)"
+  Expense:Food:Groceries    54.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -54.5 HKD
+2020-09-21 * "Load up Octopus" ""
+  Asset:Wallet    -500 HKD
+  Asset:Octopus1    500 HKD
+2020-09-22 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    48.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -48.5 HKD
+2020-09-22 * "Bank of America" "Salary"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Asset:Standard-Chartered:Priority-Banking    172666.67 HKD
+2020-09-22 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -98 HKD
+  Asset:HSBC:HK:Payme    98 HKD
+2020-09-22 * "Aeon" "Groceries"
+  Expense:Food:Groceries    6 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -6 HKD
+2020-09-22 * "Cafe de Coral" "Lunch"
+  Expense:Dining-Out:Lunch    86 HKD
+  Asset:Octopus0    -86 HKD
+2020-09-25 * "Hiyori House" "Lunch x2 (11+4)"
+  Expense:Dining-Out:Lunch    93 HKD
+  Asset:Wallet    -93 HKD
+2020-09-25 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    42 HKD
+  Asset:Octopus0    -42 HKD
+2020-09-25 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x10    -250 HKD
+2020-09-26 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    180 HKD
+  Asset:Wallet    -180 HKD
+2020-09-26 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    24.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -24.9 HKD
+2020-09-26 * "Aeon" "Groceries"
+  Expense:Food:Groceries    94.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -94.4 HKD
+2020-09-27 * "Brick Lane" "Lunch"
+  Expense:Dining-Out:Lunch    325 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -325 HKD
+2020-09-27 * "Donq" "Breakfast"
+  Expense:Food:Groceries    54 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -54 HKD
+2020-09-28 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.08 HKD
+  Asset:HSBC:HK:Sole:Savings    0.26 HKD
+  Income:Interest    -0.34 HKD
+2020-09-28 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -300 HKD
+  Asset:HSBC:HK:Payme    300 HKD
+2020-09-28 * "Transfer rent to HSBC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-09-28 * "CLP Power" "Bills"
+  Asset:Standard-Chartered:Priority-Banking    -822 HKD
+  Expense:Bills:Electric    822 HKD
+2020-09-29 * "Cafe de Coral" "Lunch"
+  Expense:Dining-Out:Lunch    93 HKD
+  Asset:Octopus0    -93 HKD
+2020-09-30 * "Rings Coffee" "Kale salad bowl, all day meaty breakfast"
+  Expense:Dining-Out:Lunch    203 HKD
+  Asset:Wallet    -203 HKD
+2020-09-30 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    152.7 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -152.7 HKD
+2020-09-30 * "Aeon" "Groceries"
+  Expense:Food:Groceries    403.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -403.5 HKD
+2020-09-30 * "Pay Amex September 2020" ""
+  Asset:HSBC:HK:Joint:Current    -4575.9 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    4575.9 HKD
+2020-09-30 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    1.44 HKD
+  Asset:Standard-Chartered:Priority-Banking    0.01 GBP
+  Income:Interest    -1.44 HKD
+  Income:Interest    -0.01 GBP
+2020-10-01 * "Leun Fat" "Egg toast sausage breakfast x2"
+  Expense:Dining-Out:Breakfast    76 HKD
+  Asset:Wallet    -76 HKD
+2020-10-01 * "Lok Yeun" "French toast"
+  Expense:Dining-Out:Breakfast    24 HKD
+  Asset:Wallet    -24 HKD
+2020-10-01 * "Aeon" "Groceries"
+  Expense:Food:Groceries    38.4 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -38.4 HKD
+2020-10-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.06 GBP
+  Income:Interest    -0.06 GBP
+2020-10-02 * "Panash" "Breakfast"
+  Expense:Food:Groceries    44 HKD
+  Asset:Octopus0    -44 HKD
+2020-10-02 * "Teawood" "Afternoon tea set"
+  Expense:Dining-Out:Afternoon-Tea    138 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -138 HKD
+2020-10-02 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    60 HKD
+  Asset:Wallet    -60 HKD
+2020-10-02 * "Aeon" "Groceries"
+  Expense:Food:Groceries    73.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -73.2 HKD
+2020-10-02 * "Park'n'Shop" "Toilet roll etc"
+  Expense:Food:Groceries    26 HKD
+  Expense:Household    55.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -81.8 HKD
+2020-10-03 * "Trois Cafe" "Lunch"
+  Expense:Dining-Out:Lunch    216 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x10    -216 HKD
+2020-10-03 * "Gong Cha" "Milk tea"
+  Expense:Dining-Out:Drinks    19 HKD
+  Asset:Octopus0    -19 HKD
+2020-10-03 * "Nespresso" "Aged Sumatra Coffee Capsules x20"
+  Expense:Food:Groceries:Coffee    134 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -134 HKD
+2020-10-03 * "Nespresso" "New Essenza Mini White machine"
+  Expense:Household    988 HKD
+  Expense:Settlements    2 HKD
+  Asset:Wallet    -990 HKD
+2020-10-03 * "Triumph" "Bras for Joanne"
+  Expense:Clothing    297 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x10    -297 HKD
+2020-10-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x10    -68.68 HKD
+2020-10-04 * "Black Wood Izakaya" "Lunch"
+  Expense:Dining-Out:Lunch    293 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -293 HKD
+2020-10-04 * "Broadway" "Samsung Galaxy S20 (Joanne)"
+  Expense:Mobile-Phone:Handset    5698 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -5698 HKD
+2020-10-04 * "Donq" "Breakfast"
+  Expense:Food:Groceries    56 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -56 HKD
+2020-10-04 * "Muji" "Dinner"
+  Expense:Dining-Out:Dinner    306 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x10    -306 HKD
+2020-10-05 * "American Express Statement" ""
+  Liability:American-Express:Cathay-Pacific-Elite    4450.5 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -4450.5 HKD
+2020-10-06 * "Black Sugar" "Cold brew x2, Cappaccino, El Salvador pour over"
+  Expense:Dining-Out:Drinks    230 HKD
+  Asset:Octopus0    -230 HKD
+2020-10-06 * "Panash" "Breakfast"
+  Expense:Food:Groceries    44 HKD
+  Asset:Octopus0    -44 HKD
+2020-10-06 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x10    -250 HKD
+2020-10-07 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    294 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -294 HKD
+2020-10-07 * "Pay SC Asia Miles September 2020" ""
+  Asset:Standard-Chartered:Priority-Banking    -1311.68 HKD
+  Payable:Standard-Chartered:Asia-Miles    1311.68 HKD
+2020-10-07 * "Pay HSBC HK Premier September 2020" ""
+  Asset:HSBC:HK:Joint:Savings    -250 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    250 HKD
+2020-10-07 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -31000 HKD
+  Expense:Bills:Rent    31000 HKD
+2020-10-08 * "Aeon" "Groceries"
+  Expense:Food:Groceries    87.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -87.8 HKD
+2020-10-08 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    44 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -44 HKD
+2020-10-08 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    50 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -50 HKD
+2020-10-08 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -250 HKD
+2020-10-09 * "Cafe de Coral" "Pork Chop, Chick rice"
+  Expense:Dining-Out:Lunch    96 HKD
+  Asset:Octopus0    -96 HKD
+2020-10-09 * "Pay DBS for Joanne" ""
+  Payable:DBS:Black-Card    16519.9 HKD
+  Asset:Standard-Chartered:Priority-Banking    -16519.9 HKD
+2020-10-09 * "Aeon" "Groceries"
+  Expense:Food:Groceries    47.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -47.9 HKD
+2020-10-09 * "Cafe de Coral" "Lunch"
+  Expense:Dining-Out:Lunch    96 HKD
+  Asset:Octopus0    -96 HKD
+2020-10-10 * "Nuttea" "Drinks"
+  Expense:Dining-Out:Drinks    84 HKD
+  Asset:Octopus0    -84 HKD
+2020-10-10 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    26 HKD
+  Asset:Octopus0    -26 HKD
+2020-10-10 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    150 HKD
+  Asset:Wallet    -150 HKD
+2020-10-10 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    82.8 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -82.8 HKD
+2020-10-10 * "Aeon" "Groceries"
+  Expense:Food:Groceries    107.3 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -107.3 HKD
+2020-10-11 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -250 HKD
+2020-10-11 * "Aboutea" "Drinks"
+  Expense:Dining-Out:Drinks    42 HKD
+  Asset:Octopus0    -42 HKD
+2020-10-11 * "Gyen Hutong" "Lunch"
+  Expense:Dining-Out:Lunch    149 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -149 HKD
+2020-10-11 * "Fuel Espresso" "Coffee and cake"
+  Expense:Dining-Out:Drinks    97 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -97 HKD
+2020-10-11 * "Liu Liang San" "Dinner"
+  Expense:Dining-Out:Dinner    170 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -170 HKD
+2020-10-11 * "Donq" "Breakfast"
+  Expense:Food:Groceries    47 HKD
+  Liability:DBS:Black-Card    -47 HKD
+2020-10-11 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    1948.68 HKD
+  Payable:Standard-Chartered:Asia-Miles    -1948.68 HKD
+2020-10-12 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-10-13 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.08 USD
+  Income:Interest    -0.08 USD
+2020-10-13 * "McDonalds" "Chicken snack"
+  Expense:Dining-Out:Snacks    35 HKD
+  Asset:Octopus0    -35 HKD
+2020-10-13 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    52 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -52 HKD
+2020-10-13 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    98.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -98.8 HKD
+2020-10-13 * "Aeon" "Groceries"
+  Expense:Food:Groceries    30.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -30.9 HKD
+2020-10-14 * "Hiyori House" "Lunch x2 (11+2)"
+  Expense:Dining-Out:Lunch    90 HKD
+  Asset:Wallet    -90 HKD
+2020-10-14 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    28 HKD
+  Asset:Octopus0    -28 HKD
+2020-10-16 * "Cafe de Coral" "Lunch"
+  Expense:Dining-Out:Lunch    83 HKD
+  Asset:Octopus0    -83 HKD
+2020-10-16 * "Chiu Fat Dispensary" "Swipe washing up liquid"
+  Expense:Household    26 HKD
+  Asset:Octopus0    -26 HKD
+2020-10-16 * "Aeon" "Groceries"
+  Expense:Food:Groceries    96.3 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -96.3 HKD
+2020-10-16 * "Starwars TOR" "6month game Subscription"
+  Expense:Bills:Subscriptions:Games    615.82 HKD
+  Liability:Standard-Chartered:Asia-Miles    -615.82 HKD
+2020-10-17 * "Yat Cafe" "Afternoon tea"
+  Expense:Dining-Out:Afternoon-Tea    83 HKD
+  Asset:Octopus0    -83 HKD
+2020-10-17 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -250 HKD
+2020-10-17 * "Octopus auto-reload" ""
+  Asset:OctopusJ    250 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -250 HKD
+2020-10-17 * "Muji" "Drinks"
+  Expense:Dining-Out:Drinks    20 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -20 HKD
+2020-10-17 * "Wing On" "Chopping board"
+  Expense:Household    67.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -67.5 HKD
+2020-10-17 * "Yat Tung Heen" "Dinner with in-laws"
+  Expense:Dining-Out:Dinner    1108.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -1108.8 HKD
+2020-10-18 * "Men Wah" "Breakfast set (lower quality)"
+  Expense:Dining-Out:Breakfast    72 HKD
+  Asset:Octopus0    -72 HKD
+2020-10-18 * "Spare-time Study Centre" "Yoga"
+  Expense:Sporting-Activities:Yoga    1422 HKD
+  Asset:Standard-Chartered:Priority-Banking    -1422 HKD
+2020-10-18 * "Panash" "Breakfast"
+  Expense:Food:Groceries    44 HKD
+  Asset:Octopus0    -44 HKD
+2020-10-18 * "UNY" "Groceries"
+  Expense:Food:Groceries    13 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -13 HKD
+2020-10-18 * "Aeon" "Groceries"
+  Expense:Food:Groceries    75.6 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -75.6 HKD
+2020-10-18 * "Are u labeller" "Lunch"
+  Expense:Dining-Out:Lunch    183 HKD
+  Asset:Octopus0    -183 HKD
+2020-10-18 * "Sung Massage" "Shoulder / Foot / Leg steam (110mins)"
+  Expense:Personal-Care:Massage    776 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -776 HKD
+2020-10-18 * "Kai Tak Noodles" "Spinach dried noodles"
+  Expense:Food:Groceries    60 HKD
+  Asset:Wallet    -60 HKD
+2020-10-18 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    200 HKD
+  Asset:Wallet    -200 HKD
+2020-10-18 * "Black Sugar" "Bob's Coffee coffee beans"
+  Expense:Food:Groceries:Coffee    250 HKD
+  Asset:Wallet    -250 HKD
+2020-10-18 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -250 HKD
+2020-10-19 * "Whitewood Coffee" "Flat white"
+  Expense:Dining-Out:Drinks    42 HKD
+  Asset:Octopus0    -42 HKD
+2020-10-19 * "King's Plaza Lunch" "Noodle lunch"
+  Expense:Dining-Out:Lunch    88 HKD
+  Asset:Octopus0    -88 HKD
+2020-10-20 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    50 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -50 HKD
+2020-10-20 * "Cafe de Coral" "Lunch"
+  Expense:Dining-Out:Lunch    83 HKD
+  Asset:Octopus0    -83 HKD
+2020-10-20 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -40 HKD
+2020-10-20 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -250 HKD
+2020-10-21 * "Aeon" "Groceries"
+  Expense:Food:Groceries    35 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -35 HKD
+2020-10-22 * "Bank of America" "Salary"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Asset:Standard-Chartered:Priority-Banking    172666.67 HKD
+2020-10-23 * "Yakiniku Great" "Lunch with Joanne Team A"
+  Expense:Dining-Out:Lunch    535 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -535 HKD
+2020-10-23 * "Brew Brothers" "Flat white"
+  Expense:Dining-Out:Drinks    42 HKD
+  Asset:Octopus0    -42 HKD
+2020-10-23 * "Mee Heung Cheun Tea Co." "Tea"
+  Expense:Food:Groceries:Tea    160 HKD
+  Asset:Wallet    -160 HKD
+2020-10-23 * "Amour Hair Spa & Salon" "Hair cut and highlights"
+  Expense:Personal-Care    1290 HKD
+  Expense:Personal-Care:Tips    100 HKD
+  Asset:Wallet    -100 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -1290 HKD
+2020-10-24 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    32 HKD
+  Asset:Octopus0    -32 HKD
+2020-10-24 * "Teishoku 8" "Afternoon Tea"
+  Expense:Dining-Out:Afternoon-Tea    53 HKD
+  Asset:Octopus0    -53 HKD
+2020-10-24 * "Nha Trang" "Dinner"
+  Expense:Dining-Out:Dinner    183 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -183 HKD
+2020-10-24 * "Venchi" "Take-away 750g family gelato tub"
+  Expense:Food:Dessert    280 HKD
+  Expense:Food:Other    20 HKD
+  Asset:Coupons:Harbour-City    -150 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -150 HKD
+2020-10-24 * "Aeon" "Groceries"
+  Expense:Food:Groceries    828 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -828 HKD
+2020-10-24 * "Aeon" "Groceries"
+  Expense:Food:Groceries    127.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -127.8 HKD
+2020-10-24 * "Park'n'Shop" "Coca-cola Blends Coffee / Chocolate"
+  Expense:Food:Groceries    11.5 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -11.5 HKD
+2020-10-24 * "Japan Home Centre" "8x Rechargable AAA (650mh)"
+  Expense:Household    110 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -110 HKD
+2020-10-24 * "Professional Hair Products" "Hair wax"
+  Expense:Personal-Care    60 HKD
+  Asset:Octopus0    -60 HKD
+2020-10-24 * "King of Soyabeans" "Afternoon tea"
+  Expense:Dining-Out:Afternoon-Tea    74 HKD
+  Asset:Octopus0    -74 HKD
+2020-10-24 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -250 HKD
+2020-10-25 * "Fishball Noodles" "Lunch"
+  Expense:Dining-Out:Lunch    76 HKD
+  Asset:Wallet    -76 HKD
+2020-10-25 * "Coco Bubble Tea" "Bubble tea"
+  Expense:Dining-Out:Drinks    25 HKD
+  Asset:Wallet    -25 HKD
+2020-10-25 * "Aeon" "Groceries"
+  Expense:Food:Groceries    197.8 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -197.8 HKD
+2020-10-26 * "Panash" "Breakfast"
+  Expense:Food:Groceries    41 HKD
+  Asset:Octopus0    -41 HKD
+2020-10-26 * "Aeon" "Groceries"
+  Expense:Food:Groceries    65.1 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -65.1 HKD
+2020-10-26 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    100 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -100 HKD
+2020-10-28 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    40 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -40 HKD
+2020-10-28 * "Aeon" "Groceries"
+  Expense:Food:Groceries    191 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -191 HKD
+2020-10-28 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -6010 HKD
+  Asset:HSBC:HK:Payme    6010 HKD
+2020-10-28 * "Transfer rent from SC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-10-28 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.08 HKD
+  Asset:HSBC:HK:Sole:Savings    0.25 HKD
+  Income:Interest    -0.33 HKD
+2020-10-28 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -250 HKD
+2020-10-28 * "Cafe de Coral" "Pork chop x2"
+  Expense:Dining-Out:Lunch    92 HKD
+  Asset:Octopus0    -92 HKD
+2020-10-29 * "Hiyori House" "Lunch (6)"
+  Expense:Dining-Out:Lunch    48 HKD
+  Asset:Wallet    -48 HKD
+2020-10-30 * "Hong Kong & China Gas" "Gas Bill"
+  Expense:Bills:Gas    325 HKD
+  Asset:Standard-Chartered:Priority-Banking    -325 HKD
+2020-10-30 * "Pay Amex October 2020" ""
+  Asset:HSBC:HK:Joint:Current    -4450.5 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    4450.5 HKD
+2020-10-31 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    35 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -35 HKD
+2020-10-31 * "Watson's Wine" "2018 Reisling"
+  Expense:Food:Wine    288 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -288 HKD
+2020-10-31 * "Aeon" "Groceries"
+  Expense:Food:Groceries    86.8 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -86.8 HKD
+2020-10-31 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    180 HKD
+  Asset:Wallet    -180 HKD
+2020-10-31 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    0.01 GBP
+  Asset:Standard-Chartered:Priority-Banking    1.58 HKD
+  Income:Interest    -0.01 GBP
+  Income:Interest    -1.58 HKD
+2020-11-01 * "Crew Coffee" "Flat White"
+  Expense:Dining-Out:Drinks    40 HKD
+  Asset:Wallet    -40 HKD
+2020-11-01 * "Cats' Eye Bistro" "Omurice lunch"
+  Expense:Dining-Out:Lunch    178 HKD
+  Asset:Wallet    -178 HKD
+2020-11-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.06 GBP
+  Income:Interest    -0.06 GBP
+2020-11-02 * "Mandarin Oriental" "November Staycation"
+  Expense:Travel:Accommodation    2159.3 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -2159.3 HKD
+2020-11-02 * "Aeon" "Groceries"
+  Expense:Food:Groceries    159.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -159.9 HKD
+2020-11-02 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -40 HKD
+2020-11-03 * "Ocean Park" "Fried chicken and ice cream"
+  Expense:Dining-Out:Lunch    109.6 HKD
+  Asset:Octopus0    -109.6 HKD
+2020-11-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -68.68 HKD
+2020-11-04 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    294 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -294 HKD
+2020-11-04 * "Cafe de Coral" "Pork chop"
+  Expense:Dining-Out:Lunch    43 HKD
+  Asset:Octopus0    -43 HKD
+2020-11-04 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x11    -40 HKD
+2020-11-05 * "American Express Statement" ""
+  Liability:American-Express:Cathay-Pacific-Elite    8217.7 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -8217.7 HKD
+2020-11-06 * "Pay HSBC HK Premier October 2020" ""
+  Asset:HSBC:HK:Joint:Savings    -6506.1 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    6506.1 HKD
+2020-11-07 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    150 HKD
+  Asset:Wallet    -150 HKD
+2020-11-07 * "Chicken Shack" "Fried chicken"
+  Expense:Dining-Out:Dinner    56 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -56 HKD
+2020-11-07 * "Pay SC Asia Miles October 2020" ""
+  Asset:Standard-Chartered:Priority-Banking    -1948.68 HKD
+  Payable:Standard-Chartered:Asia-Miles    1948.68 HKD
+2020-11-07 * "Cova" "Blueberry Cheesecake"
+  Expense:Food:Dessert    228 HKD
+  Asset:Coupons:Harbour-City    -100 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -128 HKD
+2020-11-07 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    28 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -28 HKD
+2020-11-07 * "Nespresso" "Coffee Capsules"
+  Expense:Food:Groceries:Coffee    321 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -321 HKD
+2020-11-08 * "HKPL" "Music Room Hire"
+  Expense:Education:Music    48 HKD
+  Asset:Wallet    -48 HKD
+2020-11-08 * "Pure Wagyu Yakiniku" "Lunch"
+  Expense:Dining-Out:Lunch    275 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -275 HKD
+2020-11-08 * "Donq" "Breakfast"
+  Expense:Food:Groceries    48.6 HKD
+  Liability:DBS:Black-Card    -48.6 HKD
+2020-11-08 * "Sogo" "Hong Kong style Korean facemask"
+  Expense:Covid19:Masks    99 HKD
+  Liability:DBS:Black-Card    -99 HKD
+2020-11-08 * "Triple O's" "Dinner"
+  Expense:Dining-Out:Dinner    98 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -98 HKD
+2020-11-08 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x11    -250 HKD
+2020-11-09 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -67 HKD
+  Asset:HSBC:HK:Payme    67 HKD
+2020-11-10 * "Cafe de Coral" "Double baked chicken lunch"
+  Expense:Dining-Out:Lunch    98 HKD
+  Asset:Octopus0    -98 HKD
+2020-11-10 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    42 HKD
+  Asset:Octopus0    -42 HKD
+2020-11-10 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -31000 HKD
+  Expense:Bills:Rent    31000 HKD
+2020-11-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    2899.5 HKD
+  Payable:Standard-Chartered:Asia-Miles    -2899.5 HKD
+2020-11-10 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-11-11 * "Aeon" "Groceries"
+  Expense:Food:Groceries    150 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -150 HKD
+2020-11-11 * "Cafe de Coral" "Afternoon tea set"
+  Expense:Dining-Out:Afternoon-Tea    32 HKD
+  Asset:Octopus0    -32 HKD
+2020-11-12 * "Spare-time Study Centre" "Intermediate Fencing Course"
+  Expense:Sporting-Activities:Fencing    720 HKD
+  Asset:Wallet    -720 HKD
+2020-11-12 * "Wozi" "Lunch"
+  Expense:Dining-Out:Lunch    176 HKD
+  Income:Credit-Card-Promotions    -25 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -176 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    25 HKD
+2020-11-12 * "LY Bakery" "Groceries"
+  Expense:Food:Groceries    36 HKD
+  Asset:Octopus0    -36 HKD
+2020-11-12 * "Check Check Cin" "Drinks x2 (1 birthday free)"
+  Expense:Dining-Out:Drinks    31 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -31 HKD
+2020-11-13 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.09 USD
+  Income:Interest    -0.09 USD
+2020-11-14 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    100 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -100 HKD
+2020-11-14 * "Yungs Bistro" "Cocktails"
+  Expense:Dining-Out:Drinks    172.8 HKD
+  Income:Credit-Card-Promotions    -25 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -172.8 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    25 HKD
+2020-11-15 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -250 HKD
+2020-11-15 * "Wheatie Bakery" "Breakfast croissant x2"
+  Expense:Dining-Out:Breakfast    30 HKD
+  Asset:Wallet    -30 HKD
+2020-11-15 * "Kickstart Coffee" "Flat White"
+  Expense:Dining-Out:Drinks    38 HKD
+  Asset:Wallet    -38 HKD
+2020-11-15 * "Superhooman" "Lunch"
+  Expense:Dining-Out:Lunch    152 HKD
+  Income:Credit-Card-Promotions    -25 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -152 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    25 HKD
+2020-11-15 * "Superhooman" "Lunch"
+  Expense:Dining-Out:Lunch    108 HKD
+  Income:Credit-Card-Promotions    -25 HKD
+  Liability:DBS:Black-Card    -108 HKD
+  Payable:DBS:Black-Card    25 HKD
+2020-11-15 * "Donq" "Breakfast"
+  Expense:Food:Groceries    48.6 HKD
+  Liability:DBS:Black-Card    -48.6 HKD
+2020-11-15 * "HKPL" "Music Room Hire"
+  Expense:Education:Music    48 HKD
+  Asset:Wallet    -48 HKD
+2020-11-15 * "Marigame Seimen" "Cold noodles"
+  Expense:Dining-Out:Dinner    56 HKD
+  Asset:Octopus0    -56 HKD
+2020-11-15 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Payme    500 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -500 HKD
+2020-11-16 * "Uniqlo" "Clothes"
+  Expense:Clothing    118 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -118 HKD
+2020-11-16 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    130 HKD
+  Asset:Wallet    -130 HKD
+2020-11-16 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    45 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -45 HKD
+2020-11-16 * "Panash" "Breakfast"
+  Expense:Food:Groceries    44 HKD
+  Asset:Octopus0    -44 HKD
+2020-11-16 * "Transfer for paying Amex" ""
+  Asset:HSBC:HK:Joint:Savings    -20000 HKD
+  Asset:HSBC:HK:Joint:Current    20000 HKD
+2020-11-16 * "Outback Oasis" "Refund for Outback Oasis (2)"
+  Expense:Travel:Accommodation    -362.59 HKD
+  Liability:Standard-Chartered:Executive-Platinum    362.59 HKD
+2020-11-16 * "Kiki Noodle Bar" "Afternoon Tea"
+  Expense:Dining-Out:Afternoon-Tea    96 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -96 HKD
+2020-11-16 * "Cova" "Raspberry Dome Cake"
+  Expense:Food:Dessert    238 HKD
+  Asset:Coupons:Harbour-City    -100 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -138 HKD
+2020-11-16 * "Teawood" "Spring Chicken"
+  Expense:Dining-Out:Dinner    58 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -58 HKD
+2020-11-16 * "Cafe de Coral" "Pork chop x2"
+  Expense:Dining-Out:Lunch    92 HKD
+  Asset:Octopus0    -92 HKD
+2020-11-18 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    20 HKD
+  Asset:Octopus0    -20 HKD
+2020-11-18 * "Cafe de Coral" "Pork chop x2"
+  Expense:Dining-Out:Lunch    92 HKD
+  Asset:Octopus0    -92 HKD
+2020-11-18 * "Aeon" "Groceries"
+  Expense:Food:Groceries    198.3 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -198.3 HKD
+2020-11-19 * "McDonalds" "Snacks"
+  Expense:Dining-Out:Other-Food    40 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -40 HKD
+2020-11-20 * "Bank of America" "Salary"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Income:Group-Award    -39.16 HKD
+  Asset:Standard-Chartered:Priority-Banking    172705.83 HKD
+2020-11-21 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    190 HKD
+  Asset:Wallet    -190 HKD
+2020-11-21 * "Thai Palace" "Yellow curry, Pomelo Salad"
+  Expense:Dining-Out:Lunch    100 HKD
+  Asset:Wallet    -100 HKD
+2020-11-21 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -250 HKD
+2020-11-21 * "Oliver's" "Groceries"
+  Expense:Food:Groceries    548.1 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -548.1 HKD
+2020-11-21 * "Cova" "Fruit baked Cheesecake"
+  Expense:Food:Dessert    258 HKD
+  Asset:Coupons:Harbour-City    -100 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -158 HKD
+2020-11-21 * "Aeon" "Groceries"
+  Expense:Food:Groceries    247.3 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -247.3 HKD
+2020-11-21 * "Panash" "Breakfast"
+  Expense:Food:Groceries    62 HKD
+  Asset:Octopus0    -62 HKD
+2020-11-22 * "KyukyouDo" "Lunch"
+  Expense:Dining-Out:Lunch    86 HKD
+  Income:Credit-Card-Promotions    -25 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -86 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    25 HKD
+2020-11-22 * "KyukyouDo" "Lunch"
+  Expense:Dining-Out:Lunch    86 HKD
+  Income:Credit-Card-Promotions    -25 HKD
+  Liability:DBS:Black-Card-2012    -86 HKD
+  Payable:DBS:Black-Card    25 HKD
+2020-11-22 * "Delifrance" "Iced coffee (bad)"
+  Expense:Food:Groceries    32 HKD
+  Asset:Octopus0    -32 HKD
+2020-11-22 * "HKPL" "Music Room Hire"
+  Expense:Education:Music    48 HKD
+  Asset:Wallet    -48 HKD
+2020-11-22 * "Donq" "Breakfast"
+  Expense:Food:Groceries    22 HKD
+  Liability:DBS:Black-Card    -22 HKD
+2020-11-22 * "Triple O's" "Dinner"
+  Expense:Dining-Out:Dinner    88 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -88 HKD
+2020-11-22 * "Octopus auto-reload" ""
+  Asset:OctopusJ    250 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -250 HKD
+2020-11-25 * "Saigon Pho" "Lunch set x2"
+  Expense:Dining-Out:Lunch    103 HKD
+  Asset:Wallet    -103 HKD
+2020-11-25 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -40 HKD
+2020-11-25 * "Aeon" "Groceries"
+  Expense:Food:Groceries    210.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -210.2 HKD
+2020-11-25 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    45 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -45 HKD
+2020-11-28 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    200 HKD
+  Asset:Wallet    -200 HKD
+2020-11-28 * "One six six" "Lunch"
+  Expense:Dining-Out:Lunch    115 HKD
+  Asset:Wallet    -115 HKD
+2020-11-28 * "Venchi" "Take-away 750g family gelato tub"
+  Expense:Food:Dessert    280 HKD
+  Expense:Food:Other    20 HKD
+  Asset:Coupons:Harbour-City    -150 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -150 HKD
+2020-11-28 * "Espresso Alchemy" "Cold Brew, Pour over and beans (Angeles)"
+  Expense:Dining-Out:Drinks    128 HKD
+  Expense:Food:Groceries:Coffee    146 HKD
+  Asset:Octopus0    -274 HKD
+2020-11-28 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.07 HKD
+  Asset:HSBC:HK:Sole:Savings    0.25 HKD
+  Income:Interest    -0.32 HKD
+2020-11-28 * "Panash" "Breakfast"
+  Expense:Food:Groceries    41 HKD
+  Asset:Octopus0    -41 HKD
+2020-11-28 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -250 HKD
+2020-11-28 * "Teawood" "Spring Chicken"
+  Expense:Dining-Out:Dinner    58 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -58 HKD
+2020-11-28 * "XTC Gelato" "Ice cream (using birthday offer)"
+  Expense:Dining-Out:Dessert    50 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -50 HKD
+2020-11-29 * "Ten Ren's Tea" "Tea drinks x2"
+  Expense:Dining-Out:Drinks    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -40 HKD
+2020-11-29 * "Homie" "Beef brisket and pork chop"
+  Expense:Dining-Out:Lunch    105 HKD
+  Asset:Wallet    -105 HKD
+2020-11-30 * "Panash" "Breakfast"
+  Expense:Food:Groceries    62 HKD
+  Asset:Octopus0    -62 HKD
+2020-11-30 * "McDonalds" "Chicken snack"
+  Expense:Dining-Out:Snacks    35 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -35 HKD
+2020-11-30 * "CLP Power" "Bills"
+  Asset:Standard-Chartered:Priority-Banking    -559 HKD
+  Expense:Bills:Electric    559 HKD
+2020-11-30 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    0.01 GBP
+  Asset:Standard-Chartered:Priority-Banking    1.65 HKD
+  Income:Interest    -0.01 GBP
+  Income:Interest    -1.65 HKD
+2020-11-30 * "Pay Amex November 2020" ""
+  Asset:HSBC:HK:Joint:Current    -8217.7 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    8217.7 HKD
+2020-11-30 * "Yata" "Sale items (fish etc)"
+  Expense:Food:Groceries    249.7 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -249.7 HKD
+2020-12-01 * "Transfer rent from SC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-12-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.06 GBP
+  Income:Interest    -0.06 GBP
+2020-12-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -68.68 HKD
+2020-12-03 * "Hiyori House" "Lunch x2 (11+6)"
+  Expense:Dining-Out:Lunch    92 HKD
+  Asset:Wallet    -92 HKD
+2020-12-03 * "LY Bakery" "Groceries"
+  Expense:Food:Groceries    74 HKD
+  Asset:Octopus0    -74 HKD
+2020-12-03 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -250 HKD
+2020-12-04 * "Aeon" "Groceries"
+  Expense:Food:Groceries    35.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -35.2 HKD
+2020-12-04 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    294 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-20x12    -294 HKD
+2020-12-05 * "LY Bakery" "Groceries"
+  Expense:Food:Groceries    52 HKD
+  Asset:Octopus0    -52 HKD
+2020-12-05 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    175 HKD
+  Asset:Wallet    -175 HKD
+2020-12-05 * "Yata" "Sale items (incl. Hokkaido 2.6 Milk x12)"
+  Expense:Food:Groceries    587.1 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -587.1 HKD
+2020-12-05 * "Ten Ren's Tea" "Drinks"
+  Expense:Dining-Out:Drinks    44.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -44.8 HKD
+2020-12-05 * "American Express Statement" ""
+  Liability:American-Express:Cathay-Pacific-Elite    4152.6 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    -4152.6 HKD
+2020-12-06 * "Yata" "Hokkaido 3.6 Milk x12"
+  Expense:Food:Groceries    261.6 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -261.6 HKD
+2020-12-06 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    15 HKD
+  Asset:Wallet    -15 HKD
+2020-12-06 * "Panash" "Breakfast"
+  Expense:Food:Groceries    62 HKD
+  Asset:Octopus0    -62 HKD
+2020-12-06 * "Bloomberg" "Yearly Subscription"
+  Expense:Bills:Subscriptions:News    300 USD
+  Liability:HSBC:USA:Premier-Credit-Card    -300 USD
+2020-12-06 * "Aeon" "Groceries"
+  Expense:Food:Groceries    27.3 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -27.3 HKD
+2020-12-07 * "Pay SC Asia Miles November 2020" ""
+  Asset:Standard-Chartered:Priority-Banking    -2899.5 HKD
+  Payable:Standard-Chartered:Asia-Miles    2899.5 HKD
+2020-12-08 * "A-1 Bakery" "Groceries"
+  Expense:Food:Groceries    16 HKD
+  Liability:DBS:Black-Card    -16 HKD
+2020-12-08 * "Aeon" "Groceries"
+  Expense:Food:Groceries    103 HKD
+  Liability:DBS:Black-Card    -103 HKD
+2020-12-09 * "Health Bricks Medical" "Antibiotics for Joanne"
+  Asset:Standard-Chartered:Priority-Banking    -690 HKD
+  Expense:Medicine:Prescriptions    690 HKD
+2020-12-09 * "Pay HSBC HK Premier November 2020" ""
+  Asset:HSBC:HK:Joint:Savings    -2203.2 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    2203.2 HKD
+2020-12-09 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    44 HKD
+  Asset:Octopus0    -44 HKD
+2020-12-09 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-20x12    -250 HKD
+2020-12-10 * "Hong Kong Water" "Bills"
+  Asset:Standard-Chartered:Priority-Banking    -821.2 HKD
+  Expense:Bills:Water    821.2 HKD
+2020-12-10 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -31000 HKD
+  Expense:Bills:Rent    31000 HKD
+2020-12-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    2633.68 HKD
+  Payable:Standard-Chartered:Asia-Miles    -2633.68 HKD
+2020-12-10 * "Executive Platinum Statement" ""
+  Liability:Standard-Chartered:Executive-Platinum    -362.59 HKD
+  Receivable:Standard-Chartered:Executive-Platinum    362.59 HKD
+2020-12-10 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2020-12-11 * "Hiyori House" "Lunch x2 (11+5)"
+  Expense:Dining-Out:Lunch    92 HKD
+  Asset:Wallet    -92 HKD
+2020-12-11 * "LY Bakery" "Cheese bread and cinnamon bun snack"
+  Expense:Food:Groceries    20 HKD
+  Expense:Dining-Out:Snacks    12 HKD
+  Asset:Octopus0    -32 HKD
+2020-12-11 * "Pay DBS for Joanne" ""
+  Asset:Standard-Chartered:Priority-Banking    -169.6 HKD
+  Payable:DBS:Black-Card    169.6 HKD
+2020-12-12 * "Withdrawn notes for spending" ""
+  Asset:Standard-Chartered:Priority-Banking    -5000 HKD
+  Asset:Wallet    5000 HKD
+2020-12-12 * "Transfer Joanne money back from SC" ""
+  Asset:Standard-Chartered:Priority-Banking    -3000 GBP
+  Asset:HSBC:HK:Joint:Savings    3000 GBP
+2020-12-12 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    265 HKD
+  Asset:Wallet    -265 HKD
+2020-12-12 * "Uniqlo" "Socks"
+  Expense:Clothing    36 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -36 HKD
+2020-12-12 * "Muji" "Dinner"
+  Expense:Dining-Out:Dinner    226 HKD
+  Liability:Standard-Chartered:Asia-Miles    -226 HKD
+2020-12-12 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    16 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -16 HKD
+2020-12-12 * "Aeon" "Groceries"
+  Expense:Food:Groceries    87.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -87.8 HKD
+2020-12-12 * "Ban Chiu Hin" "Roast Goose (Take-away)"
+  Expense:Dining-Out:Dinner    158 HKD
+  Income:Credit-Card-Promotions    -25 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -158 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    25 HKD
+2020-12-14 * "LY Bakery" "Breakfast and baguette for lunch"
+  Expense:Food:Groceries    45 HKD
+  Asset:Octopus0    -45 HKD
+2020-12-14 * "Wozi" "Afternoon Tea"
+  Expense:Dining-Out:Afternoon-Tea    150 HKD
+  Income:Credit-Card-Promotions    -25 HKD
+  Liability:DBS:Black-Card-20x12    -150 HKD
+  Payable:DBS:Black-Card    25 HKD
+2020-12-14 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.09 USD
+  Income:Interest    -0.09 USD
+2020-12-14 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    84 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -84 HKD
+2020-12-14 * "Aeon" "Groceries"
+  Expense:Food:Groceries    124.7 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -124.7 HKD
+2020-12-15 * "Fund Friends Provident" ""
+  Asset:HSBC:UK:Premier-Banking    -1000 GBP
+  Asset:Barclays-Bank:Investment-Funding    1000 GBP
+2020-12-16 * "Qantas" "Sydney - Santiago - Punta Arenas Refund"
+  Expense:Travel:Airfare    -11827.68 USD
+  Liability:HSBC:USA:Premier-Credit-Card    11827.68 USD
+2020-12-16 * "A-1 Bakery" "Twist Danish"
+  Expense:Food:Groceries    40 HKD
+  Asset:Octopus0    -40 HKD
+2020-12-16 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles    -250 HKD
+2020-12-16 * "Aeon" "Groceries"
+  Expense:Food:Groceries    166.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -166.5 HKD
+2020-12-18 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    40 HKD
+  Asset:Octopus0    -40 HKD
+2020-12-18 * "Hiyori House" "Lunch (11+6)"
+  Expense:Dining-Out:Lunch    92 HKD
+  Asset:Wallet    -92 HKD
+2020-12-19 * "Lungo" "Flat White"
+  Expense:Dining-Out:Drinks    39 HKD
+  Asset:Octopus0    -39 HKD
+2020-12-19 * "Fortress" "Asus RT-AX88U router (new Jeppy)"
+  Expense:Computer    2799 HKD
+  Income:Coupons    -2000 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -799 HKD
+2020-12-19 * "Ikea" "Flask for yoghurt making, Christmas biscuits"
+  Expense:Household    89.9 HKD
+  Expense:Food:Junk    17 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -106.9 HKD
+2020-12-19 * "Jaigor Snacks" "Deep friend siu-mei etc"
+  Expense:Dining-Out:Snacks    30 HKD
+  Asset:Wallet    -30 HKD
+2020-12-19 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    10 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -10 HKD
+2020-12-19 * "Aeon" "Groceries"
+  Expense:Food:Groceries    109.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -109.2 HKD
+2020-12-20 * "FriendShip Thai" "Dinner"
+  Income:Coupons    -100 HKD
+  Income:Foodpanda-Discount    -29.4 HKD
+  Expense:Dining-Out:Lunch    147 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -17.6 HKD
+2020-12-20 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles    -250 HKD
+2020-12-20 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    230 HKD
+  Asset:Wallet    -230 HKD
+2020-12-20 * "Panash" "Breakfast"
+  Expense:Food:Groceries    62.5 HKD
+  Asset:Octopus0    -62.5 HKD
+2020-12-20 * "Ocean Three" "Lamb Hotpot"
+  Expense:Food:Groceries    95 HKD
+  Asset:Octopus0    -95 HKD
+2020-12-20 * "Tei Mou Dessert" "Walnut soup Dessert"
+  Expense:Food:Dessert    40 HKD
+  Asset:Wallet    -40 HKD
+2020-12-20 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    10 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -10 HKD
+2020-12-20 * "Hangry Baby" "Snack"
+  Income:Coupons    -20 HKD
+  Income:Foodpanda-Discount    -8.8 HKD
+  Expense:Dining-Out:Lunch    44 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -15.2 HKD
+2020-12-21 * "Green Common" "Lunch"
+  Expense:Dining-Out:Lunch    101 HKD
+  Liability:Standard-Chartered:Asia-Miles    -101 HKD
+2020-12-21 * "Ten Ren's Tea" "Drink"
+  Expense:Dining-Out:Drinks    21 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -21 HKD
+2020-12-22 * "Ten Ren's Tea" "Ginger tea"
+  Expense:Dining-Out:Drinks    21 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -21 HKD
+2020-12-22 * "Bank of America" "Salary"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Asset:Standard-Chartered:Priority-Banking    172666.67 HKD
+2020-12-22 * "AIA International" "Insurance refund for prescriptions / consultations"
+  Expense:Medicine:Prescriptions    -1419 HKD
+  Asset:Standard-Chartered:Priority-Banking    1419 HKD
+2020-12-23 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    62 HKD
+  Asset:Octopus0    -62 HKD
+2020-12-23 * "Colour fans store" "Mils Mils Toilet paper x2"
+  Expense:Household    56 HKD
+  Asset:Wallet    -56 HKD
+2020-12-23 * "Hiyori House" "Lunch"
+  Income:Coupons    -40 HKD
+  Income:Foodpanda-Discount    -21.6 HKD
+  Expense:Dining-Out:Lunch    108 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -46.4 HKD
+2020-12-25 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    42 HKD
+  Asset:Octopus0    -42 HKD
+2020-12-25 * "Aeon" "Groceries"
+  Expense:Food:Groceries    76.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -76.8 HKD
+2020-12-25 * "Ten Ren's Tea" "Groceries"
+  Expense:Dining-Out:Drinks    38 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -38 HKD
+2020-12-26 * "LY Bakery" "Breakfast"
+  Expense:Food:Groceries    12 HKD
+  Asset:Octopus0    -12 HKD
+2020-12-26 * "McDonalds" "Chicken snack"
+  Expense:Dining-Out:Snacks    35 HKD
+  Income:Coupons    -10 HKD
+  Asset:Octopus0    -25 HKD
+2020-12-26 * "Zeppelin Hot Dog" "Dinner"
+  Income:Foodpanda-Discount    -16.4 HKD
+  Expense:Dining-Out:Dinner    82 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -65.6 HKD
+2020-12-27 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    200 HKD
+  Asset:Wallet    -200 HKD
+2020-12-27 * "Kai Tak Noodles" "Tomato dried noodles"
+  Expense:Food:Groceries    60 HKD
+  Asset:Wallet    -60 HKD
+2020-12-27 * "Zuk Tei Kitchen" "Dinner"
+  Expense:Dining-Out:Dinner    122 HKD
+  Liability:Standard-Chartered:Asia-Miles    -122 HKD
+2020-12-28 * "Hong Kong Coasters" "Storm and Foul Coaster set x2"
+  Expense:Household    228 HKD
+  Expense:Gifts    228 HKD
+  Liability:Standard-Chartered:Asia-Miles    -456 HKD
+2020-12-28 * "29 Coffee" "Flat White"
+  Expense:Dining-Out:Drinks    32 HKD
+  Asset:Octopus0    -32 HKD
+2020-12-28 * "Yuan is here" "Green tea red bean bun"
+  Expense:Dining-Out:Snacks    12 HKD
+  Asset:Wallet    -12 HKD
+2020-12-28 * "LY Bakery" "Breakfast and Soy milk x3"
+  Expense:Food:Groceries    116 HKD
+  Asset:Octopus0    -116 HKD
+2020-12-28 * "Kuuraku Sukiyaki" "Lunch"
+  Expense:Dining-Out:Lunch    336 HKD
+  Asset:Wallet    -336 HKD
+2020-12-28 * "HSBC HK" "Interest"
+  Asset:HSBC:HK:Joint:Savings    0.06 HKD
+  Asset:HSBC:HK:Joint:Savings    0.01 THB
+  Asset:HSBC:HK:Sole:Savings    0.25 HKD
+  Income:Interest    -0.31 HKD
+  Income:Interest    -0.01 THB
+2020-12-28 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles    -250 HKD
+2020-12-28 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    15 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -15 HKD
+2020-12-28 * "Meowbox" "Lunch"
+  Expense:Dining-Out:Lunch    196 HKD
+  Liability:Standard-Chartered:Asia-Miles    -196 HKD
+2020-12-28 * "Aeon" "Groceries"
+  Expense:Food:Groceries    176.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -176.5 HKD
+2020-12-28 * "Aeon" "Rubber gloves x2"
+  Expense:Household    21.6 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -21.6 HKD
+2020-12-29 * "Green Price" "Califia Oat Drinks x2"
+  Expense:Food:Groceries    10 HKD
+  Asset:Octopus0    -10 HKD
+2020-12-29 * "Wet Market" "Ice Vege & soy stuff for Hotpot"
+  Expense:Food:Groceries    37 HKD
+  Asset:Wallet    -37 HKD
+2020-12-29 * "Transfer rent from SC" ""
+  Asset:Standard-Chartered:Priority-Banking    -31000 HKD
+  Asset:HSBC:HK:Joint:Savings    31000 HKD
+2020-12-29 * "Century Computer" "Equipment for Server rebuild"
+  Expense:Computer    878 HKD
+  Asset:Standard-Chartered:Priority-Banking    -878 HKD
+2020-12-29 * "Newegg" "HP Microserver Gen10+ Xeon Edition"
+  Expense:Computer    5075.99 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -5075.99 HKD
+2020-12-30 * "What to eat" "Beef brisket noodles x2"
+  Expense:Dining-Out:Lunch    170 HKD
+  Asset:Wallet    -170 HKD
+2020-12-30 * "Mee Heung Cheun Tea Co." "Green & Pu'erh tea"
+  Expense:Food:Groceries:Tea    280 HKD
+  Asset:Wallet    -280 HKD
+2020-12-30 * "Yifang fruit tea" "Longan ginger and Longan-jujube drinks"
+  Expense:Dining-Out:Drinks    45.9 HKD
+  Asset:Octopus0    -45.9 HKD
+2020-12-30 * "Transfer to Payme" ""
+  Asset:HSBC:HK:Sole:Savings    -1334 HKD
+  Asset:HSBC:HK:Payme    1334 HKD
+2020-12-30 * "Chin Cheung" "Chinese medicine (SP & JP)"
+  Expense:Medicine:Chinese-Medicine    1700 HKD
+  Asset:HSBC:HK:Payme    -1700 HKD
+2020-12-30 * "Hong Kong & China Gas" "Gas Bill"
+  Expense:Bills:Gas    391 HKD
+  Asset:Standard-Chartered:Priority-Banking    -391 HKD
+2020-12-30 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles    -250 HKD
+2020-12-30 * "Pay Amex December 2020" ""
+  Asset:HSBC:HK:Joint:Current    -4152.6 HKD
+  Payable:American-Express:Cathay-Pacific-Elite    4152.6 HKD
+2020-12-30 * "QHMS" "Antibiotic for sinus infection"
+  Expense:Medicine:Prescriptions    221 HKD
+  Liability:Standard-Chartered:Asia-Miles    -221 HKD
+2020-12-30 * "Oliver's" "Groceries"
+  Expense:Food:Groceries    272.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -272.9 HKD
+2020-12-30 * "Nespresso" "Coffee Capsules (w/ free cups redemption)"
+  Expense:Food:Groceries:Coffee    676 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -676 HKD
+2020-12-30 * "Espresso Alchemy" "Beans (Adado)"
+  Expense:Food:Groceries:Coffee    149 HKD
+  Liability:Standard-Chartered:Asia-Miles    -149 HKD
+2020-12-30 * "Friendship Thai" "Dinner"
+  Income:Coupons    -180 HKD
+  Income:Foodpanda-Discount    -49.6 HKD
+  Expense:Dining-Out:Dinner    248 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -18.4 HKD
+2020-12-31 * "Wet Market" "Shiitake mushrooms for Hotpot"
+  Expense:Food:Groceries    10 HKD
+  Asset:Wallet    -10 HKD
+2020-12-31 * "Standard Chartered" "Interest"
+  Asset:Standard-Chartered:Priority-Banking    0.01 GBP
+  Asset:Standard-Chartered:Priority-Banking    1.81 HKD
+  Income:Interest    -0.01 GBP
+  Income:Interest    -1.81 HKD
+2020-12-31 * "Aeon" "Groceries"
+  Expense:Food:Groceries    99.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -99.9 HKD
+2020-12-31 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    26 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -26 HKD
+2020-12-31 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    38 HKD
+  Asset:Octopus0    -38 HKD
+2020-12-31 * "Kin's Kitchen" "Chinese New Year Daikon Pudding"
+  Expense:Food:Groceries    178.2 HKD
+  Liability:HSBC:HK:Premier-Credit-Card    -178.2 HKD
+2020-12-31 * "Cafe de Coral" "End-of-year milk tea"
+  Expense:Dining-Out:Drinks    11 HKD
+  Asset:Octopus0    -11 HKD
+2021-01-01 * "HSBC UK" "Interest"
+  Asset:HSBC:UK:Online-Bonus-Saver    0.06 GBP
+  Income:Interest    -0.06 GBP
+2021-01-02 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    16 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -16 HKD
+2021-01-02 * "Aeon" "Groceries"
+  Expense:Food:Groceries    166.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -166.9 HKD
+2021-01-02 * "Park'n'Shop" "Groceries"
+  Expense:Food:Groceries    61 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -61 HKD
+2021-01-02 * "Aeon" "Bad rice refund (for 10 bags)"
+  Expense:Food:Groceries    -690 HKD
+  Payable:HSBC:HK:Premier-Credit-Card    690 HKD
+2021-01-03 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    190 HKD
+  Asset:Wallet    -190 HKD
+2021-01-03 * "Adobe" "Photoshop Subscription"
+  Expense:Bills:Subscriptions:Software    68.68 HKD
+  Liability:Standard-Chartered:Asia-Miles-21x1    -68.68 HKD
+2021-01-03 * "Aeon" "Groceries"
+  Expense:Food:Groceries    93.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -93.2 HKD
+2021-01-03 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    33 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -33 HKD
+2021-01-04 * "Hong Kong Inland Revenue" "Pay Tax"
+  Expense:Bills:Income-Tax    186683 HKD
+  Asset:Standard-Chartered:Priority-Banking    -186683 HKD
+2021-01-05 * "Knockbox" "Flat White"
+  Expense:Dining-Out:Drinks    40 HKD
+  Asset:Wallet    -40 HKD
+2021-01-05 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    43.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -43.5 HKD
+2021-01-05 * "Smartone" "Mobile phone bill"
+  Expense:Bills:Mobile-phone    294 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x1    -294 HKD
+2021-01-05 * "Cafe de Coral" "Pork chop and baked ox tongue"
+  Expense:Dining-Out:Lunch    93 HKD
+  Asset:Octopus0    -93 HKD
+2021-01-06 * "Pay SC Asia Miles December 2020" ""
+  Asset:Standard-Chartered:Priority-Banking    -2633.68 HKD
+  Payable:Standard-Chartered:Asia-Miles    2633.68 HKD
+2021-01-08 * "LY Bakery" "Breakfast and snacks"
+  Expense:Dining-Out:Junk    16 HKD
+  Expense:Food:Groceries    46 HKD
+  Asset:Octopus0    -62 HKD
+2021-01-08 * "Hiyori House" "Lunch (1+11)"
+  Expense:Dining-Out:Lunch    90 HKD
+  Asset:Wallet    -90 HKD
+2021-01-08 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-21x2    -250 HKD
+2021-01-08 * "Starbucks" "Load Starbucks Card"
+  Asset:Starbucks-Card    100 HKD
+  Liability:Standard-Chartered:Asia-Miles-21x1    -100 HKD
+2021-01-08 * "Pay DBS for Joanne" ""
+  Asset:Standard-Chartered:Priority-Banking    -322.6 HKD
+  Payable:DBS:Black-Card    322.6 HKD
+2021-01-09 * "Pure Wagyu Yakiniku" "Lunch"
+  Expense:Dining-Out:Lunch    286 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -286 HKD
+2021-01-09 * "Yifang Fruit Tea" "Passion fruit tea"
+  Expense:Dining-Out:Drinks    23.8 HKD
+  Asset:Octopus0    -23.8 HKD
+2021-01-09 * "Reaction Coffee" "Flat White (testing)"
+  Expense:Dining-Out:Drinks    40 HKD
+  Liability:Standard-Chartered:Asia-Miles-21x1    -40 HKD
+2021-01-09 * "Cha Cha" "Red bean / green tea cake"
+  Expense:Dining-Out:Junk    18 HKD
+  Asset:Octopus0    -18 HKD
+2021-01-10 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    35.5 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -35.5 HKD
+2021-01-10 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    200 HKD
+  Asset:Wallet    -200 HKD
+2021-01-10 * "Aeon" "Groceries"
+  Expense:Food:Groceries    244.2 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -244.2 HKD
+2021-01-10 * "Transfer to Friends Provident" ""
+  Asset:Barclays-Bank:Investment-Funding    -1000 GBP
+  Asset:Friends-Provident:Cash    1000 GBP
+2021-01-10 * "SC Asia Miles Statement" ""
+  Liability:Standard-Chartered:Asia-Miles    2323.48 HKD
+  Payable:Standard-Chartered:Asia-Miles    -2323.48 HKD
+2021-01-11 * "Cafe de Coral" "Baked chicken and Hainan chicken rice"
+  Expense:Dining-Out:Lunch    102 HKD
+  Asset:Octopus0    -102 HKD
+2021-01-11 * "Peng Haoyan" "Rent for 55B"
+  Asset:HSBC:HK:Joint:Savings    -31000 HKD
+  Expense:Bills:Rent    31000 HKD
+2021-01-13 * "Park'n'Shop" "Groceries (Wan Chai x4)"
+  Expense:Food:Groceries    40 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -40 HKD
+2021-01-13 * "Cafe de Coral" "Pork chop and baked ox tongue"
+  Expense:Dining-Out:Lunch    93 HKD
+  Asset:Octopus0    -93 HKD
+2021-01-13 * "Aeon" "Groceries"
+  Expense:Food:Groceries    217.8 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -217.8 HKD
+2021-01-13 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    34 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -34 HKD
+2021-01-13 * "HSBC USA" "Interest"
+  Asset:HSBC:USA:Checking    0.08 USD
+  Income:Interest    -0.08 USD
+2021-01-13 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-21x2    -250 HKD
+2021-01-14 * "Fairwood" "Claypot rice"
+  Expense:Dining-Out:Lunch    55.8 HKD
+  Liability:Standard-Chartered:Asia-Miles-21x2    -55.8 HKD
+2021-01-14 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    36 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -36 HKD
+2021-01-14 * "Aeon" "Groceries"
+  Expense:Food:Groceries    10 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -10 HKD
+2021-01-16 * "Vida Coffee Stand" "Flat White"
+  Expense:Dining-Out:Drinks    40 HKD
+  Asset:Octopus0    -40 HKD
+2021-01-16 * "Red Object" "Mixed beef Tomato soup noodles lunch"
+  Expense:Dining-Out:Lunch    156 HKD
+  Asset:Wallet    -156 HKD
+2021-01-16 * "Solutions Healthcare" "12x white cotton gloves"
+  Expense:Household    50 HKD
+  Asset:Wallet    -50 HKD
+2021-01-16 * "Cafe Jargor" "Afternoon tea (french toast + milk tea)"
+  Expense:Dining-Out:Afternoon-Tea    39 HKD
+  Asset:Wallet    -39 HKD
+2021-01-16 * "Aeon" "Groceries"
+  Expense:Food:Groceries    220.6 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -220.6 HKD
+2021-01-16 * "Dunhill" "Trench Coat"
+  Expense:Clothing    3200 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -3200 HKD
+2021-01-17 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    16 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -16 HKD
+2021-01-17 * "Aeon" "Groceries"
+  Expense:Food:Groceries    141.1 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -141.1 HKD
+2021-01-17 * "Wet Market" "Groceries"
+  Expense:Food:Groceries    280 HKD
+  Asset:Wallet    -280 HKD
+2021-01-17 * "Aeon" "Groceries"
+  Expense:Food:Groceries    29.9 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -29.9 HKD
+2021-01-18 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    42 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -42 HKD
+2021-01-18 * "Fairwood" "Claypot rice"
+  Expense:Dining-Out:Lunch    55.8 HKD
+  Liability:Standard-Chartered:Asia-Miles-21x2    -55.8 HKD
+2021-01-18 * "Fairwood" "Claypot rice"
+  Income:Coupons    -6 HKD
+  Expense:Dining-Out:Lunch    55 HKD
+  Asset:Octopus0    -49 HKD
+2021-01-20 * "Cafe de Coral" "Double pork chop"
+  Expense:Dining-Out:Lunch    92 HKD
+  Asset:Octopus0    -92 HKD
+2021-01-20 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    18 HKD
+  Asset:Octopus0    -18 HKD
+2021-01-20 * "Octopus reload" ""
+  Asset:Octopus1    200 HKD
+  Asset:Wallet    -200 HKD
+2021-01-21 * "Hiyori House" "Lunch (2)"
+  Expense:Dining-Out:Lunch    45 HKD
+  Asset:Wallet    -45 HKD
+2021-01-21 * "LY Bakery" "Breakfast and snack"
+  Expense:Dining-Out:Junk    16 HKD
+  Expense:Food:Groceries    40 HKD
+  Asset:Octopus0    -56 HKD
+2021-01-21 * "Bank of America" "Salary"
+  Income:Gross-Salary    -179166.67 HKD
+  Income:Retirement:Employer-Contributions    -13000 HKD
+  Asset:HSBC:ORSO    6500 HKD
+  Asset:HSBC:ORSO    13000 HKD
+  Asset:Standard-Chartered:Priority-Banking    172666.67 HKD
+2021-01-21 * "Octopus auto-reload" ""
+  Asset:Octopus0    250 HKD
+  Liability:Standard-Chartered:Asia-Miles-21x2    -250 HKD
+2021-01-22 * "Espresso Alchemy" "Flat white (44), and banana bread (31)"
+  Expense:Dining-Out:Afternoon-Tea    75 HKD
+  Income:Coupons    -5 HKD
+  Liability:Standard-Chartered:Asia-Miles-21x2    -70 HKD
+2021-01-22 * "Liu Liang San" "Rib fingers, egg, consumme takeout"
+  Expense:Dining-Out:Dinner    103 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -103 HKD
+2021-01-23 * "Transfer for paying Amex" ""
+  Asset:HSBC:HK:Joint:Savings    -20000 HKD
+  Asset:HSBC:HK:Joint:Current    20000 HKD
+2021-01-24 * "Aeon" "Groceries"
+  Expense:Food:Groceries    153 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -153 HKD
+2021-01-24 * "A-1 Bakery" "Breakfast"
+  Expense:Food:Groceries    44 HKD
+  Liability:American-Express:Cathay-Pacific-Elite-21x2    -44 HKD
