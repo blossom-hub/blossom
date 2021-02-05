@@ -4,12 +4,8 @@ open System
 open System.IO
 open Shared
 open Types
+open Definitions
 open JournalParser
-
-let marketAccount = Types.Account "_Market"
-let conversionsAccount = Types.Account "_Conversions"
-
-let internalDefaultCommodity = Types.Commodity "$"  // this is not a parsable value
 
 let getAccount = function | Types.VirtualisedAccount (a, s) -> a | Types.Account a -> a
 
