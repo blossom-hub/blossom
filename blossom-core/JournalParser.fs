@@ -137,7 +137,7 @@ let pValuationMode : Parser<ValuationMode, UserState> =
 
 let pAccountConvention : Parser<AccountConvention, UserState> =
   choice [stringReturn "F5" Financial5
-          stringReturn "F5" Financial7]
+          stringReturn "F7" Financial7]
 
 // Account name elements and parsing
 let accountValidChars = letter <|> digit <|> anyOf "()[]{}" <|> (pchar ' ' .>> notFollowedBy (pchar ' ') |> attempt)
