@@ -19,6 +19,7 @@ account Asset               ; Predefine some account defaults
 commodity 9984JP   ; definitely not a hedge fund
   name Softbank Group
   measure JPY
+  dp 0
   class Equity
   externalid broker 1235
   externalid isin JP3436100006

@@ -78,6 +78,7 @@ type private RSubElement =
   | SCommodityClass of CommodityClass
   | SValuationMode of ValuationMode
   | SMeasure of Commodity
+  | SQuoteDP of int
   | SUnderlying of Commodity
   | SMultiplier of int
   | SExternalIdent of string * string
@@ -175,6 +176,7 @@ let private spName = sstr1 "name" >>. restOfLine false |>> SName
 let private spCommodityClass = sstr1 "class" >>. pCommodityClass |>> SCommodityClass
 let private spValuationMode = sstr1 "valuation" >>. pValuationMode |>> SValuationMode
 let private spMeasure = sstr1 "measure" >>. pCommodity |>> SMeasure
+let private spQuoteDP = sstr1 "dp" >>. pint32 |>> SQuoteDP
 let private spUnderlying = sstr1 "underlying" >>. pCommodity |>> SUnderlying
 let private spMultiplier = sstr1 "multiplier" >>. pint32 |>> SMultiplier
 let private spExternalIdent = sstr1 "externalid" >>. many1CharsTill (letter <|> digit <|> anyOf ".") (pchar ' ')
@@ -232,11 +234,12 @@ let pAccountDecl =
                             |> wrapCommented c
 
 let pCommodityDecl =
-  let subitems = (choice [spName; spMeasure; spUnderlying; spCommodityClass; spMultiplier; spMTM; spExternalIdent] .>> nSpaces0 .>> skipNewline) |> indented |> many
+  let subitems = (choice [spName; spMeasure; spQuoteDP; spUnderlying; spCommodityClass; spMultiplier; spMTM; spExternalIdent] .>> nSpaces0 .>> skipNewline) |> indented |> many
   sstr1 "commodity" >>. pOptLineComment pCommodity .>>. increaseIndent subitems
     |>> fun ((t, c), ss) ->
           RJournalElement.Commodity {Symbol = t
                                      Measure = glse ss (function (SMeasure m) -> Some m | _ -> None)
+                                     QuoteDP = glse ss (function (SQuoteDP i) -> Some i | _ -> None)
                                      Underlying = glse ss (function (SUnderlying m) -> Some m | _ -> None)
                                      Name = glse ss (function (SName n) -> Some n | _ -> None)
                                      Klass = glse ss (function (SCommodityClass c) -> Some c | _ -> None)
