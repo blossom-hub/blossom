@@ -47,27 +47,19 @@ let balanceEntry gdc acctDecls commodDecls = function
 
       let postings = xs |> List.choose (function | Posting (account, amount, contra) -> Some (account, amount, contra) | _ -> None)
 
-      let weightOf account ramount =
-        match ramount with | Un q               -> q, tryCommodityOf account |> orGlobalCommodity
-                           | Ve (q, c)          -> q, c
-                           | Tf ((q,c), (p, m)) -> q, c
-                           | Th ((q,c), p)      -> q, c
-                           | Cr ((q,c), _)      -> q, c
-                           | Cl (_, (p, m))     -> p, m
-
       let contraWeightOf account ramount =
-        match ramount with | Un q               -> q, tryCommodityOf account |> orGlobalCommodity
-                           | Ve (q, c)          -> q, c
-                           | Tf ((q,c), (p, m)) -> q*p*multiplierOf c, m
-                           | Th ((q,c), p)      -> q*p*multiplierOf c, measureOf c
-                           | Cr (_, (p, m))     -> p, m
-                           | Cl ((q,c), _)      -> q, c
+        match ramount with | Un q                  -> q, tryCommodityOf account |> orGlobalCommodity
+                           | Ve (q, c)             -> q, c
+                           | Tf ((q,c), (p, m), _) -> q*p*multiplierOf c, m
+                           | Th ((q,c), p, _)      -> q*p*multiplierOf c, measureOf c
+                           | Cr (_, (p, m))        -> p, m
+                           | Cl ((q,c), _)         -> q, c
 
       let convert account ramount =
           match ramount with | Un q               -> V (q, tryCommodityOf account |> orGlobalCommodity)
                              | Ve (q, c)          -> V (q, c)
-                             | Tf (a, b)          -> T (a, b)
-                             | Th ((q, c), p)     -> T ((q, c), (p, measureOf c))
+                             | Tf (a, b, ls)      -> T (a, b, ls)
+                             | Th ((q, c), p, ls) -> T ((q, c), (p, measureOf c), ls)
                              | Cr (a, b)          -> X (a, b)
                              | Cl (a, b)          -> X (b, a)
 
@@ -209,7 +201,7 @@ let expandPosting commodityDecls account amount caccount =
   match amount with
       | V (qty, commodity) ->
           [account, qty, commodity; caccount, -qty, commodity]
-      | T ((qty, commodity), (price, measure)) ->
+      | T ((qty, commodity), (price, measure), _) ->
           let cash = qty * price * multiplierOf commodityDecls commodity
           [account, qty, commodity
            marketAccount, -qty, commodity
@@ -286,8 +278,8 @@ let prefilter request journal =
               | Some r -> fun (_, amt, _) ->
                             match amt with
                               | V (_, Types.Commodity c) -> regexfilter r c
-                              | T ((_, Types.Commodity c1), (_, Types.Commodity c2)) -> regexfilter r c1 || regexfilter r c2
-                              | X ((_, Types.Commodity c1), (_, Types.Commodity c2)) -> regexfilter r c1 || regexfilter r c2
+                              | T ((_, Types.Commodity c1), (_, Types.Commodity c2), _) -> regexfilter r c1 || regexfilter r c2
+                              | X ((_, Types.Commodity c1), (_, Types.Commodity c2))    -> regexfilter r c1 || regexfilter r c2
     es |> List.filter (fun e -> e.Postings |> List.exists (fun p -> f p && g p))
 
   let apply dt es =

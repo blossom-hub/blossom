@@ -7,6 +7,7 @@ type AccountConvention =  Financial5 | Financial7
 // "NewType" style definitions
 type Comment = Comment of string
 type Commodity = Commodity of string
+type LotName = LotName of string
 type Account = | Account of string | VirtualisedAccount of string * string
 type AccountHierarchy = AccountHierarchy of string list * string option
 
@@ -16,7 +17,7 @@ type Tenor = Y | M | H | Q | W of DayOfWeek | D
 
 type Amount =
   | V of Value
-  | T of Value * Value
+  | T of Value * Value * LotName Set
   | X of Value * Value
 
 type ValuationMode =

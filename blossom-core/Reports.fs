@@ -20,9 +20,9 @@ let meta renderer request journal =
     entry.Postings |> List.collect (fun (acc, _, ca) -> f acc @ f ca) |> List.distinct
 
   let commoditiesFromAmount =
-    function | V (_, Commodity c)             -> [c]
-             | T ((_, Commodity c1), (_, Commodity c2)) -> [c1; c2]
-             | X ((_, Commodity c1), (_, Commodity c2)) -> [c1; c2]
+    function | V (_, Commodity c)                          -> [c]
+             | T ((_, Commodity c1), (_, Commodity c2), _) -> [c1; c2]
+             | X ((_, Commodity c1), (_, Commodity c2))    -> [c1; c2]
 
   let commoditiesFromEntry entry =
     entry.Postings |> List.collect (fun (_, a, _) -> commoditiesFromAmount a)
