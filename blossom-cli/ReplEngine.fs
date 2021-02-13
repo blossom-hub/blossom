@@ -65,11 +65,12 @@ let reload state =
 
 let showHelp state =
   printfn "  Filters"
-  printfn "    date: >/>=/</<="
+  printfn "    date: >,>=,<, or <="
   printfn "    payee: @"
   printfn "    narrative: ?"
   printfn "    commodity: %%"
   printfn "    hashtag: #"
+  printfn "    virtual account: /"
   printfn "    account: no symbol"
   Some state
 
@@ -81,19 +82,20 @@ let execute state input =
     Some state
 
   let action = function
-    | Quit                 -> None
-    | Clear                -> Console.Clear()
-                              Some state
-    | Set value            -> set state value
-    | Load filename        -> load state filename
-    | Reload               -> reload state
-    | Balances (fs, query) -> withJournal <| balances HumanReadable.renderTable (getFilter query) fs
-    | Journal (fs, query)  -> withJournal <| journal HumanReadable.renderTable (getFilter query) fs
+    | Quit                    -> None
+    | Clear                   -> Console.Clear()
+                                 Some state
+    | Set value               -> set state value
+    | Load filename           -> load state filename
+    | Reload                  -> reload state
+    | Balances (fs, query)    -> withJournal <| balances HumanReadable.renderTable (getFilter query) fs
+    | Journal (fs, query)     -> withJournal <| journal HumanReadable.renderTable (getFilter query) fs
     | BalanceSeries (fs, tenor, cumulative, query)
-                           -> withJournal <| balanceSeries HumanReadable.renderTable tenor cumulative (getFilter query) fs
-    | Check request        -> withJournal <| checkJournal HumanReadable.renderTable request
-    | Meta request         -> withJournal <| meta HumanReadable.renderMetaResult request
-    | Help                 -> showHelp state
+                              -> withJournal <| balanceSeries HumanReadable.renderTable tenor cumulative (getFilter query) fs
+    | LotAnalysis (fs, query) -> withJournal <| lotAnalysis HumanReadable.renderTable (getFilter query) fs
+    | Check request           -> withJournal <| checkJournal HumanReadable.renderTable request
+    | Meta request            -> withJournal <| meta HumanReadable.renderMetaResult request
+    | Help                    -> showHelp state
 
   try
     let result = runParser parse () (FromString input)

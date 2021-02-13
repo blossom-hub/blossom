@@ -297,3 +297,34 @@ let balanceSeries renderer tenor cumulative request flags journal =
                                                                               dt, ds)
                      let data = balances2 |> List.collect (fun (dt, xs) -> xs |> List.map (createRow dt))
                      Table (cs, data) |> renderer
+
+let lotAnalysis renderer request flags journal =
+  let includeVirtual, flags = Set.pop "v" flags
+
+  // run it -> filter it
+  let j2 = prefilter request journal
+
+  // get all (risky) trading postings (type T values)
+  let liftT dt (account, amount, _) =
+    match amount with
+      | T ((q, c), (p, m), ns) -> Some (dt, account, q, c, p, m, ns)
+      | _ -> None
+
+  let tradingEntries =
+    j2.Register |> Map.toList
+                |> List.collect snd
+                |> List.collect (fun e -> e.Postings |> List.choose (liftT e.Date))
+
+  let cs = [{Header = "Date"; Key=true}
+            {Header = "Account"; Key=true}
+            {Header = "Type"; Key=true}
+            {Header = "Commodity"; Key=true}
+            {Header = "Amount"; Key=false}
+            {Header = "Price"; Key=false}
+            {Header = "Measure"; Key=false}]
+
+  let createRow (d, a, q, Commodity c, p, Commodity m, ns) =
+    [Date d; getAccount a |> Text; Text "O";  Text c; Number (q, 3); Number (p, 3); Text m]
+
+  let table = Table (cs, tradingEntries |> List.map createRow)
+  renderer table

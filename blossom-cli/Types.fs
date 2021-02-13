@@ -19,6 +19,8 @@ type Command =
   | Balances of flags * string
   | Journal of flags * string
   | BalanceSeries of flags * Tenor * bool * string
+  // Investing
+  | LotAnalysis of flags * string
   // Help
   | Check of CheckRequest
   | Help
