@@ -22,7 +22,7 @@ let isElidable = function | Number _ | List _ -> false
 let rec initialRender =
   function | Date d        -> d.ToString("yyyy-MM-dd")
            | Text s        -> s
-           | Number (v,dp) -> Decimal.Round(v, dp) |> sprintf "%M"
+           | Number (v, dp) -> v.ToString("0." + String.replicate dp "0" + "##")
            | Empty         -> ""
            | List xs       -> xs |> List.map initialRender |> String.concat ", "
 

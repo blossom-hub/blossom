@@ -28,6 +28,7 @@ commodity NQZ20    ; Nasdaq futures
   name Nasdaq Dec '20 futures
   class Future
   measure USD
+  dp 3
   underlying NDX
   multiplier 20
   mtm

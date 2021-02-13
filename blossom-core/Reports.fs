@@ -301,6 +301,9 @@ let balanceSeries renderer tenor cumulative request flags journal =
 let lotAnalysis renderer request flags journal =
   let includeVirtual, flags = Set.pop "v" flags
 
+  let quoteDPFor commodity = journal.CommodityDecls |> Map.tryFind commodity
+                                                    |> Option.bind (fun t -> t.QuoteDP)
+                                                    |> Option.defaultValue 3
   // run it -> filter it
   let j2 = prefilter request journal
 
@@ -324,7 +327,7 @@ let lotAnalysis renderer request flags journal =
             {Header = "Measure"; Key=false}]
 
   let createRow (d, a, q, Commodity c, p, Commodity m, ns) =
-    [Date d; getAccount a |> Text; Text "O";  Text c; Number (q, 3); Number (p, 3); Text m]
+    [Date d; getAccount a |> Text; Text "O";  Text c; Number (q, 3); Number (p, quoteDPFor (Commodity c)); Text m]
 
   let table = Table (cs, tradingEntries |> List.map createRow)
   renderer table
