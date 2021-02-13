@@ -46,50 +46,96 @@ let balanceEntry gdc acctDecls commodDecls = function
       let orGlobalCommodity = Option.orElse gdc >> function Some c -> c | None -> internalDefaultCommodity
 
       let postings = xs |> List.choose (function | Posting (account, amount, contra) -> Some (account, amount, contra) | _ -> None)
-      // is there a blank account for auto contra?
-      let blanks, nonBlanks = postings |> List.partition (snd3 >> Option.isNone)
-                                       |> (List.map fst3) *** (List.map (second3 Option.get))
 
-      let collectWeightings (account, value, contraAccount) =
-        // if this leg has it's own contra account, it automatically balances, it has zero weight to return
-        match contraAccount with
-          | NoCAccount ->
-              match value with
-                | Un q               -> [q, tryCommodityOf account |> orGlobalCommodity]
-                | Ve (q, c)          -> [q, c]
-                | Tf ((q,c), (p, m)) -> [q*p*multiplierOf c, m]
-                | Th ((q,c), p)      -> [q*p*multiplierOf c, measureOf c]
-                | Cr ((q,c), _)      -> [q, c]
-                | Cl (_, (p, m))     -> [p, m]
-          | _ -> []
-      let ys = nonBlanks |> List.collect collectWeightings
-      // now group up and check the result balancing (or not)
-      let residual = ys |> List.groupBy snd
-                        |> List.map (second (List.sumBy fst))
-                        |> List.filter (fun (_,d) -> d <> 0M)
+      let weightOf account ramount =
+        match ramount with | Un q               -> q, tryCommodityOf account |> orGlobalCommodity
+                           | Ve (q, c)          -> q, c
+                           | Tf ((q,c), (p, m)) -> q, c
+                           | Th ((q,c), p)      -> q, c
+                           | Cr ((q,c), _)      -> q, c
+                           | Cl (_, (p, m))     -> p, m
 
-      let convertXs (account, value, contraAccount) =
-        let cv =
-          function | Un q -> V (q, tryCommodityOf account |> orGlobalCommodity)
-                   | Ve v -> V v
-                   | Tf (a, b) -> T (a, b)
-                   | Th ((q, c), p) -> T ((q, c), (p, measureOf c))
-                   | Cr (a, b) -> X (b, a)
-                   | Cl (a, b) -> X (a, b)
-        let cca = function | NoCAccount -> None | Self -> Some account | CAccount c -> Some c
-        (account, cv value, cca contraAccount)
+      let contraWeightOf account ramount =
+        match ramount with | Un q               -> q, tryCommodityOf account |> orGlobalCommodity
+                           | Ve (q, c)          -> q, c
+                           | Tf ((q,c), (p, m)) -> q*p*multiplierOf c, m
+                           | Th ((q,c), p)      -> q*p*multiplierOf c, measureOf c
+                           | Cr (_, (p, m))     -> p, m
+                           | Cl ((q,c), _)      -> q, c
 
-      let defaultContraAccount = List.tryHead blanks
-      Some <| match List.length blanks, defaultContraAccount, List.length residual with
-                | 0, _, 0       -> {Flagged = flagged; Date = dt; Payee = py; Narrative = na; HashTags = hs;
-                                    Postings = postings |> List.map (second3 Option.get >> convertXs)} |> Choice1Of2
-                | 0, _, _       -> sprintf "Entry doesn't balance! Need a contra account but none specified. %s" (posn.ToString()) |> Choice2Of2
-                | 1, Some _ , 0 -> sprintf "Entry balances, but a contra account has been specified. %s" (posn.ToString()) |> Choice2Of2
-                | 1, Some ca, _ -> let zs = residual |> List.map (fun (c, v) -> (ca, Ve (-v, c), NoCAccount))
-                                   {Flagged = flagged; Date = dt; Payee = py; Narrative = na; HashTags = hs;
-                                    Postings = nonBlanks @ zs |> List.map convertXs} |> Choice1Of2
-                | _, _, _       -> sprintf "Entry has more than one default contra account, there should only be one. %s" (posn.ToString()) |> Choice2Of2
-  | _ -> None
+      let convert account ramount =
+          match ramount with | Un q               -> V (q, tryCommodityOf account |> orGlobalCommodity)
+                             | Ve (q, c)          -> V (q, c)
+                             | Tf (a, b)          -> T (a, b)
+                             | Th ((q, c), p)     -> T ((q, c), (p, measureOf c))
+                             | Cr (a, b)          -> X (a, b)
+                             | Cl (a, b)          -> X (b, a)
+
+      // Split postings up into categories before linking to their contra
+      let emptyPostings = postings |> List.choose (function (account, None, _) -> Some account | _ -> None)
+      let unmatchedPostings = postings |> List.choose (function (account, Some v, None) -> Some (account, v) | _ -> None)
+      let selfMatchingPostings = postings |> List.choose (function (account, Some v, Some contraAccount) -> Some (account, convert account v, contraAccount) | _ -> None)
+
+      (* NEW 12/02 --> fail if ambiguous (2x2 for example)
+          1. Remove self-balancing
+          2. if *1* missing account, auto-balance against this one
+          3. if *2+* missing account, FAIL
+          4. if *0* missing account, try to match on weight/weight basis, there must be 1 side with a single entry
+                eg +2 USD +1 USD, vs -3 USD. otherwise fail
+                check blancing
+          5. oth fail
+      *)
+
+      let mkEntry ps = {
+        Flagged = flagged
+        Date = dt
+        Payee = py
+        Narrative = na
+        HashTags = hs
+        Postings = selfMatchingPostings @ ps
+      }
+
+      Some <| match List.length emptyPostings, List.length unmatchedPostings with
+                | 0,0 -> mkEntry [] |> Choice1Of2
+                | 1,0 -> $"Contra account is specified but not required. {posn}" |> Choice2Of2
+                | 0,_ -> // break in to long/short by measure
+                         let tag a v = let (q, c) = contraWeightOf a v in (a, v, q, c, Math.Sign q = 1)
+                         let ls = unmatchedPostings |> List.map (uncurry tag)
+                         let totals = ls |> List.groupByApply frh5 (List.sumBy thd5)
+                         // firstly check if overall there is a balance overall
+                         let unbalanced = totals |> List.filter (fun (c, q) -> q <> 0M) |> List.tryHead
+                         match unbalanced with
+                           | Some _ -> $"Entry does not balance, a contra account is needed but not supplied {posn}" |> Choice2Of2
+                           | None -> // needs 1 -> n, or n -> 1 for matching to be automatically calculated now, else error (ambiguous matching)
+                               let g = ls |> List.groupBy (frh5 &&& fih5)
+                               let measures = List.map fst totals
+                               let ones, multis = g |> List.partition (fun (_,vs) -> List.length vs = 1)
+                               // look for the cases, and hook them up
+                               // okay:     1 long / 1 short, 1 long / n short, n long / 1 short
+                               // not okay: n long / n short
+                               let onesMeasures = ones |> List.map (fst >> fst) |> List.distinct
+                               let everyOne = measures |> List.all (flip List.contains onesMeasures)
+                               match everyOne with
+                                 | false -> $"Ambiguous posting match, each commodity measure should be 1-1 or many-to-1. {posn}" |> Choice2Of2
+                                 | true ->
+                                     let matchUp measure =
+                                       let os = ones |> List.filter (fun x -> fst (fst x) = measure) |> List.collect snd
+                                       let ms = multis |> List.filter (fun x -> fst (fst x) = measure) |> List.collect snd
+                                       match List.length os with
+                                         | 2 -> let (a, q, _, _, _) = List.head os
+                                                let (c, _, _, _, _) = List.last os
+                                                [(a, convert a q, c)]
+                                         | 1 -> let (c, _, _, _, _) = List.head os
+                                                ms |> List.map (fun (a, q, _, _, _) -> (a, convert a q, c))
+                                         | _ -> failwith "Unexpected balancing problem matching measures in posting"
+                                     measures |> List.collect matchUp |> mkEntry |> Choice1Of2
+                | 1,_ -> let c = List.head emptyPostings
+                         unmatchedPostings |> List.map (fun (a, v) -> (a, convert a v, c))
+                                           |> mkEntry
+                                           |> Choice1Of2
+                | _,_ -> $"Only one empty balance entry is supported. {posn}" |> Choice2Of2
+
+    | _ -> None
 
 let private mergeJournals j1 j2 =
   {
@@ -162,19 +208,18 @@ let multiplierOf commodityDecls c =
 let expandPosting commodityDecls account amount caccount =
   match amount with
       | V (qty, commodity) ->
-          let contra = match caccount with Some ca -> [ca, -qty, commodity] | None -> []
-          [account, qty, commodity] @ contra
+          [account, qty, commodity; caccount, -qty, commodity]
       | T ((qty, commodity), (price, measure)) ->
           let cash = qty * price * multiplierOf commodityDecls commodity
-          let contra = match caccount with Some ca -> [ca, -cash, measure] | None -> []
           [account, qty, commodity
            marketAccount, -qty, commodity
-           marketAccount, cash, measure] @ contra
+           marketAccount, cash, measure
+           caccount, -cash, measure]
       | X ((qty1, commodity1), (qty2, commodity2)) ->
-          let contra = match caccount with Some ca -> [ca, -qty2, commodity2] | None -> []
           [account, qty1, commodity1
            conversionsAccount, -qty1, commodity1
-           conversionsAccount, qty2, commodity2] @ contra
+           conversionsAccount, qty2, commodity2
+           caccount, -qty2, commodity2]
 
 let evaluateMovements commodityDecls register : Map<DateTime, (Account * decimal * Commodity) list> =
   let expandEntry entry = entry.Postings |> List.collect (fun (a,b,c) -> expandPosting commodityDecls a b c)
@@ -226,19 +271,17 @@ let prefilter request journal =
               | None -> fun _ -> true
               | Some r -> fun (acc, _, ca) ->
                             let q1 = getAccount acc |> regexfilter r
-                            let q2 = Option.fold (fun _ t -> t |> getAccount |> regexfilter r) true ca
+                            let q2 = getAccount ca  |> regexfilter r
                             q1 || q2
     let g = match request.subaccount with
               | None -> fun _ -> true
               | Some r -> fun (acc, _, ca) ->
                             let q1 = match acc with | Types.Account _ -> true
                                                     | VirtualisedAccount (_, s) -> r = s
-                            let q2 = match ca with
-                                       | Some caa -> match caa with | Types.Account _ -> true
-                                                                    | VirtualisedAccount (_, s) -> r = s
-                                       | None -> true
+                            let q2 = match ca with | Types.Account _ -> true
+                                                   | VirtualisedAccount (_, s) -> r = s
                             q1 || q2
-    let h= match request.commodity with
+    let h = match request.commodity with
               | None -> fun _ -> true
               | Some r -> fun (_, amt, _) ->
                             match amt with

@@ -73,7 +73,7 @@ type Entry = {
   Payee: string option
   Narrative: string
   HashTags: string Set
-  Postings: (Account * Amount * Account option) list
+  Postings: (Account * Amount * Account) list
 }
 
 type Journal = {

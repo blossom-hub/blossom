@@ -37,20 +37,15 @@ type UserState =
 *)
 
 type RAmount =
-  | Un of decimal
-  | Ve of Value
-  | Tf of Value * Value
-  | Th of Value * decimal
-  | Cr of Value * Value
-  | Cl of Value * Value
-
-type RContraAccount =
-   | NoCAccount
-   | Self
-   | CAccount of Account
+  | Un of decimal             // Unlabelled plain amount    "109.4"
+  | Ve of Value               // Normal measured value      "109.4 USD"
+  | Tf of Value * Value       // Full valued transaction    "100 TSLA @ 899 USD"
+  | Th of Value * decimal     // Half valued transaction    "100 TSLA @ 899"
+  | Cr of Value * Value       // Right conversion           "100 USD -> 96 EUR"
+  | Cl of Value * Value       // Left conversion            "100 USD <- 96 EUR"
 
 type RPostingElement =
-  | Posting of account:Account * amount:RAmount option * contra:RContraAccount
+  | Posting of account:Account * amount:RAmount option * contra:Account option
   | PComment of Comment
   | PCommented of RPostingElement * Comment
 
@@ -241,11 +236,11 @@ let pCommodityDecl =
           |> wrapCommented c
 
 let pPostingEntry =
-  let contraAccount = choice [attempt (skipChar '~' >>. nSpaces0 >>. pAccountHierarchy |>> CAccount)
-                              skipChar '~' >>. preturn Self] |> opt
-                        |>> function Some c -> c | None -> NoCAccount
+  let contraAccount = choice [attempt (skipChar '~' >>. nSpaces0 >>. pAccountHierarchy |>> Choice1Of2)
+                              skipChar '~' >>. preturn (Choice2Of2 ())] |> opt
   let pp = pOptLineComment (tuple3 (pAccountHierarchy .>> nSpaces0) (opt (attempt (pRAmount .>> nSpaces0))) (nSpaces0 >>. contraAccount))
-                |>> fun ((h,a,ca), cm) -> let ps = Posting (h, a, ca)
+                |>> fun ((h,a,ca), cm) -> let ca2 = Option.map (function Choice1Of2 x -> x | Choice2Of2 _ -> h) ca
+                                          let ps = Posting (h, a, ca2)
                                           match cm with | Some c -> PCommented (ps, c) | _ -> ps
   let pc = pComment0 ";" .>> skipNewline |>> PComment
   choice [attempt pc; pp]

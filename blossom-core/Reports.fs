@@ -17,7 +17,7 @@ let meta renderer request journal =
     let f acc = let a = getAccount acc
                 let b = getVirtualAccount acc
                 match b with Some c -> [a; $"{a}/{c}"] | None -> [a]
-    entry.Postings |> List.collect (fun (acc, _, ca) -> f acc @ (Option.fold (fun _ c -> f c) [] ca))
+    entry.Postings |> List.collect (fun (acc, _, ca) -> f acc @ f ca) |> List.distinct
 
   let commoditiesFromAmount =
     function | V (_, Commodity c)             -> [c]

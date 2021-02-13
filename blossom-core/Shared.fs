@@ -9,6 +9,7 @@ open Types
 let curry f a b = f (a,b)
 let uncurry f (a, b) = f a b
 
+let flip f a b = f b a
 let swap (a,b) = (b,a)
 
 let first  f (a, b) = (f a, b)
@@ -24,6 +25,17 @@ let ( *** ) f g (a, b) = (f a, g b)
 let fst3 (a,_,_) = a
 let snd3 (_,b,_) = b
 let thd3 (_,_,c) = c
+
+let fst4 (a,_,_,_) = a
+let snd4 (_,b,_,_) = b
+let thd4 (_,_,c,_) = c
+let frh4 (_,_,_,d) = d
+
+let fst5 (a,_,_,_,_) = a
+let snd5 (_,b,_,_,_) = b
+let thd5 (_,_,c,_,_) = c
+let frh5 (_,_,_,d,_) = d
+let fih5 (_,_,_,_,e) = e
 
 type idstring = string
 let uid () : idstring =
@@ -51,6 +63,9 @@ module List =
     let grouped = list |> List.groupBy keyProjection
     let projected = grouped |> List.map (second valueProjection)
     projected
+
+  let all f list = List.map f list |> List.fold (&&) true
+  let any f list = List.map f list |> List.fold (||) false
 
 module Map =
   let merge (m1 : Map<'a, 'b>) (m2 : Map<'a, 'b>) = Map.fold (fun s k v -> Map.add k v s) m2 m1
