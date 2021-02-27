@@ -118,7 +118,7 @@ let pValue =
 
 let pLotName =
   let sq = letter <|> digit <|> anyOf "._-"
-  many1Chars2 letter sq |>> LotName
+  many1Chars2 letter sq |>> CustomLotName
 
 let pRAmount =
   let pcr = pValue .>> nSpaces1 .>> sstr1 "->" .>>. pValue |>> Cr
@@ -126,7 +126,7 @@ let pRAmount =
   let pLotNames = between (pchar '{') (pchar '}') (sepBy pLotName (pchar ',' .>>. nSpaces0)) |>> Set
   let ptf = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pValue
               .>>. opt (nSpaces1 >>. pLotNames)
-              |>> fun ((q, c), ns) -> Tf (q, c, Option.defaultValue Set.empty ns)
+              |>> fun ((q, c), ns) -> Tf (q, c, Option.defaultValue (uid() |> AutoLotName |> Set.singleton) ns)
   let pth = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pnumber
               .>>. opt (nSpaces1 >>. pLotNames)
               |>> fun ((q, c), ns) -> Th (q, c, Option.defaultValue Set.empty ns)

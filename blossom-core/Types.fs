@@ -7,7 +7,7 @@ type AccountConvention =  Financial5 | Financial7
 // "NewType" style definitions
 type Comment = Comment of string
 type Commodity = Commodity of string
-type LotName = LotName of string
+type LotName = AutoLotName of string | CustomLotName of string
 type Account = | Account of string | VirtualisedAccount of string * string
 type AccountHierarchy = AccountHierarchy of string list * string option
 
