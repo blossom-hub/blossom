@@ -232,40 +232,42 @@ let evaluateBalances journal =
             |> List.tail
             |> Map.ofList
 
-let prefilter request journal =
+let prefilter (filter: Filter) journal =
   let register = journal.Register
 
   let dateFilter dt =
-    match request.between with
+    match filter.Timespan with
       | None -> true
       | Some (left, right) ->
           let q1 = match left  with | None -> true | Some (f, d0) -> (if f then (>=) else (>)) dt d0
           let q2 = match right with | None -> true | Some (f, dT) -> (if f then (<=) else (<)) dt dT
           q1 && q2
 
-  let payeeFilter es =
-    match request.payee with
-      | None -> es
-      | Some r -> es |> List.filter (fun e -> match e.Payee with | None -> false | Some p -> regexfilter r p)
+  let payeeFilter (es : List<Entry>) =
+    match filter.Payees with
+      | [] -> es
+      | rs -> es |> List.filter (fun e -> match e.Payee with
+                                            | None   -> false
+                                            | Some p -> List.map (fun r -> regexfilter r p) rs |> List.any id)
 
-  let narrativeFilter es =
-    match request.narrative with
+  let narrativeFilter (es : List<Entry>) =
+    match filter.Narrative with
       | None -> es
       | Some r -> es |> List.filter (fun e -> regexfilter r e.Narrative)
 
-  let hashtagFilter es =
-    match Set.isEmpty request.hashtags with
-      | true  -> es
-      | false -> es |> List.filter (fun e -> Set.intersect e.HashTags request.hashtags |> Set.isEmpty |> not)
+  let hashtagFilter (es : List<Entry>) =
+    match filter.Hashtags with
+      | [] -> es
+      | rs -> es |> List.filter (fun e -> Set.intersect e.HashTags (Set.ofList rs) |> Set.isEmpty |> not)
 
-  let postingSemiFilter es =
-    let f = match request.account with
-              | None -> fun _ -> true
-              | Some r -> fun (acc, _, ca) ->
-                            let q1 = getAccount acc |> regexfilter r
-                            let q2 = getAccount ca  |> regexfilter r
-                            q1 || q2
-    let g = match request.subaccount with
+  let postingSemiFilter (es : List<Entry>) =
+    let f = match filter.Accounts with
+              | [] -> fun _ -> true
+              | rs -> fun (acc, _, ca) ->
+                        rs |> List.map (fun r -> getAccount acc |> regexfilter r || getAccount ca |> regexfilter r)
+                           |> List.any id
+
+    let g = match filter.VAccount with
               | None -> fun _ -> true
               | Some r -> fun (acc, _, ca) ->
                             let q1 = match acc with | Types.Account _ -> true
@@ -273,13 +275,15 @@ let prefilter request journal =
                             let q2 = match ca with | Types.Account _ -> true
                                                    | VirtualisedAccount (_, s) -> r = s
                             q1 || q2
-    let h = match request.commodity with
-              | None -> fun _ -> true
-              | Some r -> fun (_, amt, _) ->
-                            match amt with
-                              | V (_, Types.Commodity c) -> regexfilter r c
-                              | T ((_, Types.Commodity c1), (_, Types.Commodity c2), _) -> regexfilter r c1 || regexfilter r c2
-                              | X ((_, Types.Commodity c1), (_, Types.Commodity c2))    -> regexfilter r c1 || regexfilter r c2
+    let h = match filter.Commodities with
+              | [] -> fun _ -> true
+              | rs -> fun (_, amt, _) ->
+                        rs |> List.map (fun r ->
+                                match amt with
+                                  | V (_, Types.Commodity c) -> regexfilter r c
+                                  | T ((_, Types.Commodity c1), (_, Types.Commodity c2), _) -> regexfilter r c1 || regexfilter r c2
+                                  | X ((_, Types.Commodity c1), (_, Types.Commodity c2))    -> regexfilter r c1 || regexfilter r c2)
+                           |> List.any id
     es |> List.filter (fun e -> e.Postings |> List.exists (fun p -> f p && g p))
 
   let apply dt es =

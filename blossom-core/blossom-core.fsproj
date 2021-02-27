@@ -10,7 +10,6 @@
     <Compile Include="Tabular.fs" />
     <Compile Include="Definitions.fs" />
     <Compile Include="JournalParser.fs" />
-    <Compile Include="SubParsers.fs" />
     <Compile Include="Journal.fs" />
     <Compile Include="Reports.fs" />
   </ItemGroup>

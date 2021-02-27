@@ -4,13 +4,9 @@ open System
 open FParsec
 
 open Types
-open SubParsers
+open FilterParser
 
-type UserState = unit
-type Parser<'t> = Parser<'t, UserState>
-
-// Can make this clever by doing better validation, accepting more formats etc.
-// let pdate = tuple3 (pint32 .>> pchar '-') (pint32 .>> pchar '-') pint32 |>> DateTime
+type Parser<'t> = Parser<'t, unit>
 
 let ws = spaces
 let ws1 = spaces1
@@ -19,15 +15,42 @@ let str = pstring
 let pbool =
   choice
     [
-      choice [str "true"; str "t"; str "+"; str "yes"; str "y"; str "1"] >>. preturn true
-      choice [str "false"; str "f"; str "-"; str "no"; str "n"; str "0"] >>. preturn false
+      choice [for t in ["true"; "t"; "+"; "yes"; "y"; "1"] -> str t] >>. preturn true
+      choice [for f in ["false"; "f"; "-"; "no"; "n"; "0"] -> str f] >>. preturn false
     ]
 
+let pTenor : Parser<Tenor, unit>  =
+  let z = anyOf "YMHQ"
+           |>> function | 'Y' -> Y
+                        | 'M' -> M
+                        | 'H' -> Tenor.H
+                        | 'Q' -> Q
+                        | _   -> Y  // which shouldn't happen by design
+  let w = pchar 'W' >>. opt pint32 |>> function Some i -> W (enum i) | _ -> W DayOfWeek.Friday
+  (w <|> z)
+
 // Command Parsing
-// Flags'n'args
-let flags : Parser<flags, unit> =
-  let flg = pchar '-' >>. manyChars (asciiLower <|> digit) .>> ws
-  many flg |>> Set.ofList
+// Flags
+type Flag = GroupToTop | HideZeros | Flex | ShowVirtual | Cumulative | FlaggedOnly
+
+let pFlag (fs: string) : Parser<Flag> =
+  let flags =
+    [
+      'g', stringReturn "g" GroupToTop
+      'z', stringReturn "z" HideZeros
+      'x', stringReturn "x" Flex
+      'v', stringReturn "v" ShowVirtual
+      'c', stringReturn "c" Cumulative
+      'f', stringReturn "f" FlaggedOnly
+    ]
+  flags |> List.choose (fun (c,p) -> if Seq.contains c fs then Some p else None)
+        |> choice
+
+let pFlags fs =
+  (skipChar '-' >>. (many1 (pFlag fs) .>> followedBy ((skipAnyOf fs) <|> ws1 <|> eof)))
+      <|>% []
+
+let flagged xs v = List.contains v xs
 
 // Application Management
 let quit = choice [str "quit"; str ":q"] >>. preturn Quit
@@ -44,24 +67,50 @@ let reload = choice [str "reload"; str ":r"] >>. preturn Reload
 let balances =
   choice [str "balances"; str "bal"; str ":b"]
     >>. ws
-    >>. flags
-    .>> ws
-    .>>. restOfLine false
-    |>> Balances
-let journal = choice [str "journal"; str ":j"] >>. ws >>. flags .>> ws .>>. restOfLine false |>> Journal
+    >>. pFlags "gzxv"
+    .>>. pFilter
+    |>> fun (fs, f) ->
+          let br = {GroupToTop = flagged fs GroupToTop
+                    HideZeros = flagged fs HideZeros
+                    Flex = flagged fs Flex
+                    ShowVirtual = flagged fs ShowVirtual}
+          Balances (f, br)
+
+let journal =
+  choice [str "journal"; str ":j"]
+    >>. ws
+    >>. pFlags "zfxv"
+    .>>. pFilter
+    |>> fun (fs, f) ->
+          let fr = {HideZeros = flagged fs HideZeros
+                    FlaggedOnly = flagged fs FlaggedOnly
+                    Flex = flagged fs Flex
+                    ShowVirtual = flagged fs ShowVirtual}
+          Journal (f, fr)
+
 let series =
-  let pCumulative = opt (pchar '+') |>> function Some '+' -> true | _ -> false
-  choice [str "series"; str ":s"] >>. ws1 >>.
-    tuple4 (ws >>. flags) pTenor pCumulative (ws >>. restOfLine false) |>> BalanceSeries
+  choice [str "series"; str ":s"]
+    >>. ws1
+    >>. pTenor
+    .>> ws
+    .>>. pFlags "gzxvc"
+    .>>. pFilter
+    |>> fun ((t, fs), f) ->
+          let sr = {GroupToTop = flagged fs GroupToTop
+                    HideZeros = flagged fs HideZeros
+                    Flex = flagged fs Flex
+                    ShowVirtual = flagged fs ShowVirtual
+                    Cumulative = flagged fs Cumulative
+                    Tenor = t}
+          BalanceSeries (f, sr)
 
 // Investment
 let lotAnalysis =
+  let lr0 = {Measures = []}
   choice [str "lots"; str ":lt"]
    >>. ws
-   >>. flags
-   .>> ws
-   .>>. restOfLine false
-   |>> LotAnalysis
+   >>. pFilter
+   |>> fun f -> LotAnalysis (f, lr0)
 
 // Help
 let check = choice [str "check"; str ":c"] >>. ws1 >>. choice [str "assertions" >>. preturn Assertions] |>> Check
@@ -69,11 +118,12 @@ let help = str "help" >>. preturn Help
 
 // Meta
 let meta = str "meta" >>. ws1 >>.
-            choice [str "stats" >>. preturn MetaRequest.Statistics
-                    str "accounts" >>. preturn Accounts
-                    str "commodities" >>. preturn Commodities
-                    str "payees" >>. preturn Payees
-                    str "hashtags" >>. preturn HashTags] |>> Meta
+            choice [stringReturn "statistics"  MetaRequestType.Statistics
+                    stringReturn "accounts"    Accounts
+                    stringReturn "commodities" Commodities
+                    stringReturn "payees"      Payees
+                    stringReturn "hashtags"    HashTags]
+            |>> fun m -> Meta {RequestType = m; Regex = None}
 
 let applicationCommands = [quit; clear; set]
 let fileCommands = [load; reload;]

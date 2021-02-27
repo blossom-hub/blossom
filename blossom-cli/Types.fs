@@ -2,8 +2,6 @@ module Types
 
 open Types
 
-type flags = Set<string>
-
 type GlobalOptionValue =
   | GPerformanceReporting of bool
 
@@ -16,11 +14,11 @@ type Command =
   | Load of string
   | Reload
   // Accounting
-  | Balances of flags * string
-  | Journal of flags * string
-  | BalanceSeries of flags * Tenor * bool * string
+  | Balances of Filter * BalancesRequest
+  | Journal of Filter * JournalRequest
+  | BalanceSeries of Filter * SeriesRequest
   // Investing
-  | LotAnalysis of flags * string
+  | LotAnalysis of Filter * LotRequest
   // Help
   | Check of CheckRequest
   | Help

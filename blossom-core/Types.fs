@@ -30,16 +30,6 @@ type CommodityClass =
   | Option
   | Future
 
-type Filter = {
-  between: ((bool * DateTime) option * (bool * DateTime) option) option
-  account: string option
-  subaccount: string option
-  payee: string option
-  narrative: string option
-  commodity: string option
-  hashtags: string Set
-}
-
 type JournalMeta = {
   Name: string
   Commodity: Commodity option
@@ -88,9 +78,51 @@ type Journal = {
   Assertions: (DateTime * Account * Value) list
 }
 
+type Filter = {
+  Timespan: ((bool * DateTime) option * (bool * DateTime) option) option
+  Accounts: string list
+  Payees: string list
+  Narrative: string option
+  Commodities: string list
+  Hashtags: string list
+  VAccount: string option
+}
+
+type BalancesRequest = {
+  GroupToTop: bool
+  HideZeros: bool
+  Flex: bool
+  ShowVirtual: bool
+}
+
+type JournalRequest = {
+  HideZeros: bool
+  Flex: bool
+  FlaggedOnly: bool
+  ShowVirtual: bool
+}
+
+type SeriesRequest = {
+  GroupToTop: bool
+  HideZeros: bool
+  Flex: bool
+  ShowVirtual: bool
+  Cumulative: bool
+  Tenor: Tenor
+}
+
+type LotRequest = {
+  Measures: string list
+}
+
 type CheckRequest = Assertions
 
-type MetaRequest = Statistics | Accounts | Commodities | Payees | HashTags
+type MetaRequestType = Statistics | Accounts | Commodities | Payees | HashTags
+type MetaRequest = {
+  RequestType: MetaRequestType
+  Regex: string option
+}
+
 type MetaStatistics = {
   Range: DateTime * DateTime
   Transactions: int * int

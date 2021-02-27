@@ -45,7 +45,8 @@ let blossom2beancount inputfn outputfn  =
     acc2
 
   let date0 = journal.Register |> Map.toList |> List.map fst |> List.min
-  let (MetaResultSet accountList) = meta id Accounts journal
+  let metaRequest = {RequestType = Accounts; Regex = None}
+  let (MetaResultSet accountList) = meta id metaRequest journal
   let accounts = [for account in (accountList |> Set.filter (fun x -> not(x.Contains("/"))))
                     do $"""{date0.ToString("yyyy-MM-dd")} open {safeAccount account}"""]
 
@@ -53,7 +54,7 @@ let blossom2beancount inputfn outputfn  =
   let rs = journal.Register |> Map.toList
   let f (dt: DateTime) es =
     let dts = dt.ToString("yyyy-MM-dd")
-    let g e =
+    let g (e : Entry) =
       let s1 = match e.Payee with | Some x -> x | None -> e.Narrative
       let s2 = match e.Payee with | Some x -> e.Narrative | None -> ""
       let r1 = $"{dts} * \"{s1}\" \"{s2}\""
