@@ -33,7 +33,6 @@ commodity NQZ20    ; Nasdaq futures
   multiplier 20
   mtm
 
-
 ; Top level comment half way through ledger
 
 2020-01-01 Me | Basic Transfer 1   ; but comments ok here

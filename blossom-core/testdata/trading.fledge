@@ -1,0 +1,50 @@
+.indent 2
+
+journal Trading Example
+  cg Income:Capital Gains
+  commodity USD
+  convention F7
+
+commodity 9984
+  name Softbank Corp.
+  measure JPY
+  dp 0
+  class Equity
+  externalid isin JP3436100006
+
+* Long example
+2020-12-04 Purchase Softbank
+  Asset:Trading         400 9984 @ 7260 JPY [lot1]
+  Expense:Commission    100 JPY
+  Asset:Settlement
+
+2020-12-05 Purchase Softbank (account 2!)
+  Asset:Trading2        600 9984 @ 7260 JPY [lot2]
+  Expense:Commission    100 JPY
+  Asset:Settlement
+
+2021-02-09 Sell Softbank
+  Asset:Trading          -200 9984 @ 9808 JPY
+  Expense:Commission      75 JPY
+  ;Income:Capital Gains  -1911000 JPY
+  Asset:Settlement
+
+
+2021-02-23 Sell Softbank
+  Asset:Trading          -100 9984 @ 9797 JPY
+  Expense:Commission      25 JPY
+  ;Income:Capital Gains  -634250 JPY
+  Asset:Settlement
+
+* Short example (because it is harder)
+2020-11-27 Sell Short Smartone
+  Asset:Trading         -10000 315 @ 4.34 HKD
+  Expense:Commission     100 HKD
+  Asset:Settlement
+
+2021-01-11 Close Smartone short
+  Asset:Trading            10000 315 @ 4.14 HKD
+  Expense:Commission       100 HKD
+  ;Income:Capital Gains   -2000 HKD
+  Asset:Settlement
+

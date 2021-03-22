@@ -129,6 +129,90 @@ let balanceEntry gdc acctDecls commodDecls = function
 
     | _ -> None
 
+
+let sweepCapitalGains accountDecls entries =
+  // => beauty and efficiency can come later (once it works it can be simplied to avoid many loops)
+  (*
+      Sweep over all trading, to identify opening/closing transactions on a account/commodity[/measure? <- fx?] basis
+        -> TODO: cater for position transfers in determining matching lots
+        -> TODO: store all the analysis information for use later to avoid duplicate code analysis paths
+        -> TODO: virtualised accounts...
+
+
+      1. Firstly, identify which trades are Open/Close/Extend/Reduce (/Flip?) by creating running totals
+         Every transaction (call lot here) labelled upon loading with provided or auto name.
+         -> TODO Opening/Extend should be 1 label only in the parser, can check later (hard in parser to validate).
+         -> TODO Also confirm no duplicate names in use
+      2.
+  *)
+
+  // Step 0: label all the entries so that we can judiciously replace them later by key
+  let entries2 = entries |> List.map (fun e -> uid(), e)
+
+  // Step 1: Identify lot types
+  //  -> observe transaction per account/commodity[/measure <- fx?] basis
+  let trades = entries2 |> List.collect (fun (i, entry) -> entry.Postings |> List.choose (function (a1, T(c, p, ns), a2) -> Some ((i, entry.Date, c, p, a1, a2), ns) | _ -> None))
+                        |> List.sortBy (fun ((_, d, _, _, a1, _), _) -> (d, a1))
+
+  // all keys initialised with 0 balance to avoid the "missing or not" step below
+  let balances0 = trades |> List.map (fun ((_, _, (_,c), _, a1, _), _) -> a1, c) |> List.distinct |> List.map (fun x -> x, 0M) |> Map.ofList
+
+  // assume that we don't trade a 0 position
+  // -> TODO: flip trades (i.e. 100 long -> 100 short by trading -200 etc)
+  let f1 balances trade =
+    let ((i, dt, (q, c), p, a1, a2), ns) = trade
+    let currentBalance = balances |> Map.find (a1, c)
+    let startsZero = currentBalance = 0M
+    let startsLong = currentBalance > 0M
+    let positive = q >= 0M
+
+    let newBalance = currentBalance + q
+    let lt = match newBalance, startsZero, startsLong, positive with
+               | 0M, _,   _,     _     -> Close
+               | _, true, _,     _     -> Open
+               | _, _,    true,  true  -> Extend // Extend a long
+               | _, _,    false, false -> Extend // Extend a short
+               | _, _,    _,     _     -> Reduce
+    let updatedBalances = balances |> Map.add (a1, c) newBalance
+    (lt, q, c, ns, a1, fst trade), updatedBalances
+  let taggedTrades = trades |> List.mapFold f1 balances0
+                            |> fst
+                            |> List.mapi (fun i (lt, q, c, ns, a1, trade) -> i, lt, q, c, ns, a1, trade)
+
+  // Step 2: Match the lots to calculate the closing lots
+  //  -> we want to match both directions, but this could be a second pass to store the meta
+  //  -> need to keep track of lots which are only _partially_ closed out.
+  //  -> TODO: different strategies, this is for FIFO; need to implement self-directed as an override
+  let openExtends, closeReduces = taggedTrades |> List.partition (fun (_, lt, _, _, _, _, _) -> match lt with | Open | Extend -> true | _ -> false)
+                                               |> first (List.map (fun (i, _lt, q, c, ns, a1, _trade) -> ((i, q, c, a1, List.head ns), List.empty)))
+                                               |> second (List.map (fun (i, _lt, q, c, ns, a1, _trade) -> (i, q, c, a1, ns)))    // the list is [matching lot * matching qty]
+
+  // the outer loop folds over the individual close reduces
+  // the inner loop folds over the open extends [to match with the close reduce provided]
+  // mapFold :: ('state -> 'T -> 'Result * 'state) -> 'state -> 'T list -> ('Result list * 'state)
+  //  -> need to enumerate not just by date
+  let f2 (oeTrades: ((int * decimal * Commodity * Account * LotName) * (LotName * decimal) list) list) (crTrade: int * decimal * Commodity * Account * LotName list) =
+    let f3 (crTrade_i: (int * decimal * Commodity * Account * LotName list)) (oeTrade_j: ((int * decimal * Commodity * Account * LotName) * (LotName * decimal) list)) =
+      // sequence, lot type, remaining qty, commodity, lot names
+      let (cseq, rcq, cc, ca, cns) = crTrade_i
+      let ((oseq, roq, oc, oa, ons), closures) = oeTrade_j
+      // it is only matching if sequentually after, same commodity and same account
+      if (cseq > oseq) && (cc = oc) && (ca = oa)
+        then let amt = min (abs roq) (abs rcq)
+             let mid = cns |> List.head
+             let cq = decimal(sign rcq) * amt
+             let oq = decimal(sign roq) * amt
+             let closures2 = closures @ [mid, cq]
+             let crTrade_i2 = (cseq, rcq - cq, cc, ca, cns)
+             let oeTrade_j2 = ((oseq, roq - oq, oc, oa, ons), closures2)
+             oeTrade_j2, crTrade_i2
+        else oeTrade_j, crTrade_i
+    let newPool, _ = List.mapFold f3 crTrade oeTrades
+    1, newPool
+  let _, matched = List.mapFold f2 openExtends closeReduces
+
+  entries
+
 let private mergeJournals j1 j2 =
   {
     Meta = j2.Meta
@@ -164,6 +248,7 @@ let rec loadJournal filename =
   let register = elts |> List.choose (balanceEntry header.Commodity accountDecls commodityDecls)
                       |> List.choose (function | Choice1Of2 x -> Some x
                                                | Choice2Of2 s -> printfn "%s" s; None)
+                      |> sweepCapitalGains accountDecls
                       |> List.groupBy (fun e -> e.Date)
                       |> Map.ofList
 
