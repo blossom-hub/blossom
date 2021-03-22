@@ -37,13 +37,13 @@ type UserState =
 *)
 
 type RAmount =
-  | Un of decimal                        // Unlabelled plain amount    "109.4"
-  | Ve of Value                          // Normal measured value      "109.4 USD"
+  | Un of decimal                         // Unlabelled plain amount    "109.4"
+  | Ve of Value                           // Normal measured value      "109.4 USD"
   // trading full (with measure) or half (unmeasured price), with optional lot names
-  | Tf of Value * Value   * LotName Set  // 100 TSLA @ 899 USD {lot5}
-  | Th of Value * decimal * LotName Set  // -100 TSLA @ 899 {lot5, lot3}
-  | Cr of Value * Value                  // Right conversion           "100 USD -> 96 EUR"
-  | Cl of Value * Value                  // Left conversion            "100 USD <- 96 EUR"
+  | Tf of Value * Value   * LotName list  // 100 TSLA @ 899 USD [lot5]
+  | Th of Value * decimal * LotName list  // -100 TSLA @ 899 [lot5, lot3]
+  | Cr of Value * Value                   // Right conversion           "100 USD -> 96 EUR"
+  | Cl of Value * Value                   // Left conversion            "100 USD <- 96 EUR"
 
 type RPostingElement =
   | Posting of account:Account * amount:RAmount option * contra:Account option
@@ -123,13 +123,13 @@ let pLotName =
 let pRAmount =
   let pcr = pValue .>> nSpaces1 .>> sstr1 "->" .>>. pValue |>> Cr
   let pcl = pValue .>> nSpaces1 .>> sstr1 "<-" .>>. pValue |>> Cl
-  let pLotNames = between (pchar '{') (pchar '}') (sepBy pLotName (pchar ',' .>>. nSpaces0)) |>> Set
+  let pLotNames = between (pchar '[') (pchar ']') (sepBy pLotName (pchar ',' .>>. nSpaces0))
   let ptf = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pValue
               .>>. opt (nSpaces1 >>. pLotNames)
-              |>> fun ((q, c), ns) -> Tf (q, c, Option.defaultValue (uid() |> AutoLotName |> Set.singleton) ns)
+              |>> fun ((q, c), ns) -> Tf (q, c, Option.defaultValue [uid() |> AutoLotName] ns)
   let pth = pValue .>> nSpaces1 .>> skipChar '@' .>> nSpaces1 .>>. pnumber
               .>>. opt (nSpaces1 >>. pLotNames)
-              |>> fun ((q, c), ns) -> Th (q, c, Option.defaultValue Set.empty ns)
+              |>> fun ((q, c), ns) -> Th (q, c, Option.defaultValue [uid() |> AutoLotName] ns)
   let pv = pValue |>> Ve
   let pu = pnumber |>> Un
   choice [attempt pcr; attempt pcl; attempt ptf; attempt pth; attempt pv; pu]

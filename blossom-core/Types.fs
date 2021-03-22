@@ -15,9 +15,11 @@ type Value = decimal * Commodity
 
 type Tenor = Y | M | H | Q | W of DayOfWeek | D
 
+type LotType = Open | Extend | Reduce | Close
+
 type Amount =
   | V of Value
-  | T of Value * Value * LotName Set
+  | T of Value * Value * LotName List
   | X of Value * Value
 
 type ValuationMode =
