@@ -1,5 +1,4 @@
 ; Example parsing file for basic testing for **RJournal**
-; Not all comment features are supported yet
 
 .indent 2
 
@@ -49,7 +48,7 @@ commodity NQZ20    ; Nasdaq futures
   Asset:Account 2  ; test posting line comment
 
 2020-01-04 Basic Trade 1
-  Asset:Account 1  2  NQZ20 @ 1135 {a44} ~
+  Asset:Account 1  2 NQZ20 @ 1135 USD [a44]
   Expense:Trading/0x12    4 USD
   Asset:Account 2
 
