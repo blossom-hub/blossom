@@ -15,6 +15,7 @@ type FilterTag =
   | P of string               // payee
   | N of string               // narrative
   | C of string               // commodity
+  | D of string               // denominated commodity
   | H of string               // hastag
 
 let glse xs pred = xs |> List.choose pred
@@ -48,11 +49,12 @@ let pFilterTags =
   let pPayee = pchar '@' >>. text |>> P
   let pNarr = pchar '?' >>. text |>> N
   let pCommod = pchar '%' >>. text |>> C
+  let pDenom = skipString "%%" >>. text |>> D
   let pHashTag = pchar '#' >>. text |>> H
   let pVAcc = pchar '/' >>. text |>> V
   let pAcc = text |>> A
 
-  let pelt = choice [pFrom; pTo; pPayee; pNarr; pCommod; pHashTag; pVAcc; pAcc]
+  let pelt = choice [pFrom; pTo; pPayee; pNarr; pDenom; pCommod; pHashTag; pVAcc; pAcc]
 
   nSpaces0 >>. sepBy pelt nSpaces1 .>> eof
 
@@ -66,6 +68,7 @@ let pFilter : Parser<Filter> =
     let p = tags |> List.choose (function P v -> Some v | _ -> None)
     let n = glse tags (function N v -> Some v | _ -> None)
     let c = tags |> List.choose (function C v -> Some v | _ -> None)
+    let d = tags |> List.choose (function D v -> Some v | _ -> None)
     let hs = tags |> List.choose (function H v -> Some v | _ -> None)
 
     {
@@ -75,6 +78,7 @@ let pFilter : Parser<Filter> =
       Payees = p
       Narrative = n
       Commodities = c
+      Denominations = d
       Hashtags = hs
     }
 

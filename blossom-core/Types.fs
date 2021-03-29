@@ -86,6 +86,7 @@ type Filter = {
   Payees: string list
   Narrative: string option
   Commodities: string list
+  Denominations: string list
   Hashtags: string list
   VAccount: string option
 }
