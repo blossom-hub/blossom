@@ -412,7 +412,7 @@ let prefilter (filter: Filter) journal =
                                   | T ((_, Types.Commodity c1), (_, Types.Commodity c2), _) -> regexfilter r c1 || regexfilter r c2
                                   | X ((_, Types.Commodity c1), (_, Types.Commodity c2))    -> regexfilter r c1 || regexfilter r c2)
                            |> List.any id
-    es |> List.filter (fun e -> e.Postings |> List.exists (fun p -> f p && g p))
+    es |> List.filter (fun e -> e.Postings |> List.exists (fun p -> f p && g p && h p))
 
   let apply dt es =
     match dateFilter dt with
