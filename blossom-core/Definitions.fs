@@ -2,6 +2,8 @@ module Definitions
 
 open Types
 
+let capitalGainsAccount = Account "_CapitalGains"
+
 let marketAccount = Account "_Market"
 
 let conversionsAccount = Account "_Conversions"

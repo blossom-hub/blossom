@@ -41,6 +41,9 @@ let balanceEntry gdc acctDecls commodDecls = function
       let multiplierOf commodity = commodDecls |> Map.tryFind commodity
                                                |> Option.bind (fun c -> c.Multiplier)
                                                |> Option.defaultValue 1m
+      let navIndicatorOf commodity = commodDecls |> Map.tryFind commodity
+                                                 |> Option.map (fun c -> if c.Mtm then 0m else 1m)
+                                                 |> Option.defaultValue 1m
       let tryCommodityOf account = acctDecls |> Map.tryFind account
                                              |> Option.bind (fun a -> a.Commodity)
       let orGlobalCommodity = Option.orElse gdc >> function Some c -> c | None -> internalDefaultCommodity
@@ -50,8 +53,8 @@ let balanceEntry gdc acctDecls commodDecls = function
       let contraWeightOf account ramount =
         match ramount with | Un q                  -> q, tryCommodityOf account |> orGlobalCommodity
                            | Ve (q, c)             -> q, c
-                           | Tf ((q,c), (p, m), _) -> q*p*multiplierOf c, m
-                           | Th ((q,c), p, _)      -> q*p*multiplierOf c, measureOf c
+                           | Tf ((q,c), (p, m), _) -> q*p*multiplierOf c * navIndicatorOf c, m
+                           | Th ((q,c), p, _)      -> q*p*multiplierOf c * navIndicatorOf c, measureOf c
                            | Cr (_, (p, m))        -> p, m
                            | Cl ((q,c), _)         -> q, c
 
@@ -130,7 +133,7 @@ let balanceEntry gdc acctDecls commodDecls = function
     | _ -> None
 
 
-let sweepCapitalGains accountDecls entries =
+let sweepCapitalGains accountDecls commodityDecls defaultCGAccount entries =
   // => beauty and efficiency can come later (once it works it can be simplied to avoid many loops)
   (*
       Sweep over all trading, to identify opening/closing transactions on a account/commodity[/measure? <- fx?] basis
@@ -177,41 +180,76 @@ let sweepCapitalGains accountDecls entries =
     (lt, q, c, ns, a1, fst trade), updatedBalances
   let taggedTrades = trades |> List.mapFold f1 balances0
                             |> fst
-                            |> List.mapi (fun i (lt, q, c, ns, a1, trade) -> i, lt, q, c, ns, a1, trade)
+                            |> List.mapi (fun i (lt, q, c, ns, a1, trade) -> i, lt, q, ns, trade)
 
   // Step 2: Match the lots to calculate the closing lots
   //  -> we want to match both directions, but this could be a second pass to store the meta
   //  -> need to keep track of lots which are only _partially_ closed out.
   //  -> TODO: different strategies, this is for FIFO; need to implement self-directed as an override
-  let openExtends, closeReduces = taggedTrades |> List.partition (fun (_, lt, _, _, _, _, _) -> match lt with | Open | Extend -> true | _ -> false)
-                                               |> first (List.map (fun (i, _lt, q, c, ns, a1, _trade) -> ((i, q, c, a1, List.head ns), List.empty)))
-                                               |> second (List.map (fun (i, _lt, q, c, ns, a1, _trade) -> (i, q, c, a1, ns)))    // the list is [matching lot * matching qty]
+  let openExtends, closeReduces = taggedTrades |> List.partition (fun (_, lt, _, _, _) -> match lt with | Open | Extend -> true | _ -> false)   // the list is [matching lot * matching qty]
 
   // the outer loop folds over the individual close reduces
   // the inner loop folds over the open extends [to match with the close reduce provided]
   // mapFold :: ('state -> 'T -> 'Result * 'state) -> 'state -> 'T list -> ('Result list * 'state)
   //  -> need to enumerate not just by date
-  let f2 (oeTrades: ((int * decimal * Commodity * Account * LotName) * (LotName * decimal) list) list) (crTrade: int * decimal * Commodity * Account * LotName list) =
-    let f3 (crTrade_i: (int * decimal * Commodity * Account * LotName list)) (oeTrade_j: ((int * decimal * Commodity * Account * LotName) * (LotName * decimal) list)) =
+  // trade : idstring * DateTime * (decimal * Commodity) * Value * Account * Account
+  let f2 oeTrades crTrade =
+    let f3 crTrade_i oeTrade_j =
       // sequence, lot type, remaining qty, commodity, lot names
-      let (cseq, rcq, cc, ca, cns) = crTrade_i
-      let ((oseq, roq, oc, oa, ons), closures) = oeTrade_j
+      let (cseq, clt, rcq, cns, ctr) = crTrade_i
+      let ((oseq, olt, roq, ons, otr), closures) = oeTrade_j
+      let (_, _, (_, cc), _, ca, _) = ctr
+      let (_, _, (_, oc), _, oa, _) = otr
       // it is only matching if sequentually after, same commodity and same account
       if (cseq > oseq) && (cc = oc) && (ca = oa)
         then let amt = min (abs roq) (abs rcq)
-             let mid = cns |> List.head
              let cq = decimal(sign rcq) * amt
              let oq = decimal(sign roq) * amt
-             let closures2 = closures @ [mid, cq]
-             let crTrade_i2 = (cseq, rcq - cq, cc, ca, cns)
-             let oeTrade_j2 = ((oseq, roq - oq, oc, oa, ons), closures2)
+             let closures2 = closures @ [ctr, otr, amt]
+             let crTrade_i2 = (cseq, clt, rcq - cq, cns, ctr)
+             let oeTrade_j2 = ((oseq, olt, roq - oq, ons, otr), closures2)
              oeTrade_j2, crTrade_i2
         else oeTrade_j, crTrade_i
     let newPool, _ = List.mapFold f3 crTrade oeTrades
     1, newPool
-  let _, matched = List.mapFold f2 openExtends closeReduces
 
-  entries
+  // closing lot name, closing qty, opening lot name
+  let matched = List.mapFold f2 (openExtends |> List.map (fun t -> (t, List.empty))) closeReduces
+                  |> snd
+                  |> List.collect snd
+
+  //   Postings: (Account * Amount * Account) list
+  let cg = matched |> List.map (fun (clt, olt, qty) -> let (_, _, (oq1, oc1), (oq2, om1), _, oa1) = olt
+                                                       let (ci, _, (cq1, _), (cq2, cm1), _, ca2) = clt
+                                                       let mm = commodityDecls |> Map.tryFind oc1
+                                                                               |> Option.bind (fun c -> c.Multiplier)
+                                                                               |> Option.defaultValue 1m
+                                                       // For now, always realise the whole profit on the sale, even for mtm items
+                                                       //  let nn = commodityDecls |> Map.tryFind oc1
+                                                       //                           |> Option.map (fun c -> if c.Mtm then 0m else 1m)
+                                                       //                           |> Option.defaultValue 1m
+                                                       let pnl = (cq2 - oq2) * qty * mm * decimal(Math.Sign(oq1))
+                                                       let cga = accountDecls |> Map.tryFind oa1
+                                                                              |> Option.bind (fun a -> a.CapitalGains)
+                                                                              |> Option.defaultValue (Option.defaultValue capitalGainsAccount defaultCGAccount)
+                                                       let isMtm = commodityDecls |> Map.tryFind oc1
+                                                                                  |> Option.map (fun c -> c.Mtm)
+                                                                                  |> Option.defaultValue false
+                                                       let income = (marketAccount, V (pnl, cm1), cga)
+                                                       if isMtm
+                                                        then let physical_income = (marketAccount, V (-pnl, cm1), ca2)
+                                                             (ci, [income; physical_income])
+                                                        else (ci, [income])
+                                                       )
+                   |> List.groupByApply fst (List.map snd >> List.concat)
+                   |> Map.ofList
+
+  let entries3 = entries2 |> List.map (fun (eid, e) -> let adjs = cg |> Map.tryFind eid
+                                                       match adjs with
+                                                         | Some xs -> {e with Postings = e.Postings @ xs}
+                                                         | None    -> e)
+
+  entries3
 
 let private mergeJournals j1 j2 =
   {
@@ -248,7 +286,7 @@ let rec loadJournal filename =
   let register = elts |> List.choose (balanceEntry header.Commodity accountDecls commodityDecls)
                       |> List.choose (function | Choice1Of2 x -> Some x
                                                | Choice2Of2 s -> printfn "%s" s; None)
-                      |> sweepCapitalGains accountDecls
+                      |> sweepCapitalGains accountDecls commodityDecls header.CapitalGains
                       |> List.groupBy (fun e -> e.Date)
                       |> Map.ofList
 
@@ -282,12 +320,17 @@ let multiplierOf commodityDecls c =
                  |> Option.bind (fun d -> d.Multiplier)
                  |> Option.defaultValue 1m
 
+let navIndicatorOf commodityDecls c =
+  commodityDecls |> Map.tryFind c
+                 |> Option.map (fun d -> if d.Mtm then 0m else 1m)
+                 |> Option.defaultValue 1m
+
 let expandPosting commodityDecls account amount caccount =
   match amount with
       | V (qty, commodity) ->
           [account, qty, commodity; caccount, -qty, commodity]
       | T ((qty, commodity), (price, measure), _) ->
-          let cash = qty * price * multiplierOf commodityDecls commodity
+          let cash = qty * price * multiplierOf commodityDecls commodity * navIndicatorOf commodityDecls commodity
           [account, qty, commodity
            marketAccount, -qty, commodity
            marketAccount, cash, measure
