@@ -8,7 +8,7 @@
             "name": "blossom-cli",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "build (cli)",
             "program": "${workspaceFolder}/blossom-cli/bin/Debug/netcoreapp5.0/blossom-cli.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
