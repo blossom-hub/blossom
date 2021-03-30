@@ -16,17 +16,11 @@ let account2 = Account "Account2"
 let account3 = Account "Account3"
 
 let runBalancerChecker f g h elts =
-  let elt = Entry(true, testDate1,
-                  Some "payee", "test 1",
-                  Set.empty, elts)
-  let v = ("(In unit test)", elt)
-  let result = balanceEntry (Some testCommodity) Map.empty Map.empty v
+  let result = balanceEntry (Some testCommodity) Map.empty Map.empty
+                  ("In unit test") testDate1 true (Some "payee") "test 1" Set.empty elts
   match result with
-    | None ->
-        match f with Some ff -> ff() | None -> failwith "No result was returned"
-    | Some (Choice2Of2 msg) ->
-        match g with Some gg -> gg msg | None -> failwith $"Unexpected error: {msg}"
-    | Some (Choice1Of2 entry) -> h entry
+    | Choice2Of2 msg   -> match g with Some gg -> gg msg | None -> failwith $"Unexpected error: {msg}"
+    | Choice1Of2 entry -> h entry
 
 [<Fact>]
 let ``Balance Check 1`` () =

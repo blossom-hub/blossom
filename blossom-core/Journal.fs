@@ -25,112 +25,109 @@ let joinAccounts (AccountHierarchy (xs, s)) =
   match s with | Some q -> VirtualisedAccount (stub, q)
                | None   -> Types.Account stub
 
-let stripComments = function
-  | Commented (elt, _) -> elt
-  | Entry (flagged, dt, payee, narrative, hs, xs) -> let zs = xs |> List.map    (function | PCommented (elt2, _) -> elt2 | elt2 -> elt2)
-                                                                 |> List.filter (function | PComment _ -> false | _ -> true)
-                                                     Entry (flagged, dt, payee, narrative, hs, zs)
-  | elt -> elt
+// let stripComments = function
+//   | Commented (elt, _) -> elt
+//   | Entry (flagged, dt, payee, narrative, hs, xs) -> let zs = xs |> List.map    (function | PCommented (elt2, _) -> elt2 | elt2 -> elt2)
+//                                                                  |> List.filter (function | PComment _ -> false | _ -> true)
+//                                                      Entry (flagged, dt, payee, narrative, hs, zs)
+//   | elt -> elt
 
-let balanceEntry gdc acctDecls commodDecls = function
-  | (posn, Entry (flagged, dt, py, na, hs, xs)) ->
-      // Helpers
-      let measureOf commodity = commodDecls |> Map.tryFind commodity
-                                            |> Option.bind (fun c -> c.Measure)
-                                            |> function Some c -> c | None -> internalDefaultCommodity
-      let multiplierOf commodity = commodDecls |> Map.tryFind commodity
-                                               |> Option.bind (fun c -> c.Multiplier)
-                                               |> Option.defaultValue 1m
-      let navIndicatorOf commodity = commodDecls |> Map.tryFind commodity
-                                                 |> Option.map (fun c -> if c.Mtm then 0m else 1m)
-                                                 |> Option.defaultValue 1m
-      let tryCommodityOf account = acctDecls |> Map.tryFind account
-                                             |> Option.bind (fun a -> a.Commodity)
-      let orGlobalCommodity = Option.orElse gdc >> function Some c -> c | None -> internalDefaultCommodity
+let balanceEntry gdc acctDecls commodDecls posn dt flagged py na hs xs =
+  let measureOf commodity = commodDecls |> Map.tryFind commodity
+                                        |> Option.bind (fun c -> c.Measure)
+                                        |> function Some c -> c | None -> internalDefaultCommodity
+  let multiplierOf commodity = commodDecls |> Map.tryFind commodity
+                                           |> Option.bind (fun c -> c.Multiplier)
+                                           |> Option.defaultValue 1m
+  let navIndicatorOf commodity = commodDecls |> Map.tryFind commodity
+                                             |> Option.map (fun c -> if c.Mtm then 0m else 1m)
+                                             |> Option.defaultValue 1m
+  let tryCommodityOf account = acctDecls |> Map.tryFind account
+                                         |> Option.bind (fun a -> a.Commodity)
+  let orGlobalCommodity = Option.orElse gdc >> function Some c -> c | None -> internalDefaultCommodity
 
-      let postings = xs |> List.choose (function | Posting (account, amount, contra) -> Some (account, amount, contra) | _ -> None)
+  let postings = xs |> List.choose (function | Posting (account, amount, contra) -> Some (account, amount, contra) | _ -> None)
 
-      let contraWeightOf account ramount =
-        match ramount with | Un q                  -> q, tryCommodityOf account |> orGlobalCommodity
-                           | Ve (q, c)             -> q, c
-                           | Tf ((q,c), (p, m), _) -> q*p*multiplierOf c * navIndicatorOf c, m
-                           | Th ((q,c), p, _)      -> q*p*multiplierOf c * navIndicatorOf c, measureOf c
-                           | Cr (_, (p, m))        -> p, m
-                           | Cl ((q,c), _)         -> q, c
+  let contraWeightOf account ramount =
+    match ramount with | Un q                  -> q, tryCommodityOf account |> orGlobalCommodity
+                       | Ve (q, c)             -> q, c
+                       | Tf ((q,c), (p, m), _) -> q*p*multiplierOf c * navIndicatorOf c, m
+                       | Th ((q,c), p, _)      -> q*p*multiplierOf c * navIndicatorOf c, measureOf c
+                       | Cr (_, (p, m))        -> p, m
+                       | Cl ((q,c), _)         -> q, c
 
-      let convert account ramount =
-          match ramount with | Un q               -> V (q, tryCommodityOf account |> orGlobalCommodity)
-                             | Ve (q, c)          -> V (q, c)
-                             | Tf (a, b, ls)      -> T (a, b, ls)
-                             | Th ((q, c), p, ls) -> T ((q, c), (p, measureOf c), ls)
-                             | Cr (a, b)          -> X (a, b)
-                             | Cl (a, b)          -> X (b, a)
+  let convert account ramount =
+      match ramount with | Un q               -> V (q, tryCommodityOf account |> orGlobalCommodity)
+                         | Ve (q, c)          -> V (q, c)
+                         | Tf (a, b, ls)      -> T (a, b, ls)
+                         | Th ((q, c), p, ls) -> T ((q, c), (p, measureOf c), ls)
+                         | Cr (a, b)          -> X (a, b)
+                         | Cl (a, b)          -> X (b, a)
 
-      // Split postings up into categories before linking to their contra
-      let emptyPostings = postings |> List.choose (function (account, None, _) -> Some account | _ -> None)
-      let unmatchedPostings = postings |> List.choose (function (account, Some v, None) -> Some (account, v) | _ -> None)
-      let selfMatchingPostings = postings |> List.choose (function (account, Some v, Some contraAccount) -> Some (account, convert account v, contraAccount) | _ -> None)
+  // Split postings up into categories before linking to their contra
+  let emptyPostings = postings |> List.choose (function (account, None, _) -> Some account | _ -> None)
+  let unmatchedPostings = postings |> List.choose (function (account, Some v, None) -> Some (account, v) | _ -> None)
+  let selfMatchingPostings = postings |> List.choose (function (account, Some v, Some contraAccount) -> Some (account, convert account v, contraAccount) | _ -> None)
 
-      (* NEW 12/02 --> fail if ambiguous (2x2 for example)
-          1. Remove self-balancing
-          2. if *1* missing account, auto-balance against this one
-          3. if *2+* missing account, FAIL
-          4. if *0* missing account, try to match on weight/weight basis, there must be 1 side with a single entry
-                eg +2 USD +1 USD, vs -3 USD. otherwise fail
-                check blancing
-          5. oth fail
-      *)
+  (* NEW 12/02 --> fail if ambiguous (2x2 for example)
+      1. Remove self-balancing
+      2. if *1* missing account, auto-balance against this one
+      3. if *2+* missing account, FAIL
+      4. if *0* missing account, try to match on weight/weight basis, there must be 1 side with a single entry
+            eg +2 USD +1 USD, vs -3 USD. otherwise fail
+            check blancing
+      5. oth fail
+  *)
 
-      let mkEntry ps = {
-        Flagged = flagged
-        Date = dt
-        Payee = py
-        Narrative = na
-        HashTags = hs
-        Postings = selfMatchingPostings @ ps
-      }
+  let mkEntry ps = {
+    Flagged = flagged
+    Date = dt
+    Payee = py
+    Narrative = na
+    HashTags = hs
+    Postings = selfMatchingPostings @ ps
+  }
 
-      Some <| match List.length emptyPostings, List.length unmatchedPostings with
-                | 0,0 -> mkEntry [] |> Choice1Of2
-                | 1,0 -> $"Contra account is specified but not required. {posn}" |> Choice2Of2
-                | 0,_ -> // break in to long/short by measure
-                         let tag a v = let (q, c) = contraWeightOf a v in (a, v, q, c, Math.Sign q = 1)
-                         let ls = unmatchedPostings |> List.map (uncurry tag)
-                         let totals = ls |> List.groupByApply frh5 (List.sumBy thd5)
-                         // firstly check if overall there is a balance overall
-                         let unbalanced = totals |> List.filter (fun (c, q) -> q <> 0M) |> List.tryHead
-                         match unbalanced with
-                           | Some _ -> $"Entry does not balance, a contra account is needed but not supplied {posn}" |> Choice2Of2
-                           | None -> // needs 1 -> n, or n -> 1 for matching to be automatically calculated now, else error (ambiguous matching)
-                               let g = ls |> List.groupBy (frh5 &&& fih5)
-                               let measures = List.map fst totals
-                               let ones, multis = g |> List.partition (fun (_,vs) -> List.length vs = 1)
-                               // look for the cases, and hook them up
-                               // okay:     1 long / 1 short, 1 long / n short, n long / 1 short
-                               // not okay: n long / n short
-                               let onesMeasures = ones |> List.map (fst >> fst) |> List.distinct
-                               let everyOne = measures |> List.all (flip List.contains onesMeasures)
-                               match everyOne with
-                                 | false -> $"Ambiguous posting match, each commodity measure should be 1-1 or many-to-1. {posn}" |> Choice2Of2
-                                 | true ->
-                                     let matchUp measure =
-                                       let os = ones |> List.filter (fun x -> fst (fst x) = measure) |> List.collect snd
-                                       let ms = multis |> List.filter (fun x -> fst (fst x) = measure) |> List.collect snd
-                                       match List.length os with
-                                         | 2 -> let (a, q, _, _, _) = List.head os
-                                                let (c, _, _, _, _) = List.last os
-                                                [(a, convert a q, c)]
-                                         | 1 -> let (c, _, _, _, _) = List.head os
-                                                ms |> List.map (fun (a, q, _, _, _) -> (a, convert a q, c))
-                                         | _ -> failwith "Unexpected balancing problem matching measures in posting"
-                                     measures |> List.collect matchUp |> mkEntry |> Choice1Of2
-                | 1,_ -> let c = List.head emptyPostings
-                         unmatchedPostings |> List.map (fun (a, v) -> (a, convert a v, c))
-                                           |> mkEntry
-                                           |> Choice1Of2
-                | _,_ -> $"Only one empty balance entry is supported. {posn}" |> Choice2Of2
+  match List.length emptyPostings, List.length unmatchedPostings with
+    | 0,0 -> mkEntry [] |> Choice1Of2
+    | 1,0 -> $"Contra account is specified but not required. {posn}" |> Choice2Of2
+    | 0,_ -> // break in to long/short by measure
+             let tag a v = let (q, c) = contraWeightOf a v in (a, v, q, c, Math.Sign q = 1)
+             let ls = unmatchedPostings |> List.map (uncurry tag)
+             let totals = ls |> List.groupByApply frh5 (List.sumBy thd5)
+             // firstly check if overall there is a balance overall
+             let unbalanced = totals |> List.filter (fun (c, q) -> q <> 0M) |> List.tryHead
+             match unbalanced with
+               | Some _ -> $"Entry does not balance, a contra account is needed but not supplied {posn}" |> Choice2Of2
+               | None -> // needs 1 -> n, or n -> 1 for matching to be automatically calculated now, else error (ambiguous matching)
+                   let g = ls |> List.groupBy (frh5 &&& fih5)
+                   let measures = List.map fst totals
+                   let ones, multis = g |> List.partition (fun (_,vs) -> List.length vs = 1)
+                   // look for the cases, and hook them up
+                   // okay:     1 long / 1 short, 1 long / n short, n long / 1 short
+                   // not okay: n long / n short
+                   let onesMeasures = ones |> List.map (fst >> fst) |> List.distinct
+                   let everyOne = measures |> List.all (flip List.contains onesMeasures)
+                   match everyOne with
+                     | false -> $"Ambiguous posting match, each commodity measure should be 1-1 or many-to-1. {posn}" |> Choice2Of2
+                     | true ->
+                         let matchUp measure =
+                           let os = ones |> List.filter (fun x -> fst (fst x) = measure) |> List.collect snd
+                           let ms = multis |> List.filter (fun x -> fst (fst x) = measure) |> List.collect snd
+                           match List.length os with
+                             | 2 -> let (a, q, _, _, _) = List.head os
+                                    let (c, _, _, _, _) = List.last os
+                                    [(a, convert a q, c)]
+                             | 1 -> let (c, _, _, _, _) = List.head os
+                                    ms |> List.map (fun (a, q, _, _, _) -> (a, convert a q, c))
+                             | _ -> failwith "Unexpected balancing problem matching measures in posting"
+                         measures |> List.collect matchUp |> mkEntry |> Choice1Of2
+    | 1,_ -> let c = List.head emptyPostings
+             unmatchedPostings |> List.map (fun (a, v) -> (a, convert a v, c))
+                               |> mkEntry
+                               |> Choice1Of2
+    | _,_ -> $"Only one empty balance entry is supported. {posn}" |> Choice2Of2
 
-    | _ -> None
 
 
 let sweepCapitalGains accountDecls commodityDecls defaultCGAccount entries =
@@ -263,7 +260,8 @@ let private mergeJournals j1 j2 =
   }
 
 let rec loadJournal filename =
-  let elts = loadRJournal filename |> List.map (second stripComments)
+  let elts = loadRJournal filename // |> List.map (second stripComments)
+  let items = elts |> List.choose (function (p, Item (dt, x)) -> Some (p, dt, x) | _ -> None)
 
   let imports = elts |> List.choose (function (_, Import i) -> Some i | _ -> None)
   let cwd = Path.GetDirectoryName filename
@@ -283,22 +281,24 @@ let rec loadJournal filename =
   let commodityDecls = elts |> List.choose (function (_, RJournalElement.Commodity c) -> Some (c.Symbol, c) | _ -> None)
                             |> Map.ofList
 
-  let register = elts |> List.choose (balanceEntry header.Commodity accountDecls commodityDecls)
-                      |> List.choose (function | Choice1Of2 x -> Some x
-                                               | Choice2Of2 s -> printfn "%s" s; None)
-                      |> sweepCapitalGains accountDecls commodityDecls header.CapitalGains
-                      |> List.groupBy (fun e -> e.Date)
-                      |> Map.ofList
+  let register = items |> List.choose (function | (ps, dt, BasicEntry (f, p, n, t, xs)) ->
+                                                       Some (balanceEntry header.Commodity accountDecls commodityDecls ps dt f p n t xs)
+                                                | _ -> None)
+                       |> List.choose (function | Choice1Of2 x -> Some x
+                                                | Choice2Of2 s -> printfn "%s" s; None)
+                       |> sweepCapitalGains accountDecls commodityDecls header.CapitalGains
+                       |> List.groupBy (fun e -> e.Date)
+                       |> Map.ofList
+
+  let splits = items |> List.choose (function (_, dt, Split (c, k1, k2)) -> Some (c, (dt, k1, k2)) | _ -> None)
+                     |> List.groupByApply fst (List.map snd)
+                     |> Map.ofList
+
+  let assertions = items |> List.choose (function (_, dt, Assertion (a,v)) -> Some (dt,a,v) | _ -> None)
 
   let prices = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
                     |> List.groupByApply fst (List.collect snd >> Map.ofList)
                     |> Map.ofList
-
-  let splits = elts |> List.choose (function (_, Split (d, c, k1, k2)) -> Some (c, (d, k1, k2)) | _ -> None)
-                    |> List.groupByApply fst (List.map snd)
-                    |> Map.ofList
-
-  let assertions = elts |> List.choose (function (_, Assertion (d,a,v)) -> Some (d,a,v) | _ -> None)
 
   // Avengers... assemble!
   let journal = {

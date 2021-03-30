@@ -50,23 +50,27 @@ type RPostingElement =
   | PComment of Comment
   | PCommented of RPostingElement * Comment
 
+type RElement =
+  | Comment2 of text:string
+  | BasicEntry of flagged: bool * payee:string option * narrative:string * tags:string Set * xs:RPostingElement list
+  | Assertion of account:Account * value:Value
+  | Price of commodity:Commodity * value:Value
+  | Split of commodity:Commodity * pre:int * post:int
+
 type RJournalElement =
-  // Operational
+  // Structural
   | Indent of int
-  // Standard
+  | StartRegion of name:string
+  | EndRegion
+  | Comment1 of text:string
+  // Operational
   | Header of JournalMeta
   | Import of string
-  | Comment of Comment
-  // Declarations
   | Account of AccountDecl
   | Commodity of CommodityDecl
   // Core entries
-  | Entry of flagged: bool * date:DateTime * payee:string option * narrative:string * tags:string Set * xs:RPostingElement list
+  | Item of timestamp:DateTime * element:RElement
   | Prices of commodity:Commodity * measure:Commodity * xs:(DateTime * decimal) list
-  | Split of date:DateTime * commodity:Commodity * pre:int * post:int
-  | Assertion of date:DateTime * account:Account * value:Value
-  // A element that has a comment associated with it
-  | Commented of RJournalElement * Comment
 
 type private RSubElement =
   | SComment of Comment
@@ -144,7 +148,6 @@ let pValuationMode : Parser<ValuationMode, UserState> =
   choice [stringReturn "Latest" Latest
           stringReturn "Historical" Historical]
 
-
 // Account name elements and parsing
 let pAccountConvention : Parser<AccountConvention, UserState> =
   choice [stringReturn "F5" Financial5
@@ -189,19 +192,24 @@ let private spPropagate = sstr "propagate" >>% SPropagate
 let glse xs pred = xs |> List.choose pred
                       |> List.tryLast
 
-// RJournalElement Parsers
 // TODO Support detecting comments on restOfLine items (or parse till ';' etc)
-let wrapCommented c elt = match c with | Some c -> Commented(elt, c)
-                                       | None   -> elt
+// let wrapCommented c elt = match c with | Some c -> Commented(elt, c)
+//                                        | None   -> elt
 
-let pComment0 xs = anyOf xs >>. restOfLine false |>> Types.Comment
-let pComment = pComment0 ";*" |>> Comment
+// let pComment0 xs = anyOf xs >>. restOfLine false |>> Types.Comment
+// let pComment = pComment0 ";*" |>> Comment
 
-let pOptLineComment p = p .>> nSpaces0 .>>. opt (pComment0 ";").>> optional newline
+// let pOptLineComment p = p .>> nSpaces0 .>>. opt (pComment0 ";").>> optional newline
+
+// RJournalElement Parsers
 
 let pIndent =
   let pval = sstr1 ".indent" >>. pint32 .>> nSpaces0 .>> skipNewline
   pval >>= fun i -> (updateUserState (fun u -> {u with IndentSize = i}) >>. preturn (Indent i))
+
+let pStartRegion = nSpaces0 >>. sstr1 "#region" >>. restOfLine true |>> StartRegion
+
+let pEndRegion = nSpaces0 >>. stringReturn "#endregion" EndRegion
 
 let pHeader =
   let getConvention x = glse x (function (SAccountConvention x) -> Some x | _ -> None)
@@ -215,6 +223,8 @@ let pHeader =
                   Note = glse ss (function (SNote x) -> Some x | _ -> None)
                   Convention = getConvention ss}
 
+let pComment1 =
+  nSpaces0 >>. skipAnyOf ";*" >>. restOfLine true |>> Comment1
 
 let pImport =
   let filename = restOfLine true
@@ -223,20 +233,19 @@ let pImport =
 let pAccountDecl =
   let subitems = (choice [spCommodity; spCG; spNote; spValuationMode; spPropagate] .>> nSpaces0 .>> skipNewline) |> indented |> many
   let accountHierarchy = pAcccountElts |>> (String.concat ":" >> Types.Account)
-  sstr1 "account" >>. pOptLineComment accountHierarchy .>>. increaseIndent subitems
-    |>> fun ((a, c), ss) -> Account {Account = a
-                                     Commodity = glse ss (function (SCommodity x) -> Some x | _ -> None)
-                                     Note = glse ss (function (SNote x) -> Some x | _ -> None)
-                                     CapitalGains = glse ss (function (SCG x) -> Some x | _ -> None)
-                                     ValuationMode = glse ss (function (SValuationMode x) -> Some x | _ -> None)
-                                                        |> Option.defaultValue Historical
-                                     Propagate = List.contains SPropagate ss}
-                            |> wrapCommented c
+  sstr1 "account" >>. accountHierarchy .>> skipNewline .>>. increaseIndent subitems
+    |>> fun (a, ss) -> Account {Account = a
+                                Commodity = glse ss (function (SCommodity x) -> Some x | _ -> None)
+                                Note = glse ss (function (SNote x) -> Some x | _ -> None)
+                                CapitalGains = glse ss (function (SCG x) -> Some x | _ -> None)
+                                ValuationMode = glse ss (function (SValuationMode x) -> Some x | _ -> None)
+                                                   |> Option.defaultValue Historical
+                                Propagate = List.contains SPropagate ss}
 
 let pCommodityDecl =
   let subitems = (choice [spName; spMeasure; spQuoteDP; spUnderlying; spCommodityClass; spMultiplier; spMTM; spExternalIdent] .>> nSpaces0 .>> skipNewline) |> indented |> many
-  sstr1 "commodity" >>. pOptLineComment pCommodity .>>. increaseIndent subitems
-    |>> fun ((t, c), ss) ->
+  sstr1 "commodity" >>. pCommodity .>> skipNewline .>>. increaseIndent subitems
+    |>> fun (t, ss) ->
           RJournalElement.Commodity {Symbol = t
                                      Measure = glse ss (function (SMeasure m) -> Some m | _ -> None)
                                      QuoteDP = glse ss (function (SQuoteDP i) -> Some i | _ -> None)
@@ -246,55 +255,51 @@ let pCommodityDecl =
                                      Multiplier = glse ss (function (SMultiplier m) -> Some (decimal m) | _ -> None)
                                      ExternalIdents = ss |> List.choose (function (SExternalIdent (a,b)) -> Some (a,b) | _ -> None) |> Map.ofList
                                      Mtm = List.contains SMTM ss}
-          |> wrapCommented c
 
-let pPostingEntry =
-  let contraAccount = choice [attempt (skipChar '~' >>. nSpaces0 >>. pAccountHierarchy |>> Choice1Of2)
-                              skipChar '~' >>. preturn (Choice2Of2 ())] |> opt
-  let pp = pOptLineComment (tuple3 (pAccountHierarchy .>> nSpaces0) (opt (attempt (pRAmount .>> nSpaces0))) (nSpaces0 >>. contraAccount))
-                |>> fun ((h,a,ca), cm) -> let ca2 = Option.map (function Choice1Of2 x -> x | Choice2Of2 _ -> h) ca
-                                          let ps = Posting (h, a, ca2)
-                                          match cm with | Some c -> PCommented (ps, c) | _ -> ps
-  let pc = pComment0 ";" .>> skipNewline |>> PComment
-  choice [attempt pc; pp]
+let pElement =
+  let pComment = sstr1 "comment" >>. restOfLine false |>> Comment2
+  let pAssertion = sstr1 "assert" >>. pAccountHierarchy .>> nSpaces1 .>>. pValue |>> Assertion
+  let pPrice = sstr1 "price" >>. pCommodity .>> nSpaces1 .>>. pValue |>> Price
+  let pSplit = sstr1 "split" >>. tuple3 (pCommodity .>> nSpaces1) (pint32 .>> nSpaces1) pint32 |>> Split
 
-let pEntry =
-  // TODO: could write it as a parser later..
-  let spn (n:string) = n.Split([|'|'|], 2) |> List.ofArray
-                                           |> function | [x] -> (None, x) | x::xs -> (Some (x.Trim()), List.head xs) | _ -> (None, n)
-  let phashline = indented (sepBy (pchar '#' >>. many1Chars (letter <|> digit)) nSpaces1 .>> newline)
-  let subitems = indented pPostingEntry
-  let pflag = opt (pchar '*' .>> nSpaces1) |>> Option.isSome
+  // basic entry
+  let pPostingEntry =
+    let contraAccount = choice [attempt (skipChar '~' >>. nSpaces0 >>. pAccountHierarchy |>> Choice1Of2)
+                                skipChar '~' >>. preturn (Choice2Of2 ())] |> opt
+    let pp = tuple3 (pAccountHierarchy .>> nSpaces0) (opt (attempt (pRAmount .>> nSpaces0))) (nSpaces0 >>. contraAccount)
+                  |>> fun (h,a,ca) -> let ca2 = Option.map (function Choice1Of2 x -> x | Choice2Of2 _ -> h) ca
+                                      Posting (h, a, ca2)
+    pp .>> skipNewline
 
-  pdate .>> nSpaces1 .>>. pflag .>>. (pOptLineComment (manyChars (noneOf ";\n")))
-        .>>. increaseIndent (opt phashline .>>. many1 subitems)
-        |>> fun (((d, f), (n, cm)), (hs, xs)) ->
-              let p, n = spn n
-              let tags = defaultArg hs [] |> set
-              Entry (flagged = f, date = d, payee = p, narrative = n.Trim(), tags=tags, xs=xs)
-                 |> wrapCommented cm
+  let pBasicEntry =
+    // TODO: could write it as a parser later..
+    let spn (n:string) = n.Split([|'|'|], 2) |> List.ofArray
+                                             |> function | [x] -> (None, x) | x::xs -> (Some (x.Trim()), List.head xs) | _ -> (None, n)
+    let phashline = indented (sepBy (pchar '#' >>. many1Chars (letter <|> digit)) nSpaces1 .>> newline)
+    let subitems = indented pPostingEntry
+    let flag = stringReturn "*" true <|> preturn false
+    flag .>>. manyChars (noneOf ";\n") .>> skipNewline .>>. increaseIndent (opt phashline .>>. many1 subitems)
+      |>> fun ((f, x), (y, z)) -> let p, n = spn x
+                                  let tags = Option.defaultValue [] y |> set
+                                  BasicEntry (f, p, n, tags, z)
+
+  choice [pComment; pAssertion; pPrice; pSplit; pBasicEntry]
+
+let pItem =
+  pdate .>> nSpaces1 .>>. pElement |>> Item
 
 let pPrices =
   let subitems = (pdate .>> nSpaces1 .>>. pnumber .>> nSpaces0 .>> skipNewline) |> indented |> many
-  sstr1 "prices" >>. pOptLineComment (pCommodity .>> nSpaces1 .>>. pCommodity) .>>. increaseIndent subitems
-    |>> fun (((c,m), cm), xs) -> Prices (commodity = c, measure = m, xs = xs)
-                                   |> wrapCommented cm
-
-let pSplit =
-  sstr1 "split" >>. pOptLineComment (tuple4 (pdate .>> nSpaces1) (pCommodity .>> nSpaces1) (pint32 .>> nSpaces1) pint32)
-    |>> fun ((d, c, ou, nu), cm) -> Split (date = d, commodity = c, pre = ou, post = nu) |> wrapCommented cm
-
-let pAssertion =
-  sstr1 "assert" >>. pOptLineComment (tuple3 (pdate .>> nSpaces1) (pAccountHierarchy .>> nSpaces1) pValue)
-    |>> fun ((d, t, n), c) -> Assertion (date = d, account = t, value = n) |> wrapCommented c
+  sstr1 "prices" >>. pCommodity .>> nSpaces1 .>>. pCommodity .>> skipNewline .>>. increaseIndent subitems
+    |>> fun ((c, m), xs) -> Prices (commodity = c, measure = m, xs = xs)
 
 let pRJournal =
-  let parsers = [ pIndent;
-                  pHeader; pImport; pComment;
-                  pAccountDecl; pCommodityDecl;
-                  pEntry; pPrices; pSplit;
-                  pAssertion]
-  many (getPosition .>>. choice parsers .>> skipMany newline) .>> eof
+  let parsers = [
+    pIndent; pStartRegion; pEndRegion; pComment1;
+    pHeader; pImport; pAccountDecl; pCommodityDecl;
+    pItem; pPrices
+  ]
+  spaces >>. many (getPosition .>>. choice parsers .>> skipMany newline) .>> eof
 
 let loadRJournal filename =
   let result = runParser pRJournal UserState.Default (FromFile filename)

@@ -1,8 +1,11 @@
 ; Example parsing file for basic testing for **RJournal**
+* Temporarily removed all inline comments pending parser upgrade
 
 .indent 2
 
 import market.fledge
+
+#region Setup
 
 journal Example ledger
   note This is purely for parser testing
@@ -10,12 +13,12 @@ journal Example ledger
   commodity USD
   convention F7
 
-account Asset               ; Predefine some account defaults
+account Asset
   note Set some default values
   cg Income:Capital Gains 2
   valuation Latest
 
-commodity 9984JP   ; definitely not a hedge fund
+commodity 9984JP
   name Softbank Group
   measure JPY
   dp 0
@@ -23,7 +26,7 @@ commodity 9984JP   ; definitely not a hedge fund
   externalid broker 1235
   externalid isin JP3436100006
 
-commodity NQZ20    ; Nasdaq futures
+commodity NQZ20
   name Nasdaq Dec '20 futures
   class Future
   measure USD
@@ -32,20 +35,20 @@ commodity NQZ20    ; Nasdaq futures
   multiplier 20
   mtm
 
+#endregion
+
 ; Top level comment half way through ledger
 
-2020-01-01 Me | Basic Transfer 1   ; but comments ok here
+2020-01-01 Me | Basic Transfer 1
   #ABC #DEF
   Asset:Account 1   100 USD ~Asset:Settlement Alpha
-  ; test comment 0
 
 2020-01-02 * SO | Basic Transfer 2
   Asset:Account 1  100 USD ~
 
 2020-01-03 Basic Transfer 3
-  ; indented comments now okay
   Asset:Account 1  100
-  Asset:Account 2  ; test posting line comment
+  Asset:Account 2
 
 2020-01-04 Basic Trade 1
   Asset:Account 1  2 NQZ20 @ 1135 USD [a44]
@@ -64,4 +67,4 @@ commodity NQZ20    ; Nasdaq futures
   Asset:Account 1  145 EUR -> 110 GBP
   Asset:Account 2
 
-assert 2020-02-01 Asset:Account 2  -106 USD    ; actually incorrect (it is 104)
+2020-02-01 assert Asset:Account 2  -106 USD
