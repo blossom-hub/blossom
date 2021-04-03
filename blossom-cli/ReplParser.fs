@@ -122,7 +122,7 @@ let meta = str "meta" >>. ws1 >>.
                     stringReturn "accounts"    Accounts
                     stringReturn "commodities" Commodities
                     stringReturn "payees"      Payees
-                    stringReturn "hashtags"    HashTags]
+                    stringReturn "tags"        Tags_]
             |>> fun m -> Meta {RequestType = m; Regex = None}
 
 let applicationCommands = [quit; clear; set]

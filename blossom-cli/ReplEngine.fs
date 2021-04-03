@@ -67,7 +67,7 @@ let showHelp state =
   printfn "    narrative: ?"
   printfn "    commodity: %%"
   printfn "    denomination: %%%%"
-  printfn "    hashtag: #"
+  printfn "    tag: +"
   printfn "    virtual account: /"
   printfn "    account: no symbol"
   Some state

@@ -11,9 +11,9 @@ open Xunit
 let testCommodity = Commodity "Alpha"
 let testDate1 = DateTime(2021,1,1)
 
-let account1 = Account "Account1"
-let account2 = Account "Account2"
-let account3 = Account "Account3"
+let account1 = Account ("Account1", None)
+let account2 = Account ("Account2", None)
+let account3 = Account ("Account3", None)
 
 let runBalancerChecker f g h elts =
   let result = balanceEntry (Some testCommodity) Map.empty Map.empty
@@ -25,7 +25,7 @@ let runBalancerChecker f g h elts =
 [<Fact>]
 let ``Balance Check 1`` () =
   let elts = [
-    Posting(account1, Some (Un 3.4M), Some account2)
+    Posting(account1, Some (3.4M, testCommodity), Some (CV account2))
   ]
   let f entry =
     let ps = entry.Postings
@@ -35,7 +35,7 @@ let ``Balance Check 1`` () =
 [<Fact>]
 let ``Balance Check 2`` () =
   let elts = [
-    Posting(account1, Some (Un 3.4M), None)
+    Posting(account1, Some (3.4M, testCommodity), None)
     Posting(account2, None, None)
   ]
   let f entry =
@@ -46,8 +46,8 @@ let ``Balance Check 2`` () =
 [<Fact>]
 let ``Balance Check 3`` () =
   let elts = [
-    Posting(account1, Some (Un 3.4M), None)
-    Posting(account2, Some (Ve (3.4M, Commodity "USD")), None)
+    Posting(account1, Some (3.4M, testCommodity), None)
+    Posting(account2, Some (3.4M, Commodity "USD"), None)
     Posting(account3,None, None)
   ]
   let f entry =

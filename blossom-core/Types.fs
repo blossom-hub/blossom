@@ -2,14 +2,15 @@ module Types
 
 open System
 
-type AccountConvention =  Financial5 | Financial7
+type SQ = DateTime * uint32 option
+
+type AccountConvention = Financial5 | Financial7
 
 // "NewType" style definitions
 type Comment = Comment of string
 type Commodity = Commodity of string
 type LotName = AutoLotName of string | CustomLotName of string
-type Account = | Account of string | VirtualisedAccount of string * string
-type AccountHierarchy = AccountHierarchy of string list * string option
+type Account = Account of string * string option
 
 type Value = decimal * Commodity
 
@@ -35,7 +36,6 @@ type CommodityClass =
 type JournalMeta = {
   Name: string
   Commodity: Commodity option
-  CapitalGains: Account option
   Note: string option
   Convention: AccountConvention option
 }
@@ -44,7 +44,6 @@ type AccountDecl = {
   Account: Account
   ValuationMode: ValuationMode
   Commodity: Commodity option
-  CapitalGains: Account option
   Note: string option
   Propagate: bool
 }
@@ -66,7 +65,7 @@ type Entry = {
   Date: DateTime
   Payee: string option
   Narrative: string
-  HashTags: string Set
+  Tags: string Set
   Postings: (Account * Amount * Account) list
 }
 
@@ -87,7 +86,7 @@ type Filter = {
   Narrative: string option
   Commodities: string list
   Denominations: string list
-  Hashtags: string list
+  Tags: string list
   VAccount: string option
 }
 
@@ -120,7 +119,7 @@ type LotRequest = {
 
 type CheckRequest = Assertions
 
-type MetaRequestType = Statistics | Accounts | Commodities | Payees | HashTags
+type MetaRequestType = Statistics | Accounts | Commodities | Payees | Tags_
 type MetaRequest = {
   RequestType: MetaRequestType
   Regex: string option
@@ -132,7 +131,7 @@ type MetaStatistics = {
   Accounts: int
   Commodities: int
   Payees: int
-  Hashtags: int
+  Tags: int
   Assertions: int
   Prices: int
 }

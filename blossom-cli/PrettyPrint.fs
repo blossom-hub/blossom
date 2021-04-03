@@ -61,9 +61,8 @@ let blossom2beancount inputfn outputfn  =
       let am2s = function | V (a, Commodity b) -> $"{a} {safeCommodity b}"
                           | T ((q1, Commodity c1), (q2, Commodity c2), _) -> $"{q1} X{safeCommodity c1} {{{q2} {safeCommodity c2}}}"
                           | X _ -> ""
-      let ac2s = function Account x -> x | VirtualisedAccount (a, _) -> a
       let rs2 = [for (a,am,_) in e.Postings
-                  do $"  {ac2s a |> safeAccount}    {am2s am}".TrimEnd()]
+                  do $"  {getAccount a |> safeAccount}    {am2s am}".TrimEnd()]
       [r1] @ rs2
     es |> List.collect g
   let entries = rs |> List.collect (fun (d,e) -> f d e)

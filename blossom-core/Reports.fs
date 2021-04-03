@@ -8,7 +8,8 @@ open Tabular
 
 // utilities
 let groupTopn iv n =
-  List.map (first3 (splitAccounts >> function (AccountHierarchy (xs, _)) -> xs.[0..n-1] |> fun x -> AccountHierarchy (x, None) |> joinAccounts)) >> summateAQCs iv
+  let f = splitAccounts >> fst >> List.take n >> (fun x -> joinAccounts x None)
+  List.map (first3 f) >> summateAQCs iv
 
 let meta renderer request journal =
   let journalList = journal.Register |> Map.toList
@@ -46,8 +47,8 @@ let meta renderer request journal =
 
   let payees = journalList |> List.collect (snd >> List.choose (fun p -> p.Payee)) |> Set.ofList
 
-  let hashtags =
-    journalList |> List.collect (fun (_, es) -> es |> List.map (fun p -> p.HashTags))
+  let tags =
+    journalList |> List.collect (fun (_, es) -> es |> List.map (fun p -> p.Tags))
                 |> Set.unionMany
 
   let transactionCount = journalList |> List.collect snd |> List.length
@@ -64,14 +65,14 @@ let meta renderer request journal =
             Accounts = accounts |> Set.count
             Commodities = commodities |> Set.count
             Payees = payees |> Set.count
-            Hashtags = hashtags |> Set.count
+            Tags = tags |> Set.count
             Assertions = journal.Assertions |> List.length
             Prices = journal.Prices |> Map.toList |> List.sumBy (snd >> Map.count)
           }
       | Accounts    -> fn accounts |> MetaResultSet
       | Commodities -> fn commodities |> MetaResultSet
       | Payees      -> fn payees |> MetaResultSet
-      | HashTags    -> fn hashtags |> MetaResultSet
+      | Tags_       -> fn tags |> MetaResultSet
 
 let checkJournal renderer request journal =
   let checkAssertion asofBalances dt account quantity commodity =
@@ -214,9 +215,9 @@ let journal renderer filter (request : JournalRequest) journal =
   let removeVirtualAccount xs =
     match request.ShowVirtual with
       | true -> xs
-      | false -> xs |> List.groupByApply (fun (f, d, p, n, a, _, c) -> (f, d, p, n, Account (getAccount a), c))
+      | false -> xs |> List.groupByApply (fun (f, d, p, n, a, _, c) -> (f, d, p, n, stripVirtualAccount a, c))
                                          (List.sumBy (fun (_, _, _, _, _, q, _) -> q))
-                    |> List.map (fun ((f, d, p, n, a, c), q) -> (f, d, p, n, Account (getAccount a), q ,c))
+                    |> List.map (fun ((f, d, p, n, a, c), q) -> (f, d, p, n, stripVirtualAccount a, q ,c))
 
   let createRow (f, d, p, n, a, q, Commodity c) =
     match request.ShowVirtual with
@@ -281,7 +282,7 @@ let balanceSeries renderer filter (request : SeriesRequest) journal =
         let balances =
           match request.ShowVirtual with
             | true  -> balances0
-            | false -> balances0 |> List.map (second (List.groupByApply (fun (a, _, c) -> (Account (getAccount a), c))
+            | false -> balances0 |> List.map (second (List.groupByApply (fun (a, _, c) -> (stripVirtualAccount a, c))
                                                                         (List.sumBy (fun (_, q, _) -> q))
                                                         >> List.map (fun ((a, c), q) -> (a,q,c))))
         match request.Cumulative with

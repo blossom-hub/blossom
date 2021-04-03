@@ -9,13 +9,11 @@ import market.fledge
 
 journal Example ledger
   note This is purely for parser testing
-  cg Income:Capital Gains
   commodity USD
   convention F7
 
-account Asset
+account Asset:X
   note Set some default values
-  cg Income:Capital Gains 2
   valuation Latest
 
 commodity 9984JP
@@ -35,36 +33,62 @@ commodity NQZ20
   multiplier 20
   mtm
 
+alias AC1 Asset:Account1
+
 #endregion
 
 ; Top level comment half way through ledger
 
 2020-01-01 Me | Basic Transfer 1
-  #ABC #DEF
-  Asset:Account 1   100 USD ~Asset:Settlement Alpha
+  Asset:Account1   100 USD  ~Asset:SettlementAlpha
 
 2020-01-02 * SO | Basic Transfer 2
-  Asset:Account 1  100 USD ~
+  Asset:Account1  100 USD ~
 
 2020-01-03 Basic Transfer 3
-  Asset:Account 1  100
-  Asset:Account 2
+  Asset:Account1  100 USD
+  Asset:Account2
 
-2020-01-04 Basic Trade 1
-  Asset:Account 1  2 NQZ20 @ 1135 USD [a44]
-  Expense:Trading/0x12    4 USD
-  Asset:Account 2
+;2020-01-04 Basic Trade 1
+;  Asset:Account1  2 NQZ20 @ 1135 USD [a44]
+;  Expense:Trading/0x12    4 USD
+;  Asset:Account2
 
-2020-01-04 Basic Trade 2
-  Asset:Account 1  2 ASSET @ 100 USD
-  Asset:Settlement Trading
+;2020-01-04 Basic Trade 2
+;  Asset:Account1  2 ASSET @ 100 USD
+;  Asset:Settlement Trading
 
-2020-01-05 Basic Exchanges 1
-  Asset:Account 1  145 EUR <- 100 GBP ~
+;2020-01-05 Basic Exchanges 1
+;  Asset:Account1  145 EUR <- 100 GBP ~
 
-2020-01-06 Basic Exchanges 2
-  Asset:Account 1  100 GBP -> 135 USD
-  Asset:Account 1  145 EUR -> 110 GBP
-  Asset:Account 2
+;2020-01-06 Basic Exchanges 2
+;  Asset:Account1  100 GBP -> 135 USD
+;  Asset:Account1  145 EUR -> 110 GBP
+;  Asset:Account2
 
-2020-02-01 assert Asset:Account 2  -106 USD
+2020-02-01 assert Asset:Account2  -106 USD
+
+; option 1 (minimal, auto sprayout)
+2020-02-01 dividend Asset:Account1  ASSET 1.02 USD
+
+; option 2 (complete)
+2020-02-01 dividend Asset:Account1  ASSET 1.03 USD
+  paydate      2020-03-01
+  settlement   Asset:SettlementTrading
+  receivable   Receivable:Dividend
+
+; trading (minimal)
+2020-03-01 trade Asset:Account1  500 ASSET @ 13.4 USD
+
+; trading (more advanced)
+2020-03-01 trade Asset:Account1  500 ASSET @ 13.4 USD
+  lot          A666
+  reference    alpha565
+  settlement   Asset:SettlementTrading
+  expense      Expense:Trading 7.99 USD ~Asset:Settlement:Cash
+
+2020-03-01 trade Asset:Account1  -200 ASSET @ 13.4 USD
+  lot          A666, B555
+  settlement   Asset:SettlementTrading
+  expense      Expense:Trading 7.99 USD
+
