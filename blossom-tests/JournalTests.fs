@@ -16,8 +16,8 @@ let account2 = Account ("Account2", None)
 let account3 = Account ("Account3", None)
 
 let runBalancerChecker f g h elts =
-  let result = balanceEntry (Some testCommodity) Map.empty Map.empty
-                  ("In unit test") testDate1 true (Some "payee") "test 1" Set.empty elts
+  let dtransfer = {Payee = Some "payee"; Narrative = "test 1"; Tags = Set.empty; Entries = elts}
+  let result = liftBasicEntry "In unit test" testDate1 false dtransfer
   match result with
     | Choice2Of2 msg   -> match g with Some gg -> gg msg | None -> failwith $"Unexpected error: {msg}"
     | Choice1Of2 entry -> h entry
