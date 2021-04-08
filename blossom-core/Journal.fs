@@ -59,10 +59,10 @@ let liftBasicEntry position date flagged dtransfer =
     | _, _ -> $"Only one empty balance entry is supported. {position}" |> Choice2Of2
 
 
-let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) (analysedLots : AnalysedLot list) =
+let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLots =
   // Build up transfer entries based on the lot details occuring in the InvestmentAnalysis
   // Notionals are not transferred if the traded instrument is MTM.
-  let f1 (alot: AnalysedLot) =
+  let f1 (alot: OpeningTrade) =
     let mtm = commodityDecls |> Map.tryFind alot.Asset
                              |> Option.map (fun decl -> decl.Mtm)
                              |> Option.defaultValue false
@@ -91,8 +91,7 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) (analysedL
                          // 3. Realise the pnl
                          let physicalTransfer2 = (marketAccount, V (mlot.Quantity, alot.Asset), alot.Account)
                          let notionalTransfer2 = (mlot.Settlement, V closingNotional, marketAccount)
-                         let pnl = (fst mlot.PerUnitPrice - fst alot.PerUnitPrice) * mlot.Quantity, snd mlot.PerUnitPrice
-                         let incomeTransfer2 = (marketAccount, V pnl, capitalGainsAccount)
+                         let incomeTransfer2 = (marketAccount, V mlot.UnadjustedPnL, capitalGainsAccount)
                          let closePostings =
                           if mtm
                             then [physicalTransfer2; incomeTransfer2] @ mlot.Expenses

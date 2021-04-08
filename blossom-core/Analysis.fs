@@ -92,11 +92,12 @@ let analyseInvestments (trades : DTrade H list) (dividends : DDividend H list)
                 then
                   let closingSettlement = Option.defaultValue ocm.Closing.Account ocm.Closing.Settlement
                   Some {
-                    MatchedLot.Date = ocm.CSeq
+                    ClosingTrade.Date = ocm.CSeq
                     Settlement = closingSettlement
                     CapitalGains = ocm.Closing.CapitalGains
                     Quantity = ocm.Quantity
                     PerUnitPrice = ocm.Closing.PerUnitPrice
+                    UnadjustedPnL = pnl, snd ocm.Closing.PerUnitPrice
                     LotName = ""
                     Reference = ocm.Closing.Reference
                     Expenses =  ocm.Closing.Expenses |> List.map (fun (a, v, c) -> (a, V v, match c with | Some CS -> a | Some (CV a2) -> a2 | None -> closingSettlement))
@@ -104,7 +105,7 @@ let analyseInvestments (trades : DTrade H list) (dividends : DDividend H list)
                 else None)
         let openingSettlement = Option.defaultValue dtrade.Account dtrade.Settlement
         {
-          AnalysedLot.Date = sq
+          OpeningTrade.Date = sq
           Account = dtrade.Account
           Settlement = openingSettlement
           Asset = dtrade.Asset

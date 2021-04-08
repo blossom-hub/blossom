@@ -60,18 +60,19 @@ type CommodityDecl = {
   ExternalIdents: Map<string, string>
 }
 
-type MatchedLot = {
+type ClosingTrade = {
   Date: SQ
   Settlement: Account
   CapitalGains: Account option
   Quantity: decimal
   PerUnitPrice: Value
+  UnadjustedPnL: Value
   LotName: string
   Reference: string option
   Expenses: (Account * Amount * Account) list
 }
 
-type AnalysedLot = {
+type OpeningTrade = {
   Date: SQ
   Account: Account
   Settlement: Account
@@ -81,7 +82,7 @@ type AnalysedLot = {
   LotName: string
   Reference: string option
   Expenses: (Account * Amount * Account) list
-  Closings: MatchedLot list
+  Closings: ClosingTrade list
 }
 
 type Entry = {
@@ -98,7 +99,7 @@ type Journal = {
   AccountDecls: Map<Account, AccountDecl>
   CommodityDecls: Map<Commodity, CommodityDecl>
   Register: Map<SQ, Entry list>
-  InvestmentAnalysis: AnalysedLot list
+  InvestmentAnalysis: OpeningTrade list
   Prices: Map<Commodity * Commodity, Map<DateTime, decimal>>
   Splits: Map<Commodity, (DateTime * int * int) list>
   Assertions: (DateTime * Account * Value) list
