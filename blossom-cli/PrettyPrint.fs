@@ -44,7 +44,7 @@ let blossom2beancount inputfn outputfn  =
     let acc2 = acc1.Replace("Payable:", "Liability:").Replace("Receivable:", "Asset:")
     acc2
 
-  let date0 = journal.Register |> Map.toList |> List.map fst |> List.min
+  let date0 = journal.Register |> Map.toList |> List.map fst |> List.min |> fst
   let metaRequest = {RequestType = Accounts; Regex = None}
   let (MetaResultSet accountList) = meta id metaRequest journal
   let accounts = [for account in (accountList |> Set.filter (fun x -> not(x.Contains("/"))))
@@ -65,7 +65,7 @@ let blossom2beancount inputfn outputfn  =
                   do $"  {getAccount a |> safeAccount}    {am2s am}".TrimEnd()]
       [r1] @ rs2
     es |> List.collect g
-  let entries = rs |> List.collect (fun (d,e) -> f d e)
+  let entries = rs |> List.collect (fun (d,e) -> f (fst d) e)
 
   // prices
   let prices = journal.Prices |> Map.toList

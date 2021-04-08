@@ -60,7 +60,7 @@ let meta renderer request journal =
     match request.RequestType with
       | MetaRequestType.Statistics ->
           Statistics {
-            Range = journalList |> List.map fst |> (List.min &&& List.max)
+            Range = journalList |> List.map fst |> ((List.min >> fst) &&& (List.max >> fst))
             Transactions = transactionCount, entryCount
             Accounts = accounts |> Set.count
             Commodities = commodities |> Set.count
@@ -87,7 +87,7 @@ let checkJournal renderer request journal =
       | Assertions -> let balances = evaluateBalances journal |> Map.toList
                       let assertions = journal.Assertions
                       let schedule = assertions |> List.map fst3
-                      let f1 = (fun dt -> dt, balances |> List.takeWhile (fun (d,_) -> d <= dt) |> List.last |> snd)
+                      let f1 = (fun dt -> dt, balances |> List.takeWhile (fun (d,_) -> fst d <= dt) |> List.last |> snd)
                       let f2 = List.groupByApply (fst3 &&& thd3) (List.sumBy snd3) >> Map.ofList
                       let asofBalances = schedule |> List.map (f1 >> second f2) |> Map.ofList
                       let check1 (dt, a, (q, c)) =
@@ -221,8 +221,8 @@ let journal renderer filter (request : JournalRequest) journal =
 
   let createRow (f, d, p, n, a, q, Commodity c) =
     match request.ShowVirtual with
-      | true  -> [Date d; f2s f |> Text; p2s p |> Text; Text n; getAccount a |> Text; getVirtualAccount a |> p2s |> Text; Number(q, 3); Text c]
-      | false -> [Date d; f2s f |> Text; p2s p |> Text; Text n; getAccount a |> Text; Number(q, 3); Text c]
+      | true  -> [Date (fst d); f2s f |> Text; p2s p |> Text; Text n; getAccount a |> Text; getVirtualAccount a |> p2s |> Text; Number(q, 3); Text c]
+      | false -> [Date (fst d); f2s f |> Text; p2s p |> Text; Text n; getAccount a |> Text; Number(q, 3); Text c]
 
   let data = result2 |> removeVirtualAccount |> List.map createRow
   let table = Table (cs, data)
@@ -259,7 +259,7 @@ let balanceSeries renderer filter (request : SeriesRequest) journal =
                   |> iftrue (not request.Flex) (List.map (second (accountFilter >> virtualAccountFilter >> commodityFilter)))
                   |> iftrue request.GroupToTop (List.map (second (groupTopn request.ShowVirtual 1)))
 
-  let dates = result |> List.map fst
+  let dates = result |> List.map (fst >> fst)
   let left, right = dates |> (List.min &&& List.max)
   let schedule = makeSchedule request.Tenor left right |> Set.add left |> Set.toList
 
@@ -278,7 +278,7 @@ let balanceSeries renderer filter (request : SeriesRequest) journal =
   match left = right with
     | true -> renderer (Table(cs, []))
     | false ->
-        let balances0 = schedule |> List.map (fun dt -> dt, result |> List.takeWhile (fun (d,_) -> d <= dt) |> List.last |> snd)
+        let balances0 = schedule |> List.map (fun dt -> dt, result |> List.takeWhile (fun (d,_) -> fst d <= dt) |> List.last |> snd)
         let balances =
           match request.ShowVirtual with
             | true  -> balances0
@@ -296,10 +296,13 @@ let balanceSeries renderer filter (request : SeriesRequest) journal =
                      let data = balances2 |> List.collect (fun (dt, xs) -> xs |> List.map (createRow dt))
                      Table (cs, data) |> renderer
 
+
 let lotAnalysis renderer filter (request: LotRequest) journal =
   let quoteDPFor commodity = journal.CommodityDecls |> Map.tryFind commodity
                                                     |> Option.bind (fun t -> t.QuoteDP)
                                                     |> Option.defaultValue 3
+  // analysis has already completed, so this runs on the InvestmentAnalysis result for the journal
+  let analysis = journal
   // run it -> filter it
   let j2 = prefilter filter journal
 
@@ -334,7 +337,7 @@ let lotAnalysis renderer filter (request: LotRequest) journal =
   let tradingEntries =
     j2.Register |> Map.toList
                 |> List.collect snd
-                |> List.collect (fun e -> e.Postings |> List.choose (liftT e.Date))
+                |> List.collect (fun e -> e.Postings |> List.choose (liftT (fst e.Date)))
                 |> (accountFilter >> virtualAccountFilter >> commodityFilter)
 
   let cs = [{Header = "Date"; Key=true}

@@ -80,7 +80,7 @@ type DTrade = {
   Account: Account
   Settlement: Account option
   CapitalGains: Account option
-  Commodity: Commodity
+  Asset: Commodity
   Quantity: decimal
   PerUnitPrice: Value
   LotName: string list
@@ -336,7 +336,7 @@ let pElement =
                                                   Trade {Account = account
                                                          Settlement = s
                                                          CapitalGains = cg
-                                                         Commodity = c
+                                                         Asset = c
                                                          Quantity = q
                                                          PerUnitPrice = price
                                                          LotName = lns

@@ -24,6 +24,9 @@ commodity 9984JP
   externalid broker 1235
   externalid isin JP3436100006
 
+commodity ASSET
+  mtm
+
 commodity NQZ20
   name Nasdaq Dec '20 futures
   class Future
@@ -69,9 +72,24 @@ alias AC1 Asset:Account1
 2020-02-01 assert Asset:Account2  -106 USD
 
 ; option 1 (minimal, auto sprayout)
+; result equivalent to:
+; 2020-02-01 Dividend payment on 500 ABC
+;   Asset:SettlementAccount       1000 USD
+;   Income:DividendIncomeAccount
 2020-02-01 dividend Asset:Account1  ASSET 1.02 USD
 
+
+; DIVIDEND PROBLEM: will need to specify the quantity at the moment because of settle vs non-settle? TBC
 ; option 2 (complete)
+; result equivalent to:
+; 2020-02-01 Ex-dividend payment on 500 ABC (paydate: 2020-03-01)
+;   Income:DividendIncomeAccount           -1000 USD
+;   Receivable:DividendReceivablesAccount
+;
+; 2020-03-01 Dividend payment on 500 ABC (re: 2020-02-01)
+;   Asset:SettlementAccount                 1000 USD
+;   Receivable:DividendReceivablesAccount
+
 2020-02-01 dividend Asset:Account1  ASSET 1.03 USD
   paydate      2020-03-01
   settlement   Asset:SettlementTrading
@@ -81,14 +99,15 @@ alias AC1 Asset:Account1
 2020-03-01 trade Asset:Account1  500 ASSET @ 13.4 USD
 
 ; trading (more advanced)
-2020-03-01 trade Asset:Account1  500 ASSET @ 13.4 USD
+2020-03-02 trade Asset:Account1  500 ASSET @ 13.4 USD
   lot          A666
   reference    alpha565
   settlement   Asset:SettlementTrading
-  expense      Expense:Trading 7.99 USD ~Asset:Settlement:Cash
+  expense      Expense:Trading 4.00 USD ~Asset:Settlement:Cash
 
-2020-03-01 trade Asset:Account1  -200 ASSET @ 13.4 USD
+2020-03-03 trade Asset:Account1  -300 ASSET @ 13.5 USD
   lot          A666, B555
   settlement   Asset:SettlementTrading
-  expense      Expense:Trading 7.99 USD
+  cg           Income:CapitalGains
+  expense      Expense:Trading 10.99 USD
 
