@@ -39,15 +39,15 @@ alias AC1 Asset:Account1
 
 ; Top level comment half way through ledger
 
-2020-01-01 Me | Basic Transfer 1
-  Asset:Account1   100 USD  ~Asset:SettlementAlpha
+;2020-01-01 Me | Basic Transfer 1
+;  Asset:Account1   100 USD  ~Asset:SettlementAlpha
 
-2020-01-02 * SO | Basic Transfer 2
-  Asset:Account1  100 USD ~
+;2020-01-02 * SO | Basic Transfer 2
+;  Asset:Account1  100 USD ~
 
-2020-01-03 Basic Transfer 3
-  Asset:Account1  100 USD
-  Asset:Account2
+;2020-01-03 Basic Transfer 3
+;  Asset:Account1  100 USD
+;  Asset:Account2
 
 ;2020-01-04 Basic Trade 1
 ;  Asset:Account1  2 NQZ20 @ 1135 USD [a44]
@@ -92,19 +92,16 @@ alias AC1 Asset:Account1
   settlement   Asset:SettlementTrading
   receivable   Receivable:Dividend
 
-; trading (minimal)
-2020-03-01 trade Asset:Account1  500 ASSET @ 13.4 USD
+2019-03-25 trade Asset:InteractiveBrokers:Trading:OPT 1 144051218 @ 260 JPY
+  settlement      Asset:InteractiveBrokers:Cash
 
-; trading (more advanced)
-2020-03-02 trade Asset:Account1  500 ASSET @ 13.4 USD
-  lot          A666
-  reference    alpha565
-  settlement   Asset:SettlementTrading
-  expense      Expense:Trading 4.00 USD ~Asset:Settlement:Cash
+2019-03-25 trade Asset:InteractiveBrokers:Trading:OPT 1 144051218 @ 260 JPY
+  settlement      Asset:InteractiveBrokers:Cash
 
-2020-03-03 trade Asset:Account1  -300 ASSET @ 13.5 USD
-  lot          A666, B555
-  settlement   Asset:SettlementTrading
-  cg           Income:CapitalGains
-  expense      Expense:Trading 10.99 USD
+2019-05-09 trade Asset:InteractiveBrokers:Trading:OPT -1 144051218 @ 205 JPY
+  settlement      Asset:InteractiveBrokers:Cash
+  cg              Income:CapitalGains
 
+2019-05-10 trade Asset:InteractiveBrokers:Trading:OPT -1 144051218 @ 0 JPY
+  settlement      Asset:InteractiveBrokers:Cash
+  cg              Income:CapitalGains

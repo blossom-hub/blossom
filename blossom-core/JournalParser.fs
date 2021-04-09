@@ -213,7 +213,7 @@ let pPosting =
 
 let pPostingM =
   let contra = sstr "~" >>. opt pAccount
-  p0 pAccount .>>. pValue .>>. opt (nSpaces1 >>. contra) .>> skipNewline
+  p0 pAccount .>>. pValue .>>. opt (nSpaces1 >>. contra)
     |>> fun ((a, v), c) -> match c with
                              | None          -> (a, v, None)
                              | Some None     -> (a, v, Some CS)

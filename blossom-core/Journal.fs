@@ -63,11 +63,10 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
   // Build up transfer entries based on the lot details occuring in the InvestmentAnalysis
   // Notionals are not transferred if the traded instrument is MTM.
   let f1 (alot: OpeningTrade) =
-    let mtm = commodityDecls |> Map.tryFind alot.Asset
-                             |> Option.map (fun decl -> decl.Mtm)
-                             |> Option.defaultValue false
-    let openingNotional = first (fun p -> -p * decimal alot.Quantity) alot.PerUnitPrice
-    let physicalTransfer = (marketAccount, V (-alot.Quantity, alot.Asset), alot.Account)
+    let multiplier = multiplierOf commodityDecls alot.Asset
+    let mtm = isMtm commodityDecls alot.Asset
+    let openingNotional = first (fun p -> -p * decimal alot.Quantity * multiplier) alot.PerUnitPrice
+    let physicalTransfer = (alot.Account, V (alot.Quantity, alot.Asset), marketAccount)
     let notionalTransfer = (alot.Settlement, V openingNotional, marketAccount)
     let openPostings =
       if mtm
@@ -83,13 +82,13 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
     }
     let closingEntries =
       alot.Closings |> List.map (fun mlot ->
-                         let closingNotional = first (fun p -> p * mlot.Quantity) mlot.PerUnitPrice
+                         let closingNotional = first (fun p -> p * mlot.Quantity * multiplier) mlot.PerUnitPrice
                          let capitalGainsAccount = Option.defaultValue capitalGainsAccount mlot.CapitalGains
                          // Postings
                          // 1. Return the "physical asset"
                          // 2. Return the cash notional, if not mtm
                          // 3. Realise the pnl
-                         let physicalTransfer2 = (marketAccount, V (mlot.Quantity, alot.Asset), alot.Account)
+                         let physicalTransfer2 = (alot.Account, V (mlot.Quantity, alot.Asset), marketAccount)
                          let notionalTransfer2 = (mlot.Settlement, V closingNotional, marketAccount)
                          let incomeTransfer2 = (marketAccount, V mlot.UnadjustedPnL, capitalGainsAccount)
                          let closePostings =
@@ -158,7 +157,7 @@ let loadJournal filename =
   let trades = items |> List.choose (function | (ps, sq, flagged, Trade dtrade) -> Some (ps, sq, flagged, dtrade)
                                               | _ -> None)
 
-  let investments = analyseInvestments trades dividends [] []
+  let investments = analyseInvestments commodityDecls trades dividends [] []
   let register = integrateRegister commodityDecls transfers investments
 
   // Avengers... assemble!
@@ -172,16 +171,6 @@ let loadJournal filename =
     Splits = splits
     Assertions = assertions
   }
-
-let multiplierOf commodityDecls c =
-  commodityDecls |> Map.tryFind c
-                 |> Option.bind (fun d -> d.Multiplier)
-                 |> Option.defaultValue 1m
-
-let navIndicatorOf commodityDecls c =
-  commodityDecls |> Map.tryFind c
-                 |> Option.map (fun d -> if d.Mtm then 0m else 1m)
-                 |> Option.defaultValue 1m
 
 let expandPosting commodityDecls account amount caccount =
   match amount with
