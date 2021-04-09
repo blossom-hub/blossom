@@ -145,20 +145,21 @@ let balances renderer filter (request : BalancesRequest) journal =
                        |> iftrue request.HideZeros zeroFilter
 
   // temporarily make a table
+  let gcn c = journal.CommodityDecls |> Map.tryFind c |> Option.bind (fun t -> t.Name) |> Option.defaultValue ""
   let table =
     match request.ShowVirtual with
       | true  -> let c = [{Header = "Account"; Key = true};  {Header = "V"; Key = true};
-                          {Header = "Balance"; Key = false}; {Header ="Commodity"; Key = false}]
-                 let d = result2 |> List.map (fun (a, q, Commodity c) -> (a, q, c))
-                                 |> List.sortBy fst3
-                                 |> List.map (fun (a, q, c) -> let s2 = getVirtualAccount a |> Option.defaultValue ""
-                                                               [getAccount a |> Text; Text s2; Number (q, 3); Text c])
+                          {Header = "Balance"; Key = false}; {Header ="Commodity"; Key = false}; {Header ="Name"; Key = false}]
+                 let d = result2 |> List.map (fun (a, q, Commodity c) -> (a, q, c, gcn (Commodity c)))
+                                 |> List.sortBy fst4
+                                 |> List.map (fun (a, q, c, cn) -> let s2 = getVirtualAccount a |> Option.defaultValue ""
+                                                                   [getAccount a |> Text; Text s2; Number (q, 3); Text c; Text cn])
                  Table (c, d)
-      | false -> let c = [{Header = "Account"; Key = true}; {Header = "Balance"; Key = false}; {Header ="Commodity"; Key = false}]
+      | false -> let c = [{Header = "Account"; Key = true}; {Header = "Balance"; Key = false}; {Header ="Commodity"; Key = false}; {Header ="Name"; Key = false}]
                  let d = result2 |> List.map (fun (a, q, c) -> (a, q, c))
                                  |> summateAQCs false
                                  |> List.sortBy fst3
-                                 |> List.map (fun (a, q, Commodity c) -> [getAccount a |> Text; Number (q, 3); Text c])
+                                 |> List.map (fun (a, q, Commodity c) -> [getAccount a |> Text; Number (q, 3); Text c; Text (gcn (Commodity c))])
                  Table (c, d)
 
   renderer table
