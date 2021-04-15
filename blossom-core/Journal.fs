@@ -89,11 +89,12 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
                          // 2. Return the cash notional, if not mtm
                          // 3. Realise the pnl
                          let physicalTransfer2 = (alot.Account, V (mlot.Quantity, alot.Asset), marketAccount)
-                         let notionalTransfer2 = (mlot.Settlement, V closingNotional, marketAccount)
+                         let notionalTransfer2 = (marketAccount, V closingNotional, mlot.Settlement)
                          let incomeTransfer2 = (marketAccount, V mlot.UnadjustedPnL, capitalGainsAccount)
+                         let incomeTransfer3 = (mlot.Settlement, V mlot.UnadjustedPnL, capitalGainsAccount)
                          let closePostings =
                           if mtm
-                            then [physicalTransfer2; incomeTransfer2] @ mlot.Expenses
+                            then [physicalTransfer2; incomeTransfer3] @ mlot.Expenses
                             else [physicalTransfer2; incomeTransfer2; notionalTransfer2] @ mlot.Expenses
                          mlot.Date, {
                            Flagged = false
@@ -165,7 +166,7 @@ let loadJournal filename =
     Meta = header
     AccountDecls = accountDecls
     CommodityDecls = commodityDecls
-    InvestmentAnalysis = []
+    InvestmentAnalysis = investments
     Register = register
     Prices = prices
     Splits = splits
