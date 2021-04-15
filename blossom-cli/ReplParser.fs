@@ -30,24 +30,9 @@ let pTenor : Parser<Tenor, unit>  =
   (w <|> z)
 
 // Command Parsing
-// Flags
-type Flag = GroupToTop | HideZeros | Flex | ShowVirtual | Cumulative | FlaggedOnly
 
-let pFlag (fs: string) : Parser<Flag> =
-  let flags =
-    [
-      'g', stringReturn "g" GroupToTop
-      'z', stringReturn "z" HideZeros
-      'x', stringReturn "x" Flex
-      'v', stringReturn "v" ShowVirtual
-      'c', stringReturn "c" Cumulative
-      'f', stringReturn "f" FlaggedOnly
-    ]
-  flags |> List.choose (fun (c,p) -> if Seq.contains c fs then Some p else None)
-        |> choice
-
-let pFlags fs =
-  (skipChar '-' >>. (many1 (pFlag fs) .>> followedBy ((skipAnyOf fs) <|> ws1 <|> eof)))
+let pFlags (fs:string) =
+  (skipChar '-' >>. (many1 (anyOf fs) .>> followedBy ((skipAnyOf fs) <|> ws1 <|> eof)))
       <|>% []
 
 let flagged xs v = List.contains v xs
@@ -60,8 +45,8 @@ let set =
   str "set" >>. opt (ws1 >>. choice [gpv]) |>> Set
 
 // File management
-let load = choice [str "load"; str ":l"] >>. ws1 >>. restOfLine false |>> Load
-let reload = choice [str "reload"; str ":r"] >>. preturn Reload
+let load = choice [str "load"] >>. ws1 >>. restOfLine false |>> Load
+let reload = choice [str "reload"] >>. preturn Reload
 
 // Accounting
 let balances =
@@ -70,10 +55,10 @@ let balances =
     >>. pFlags "gzxv"
     .>>. pFilter
     |>> fun (fs, f) ->
-          let br = {GroupToTop = flagged fs GroupToTop
-                    HideZeros = flagged fs HideZeros
-                    Flex = flagged fs Flex
-                    ShowVirtual = flagged fs ShowVirtual}
+          let br = {GroupToTop = flagged fs 'g'
+                    HideZeros = flagged fs 'z'
+                    Flex = flagged fs 'x'
+                    ShowVirtual = flagged fs 'v'}
           Balances (f, br)
 
 let journal =
@@ -82,10 +67,10 @@ let journal =
     >>. pFlags "zfxv"
     .>>. pFilter
     |>> fun (fs, f) ->
-          let fr = {HideZeros = flagged fs HideZeros
-                    FlaggedOnly = flagged fs FlaggedOnly
-                    Flex = flagged fs Flex
-                    ShowVirtual = flagged fs ShowVirtual}
+          let fr = {HideZeros = flagged fs 'z'
+                    FlaggedOnly = flagged fs 'f'
+                    Flex = flagged fs 'x'
+                    ShowVirtual = flagged fs 'v'}
           Journal (f, fr)
 
 let series =
@@ -96,21 +81,25 @@ let series =
     .>>. pFlags "gzxvc"
     .>>. pFilter
     |>> fun ((t, fs), f) ->
-          let sr = {GroupToTop = flagged fs GroupToTop
-                    HideZeros = flagged fs HideZeros
-                    Flex = flagged fs Flex
-                    ShowVirtual = flagged fs ShowVirtual
-                    Cumulative = flagged fs Cumulative
+          let sr = {GroupToTop = flagged fs 'g'
+                    HideZeros = flagged fs 'z'
+                    Flex = flagged fs 'x'
+                    ShowVirtual = flagged fs 'v'
+                    Cumulative = flagged fs 'c'
                     Tenor = t}
           BalanceSeries (f, sr)
 
 // Investment
 let lotAnalysis =
-  let lr0 = {Measures = []}
-  choice [str "lots"; str ":lt"]
+  choice [str "lots"; str ":l"]
    >>. ws
-   >>. pFilter
-   |>> fun f -> LotAnalysis (f, lr0)
+   >>. pFlags "xog"
+   .>>. pFilter
+   |>> fun (fs, f) ->
+      let lr = { ClosedOnly = flagged fs 'x'
+                 OpenOnly = flagged fs 'o'
+                 Consolidated = flagged fs 'g'}
+      LotAnalysis (f, lr)
 
 // Help
 let check = choice [str "check"; str ":c"] >>. ws1 >>. choice [str "assertions" >>. preturn Assertions] |>> Check

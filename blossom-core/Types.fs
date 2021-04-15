@@ -140,7 +140,9 @@ type SeriesRequest = {
 }
 
 type LotRequest = {
-  Measures: string list
+  Consolidated: bool
+  OpenOnly: bool
+  ClosedOnly: bool
 }
 
 type CheckRequest = Assertions

@@ -1,6 +1,7 @@
 module Reports
 
 open System
+open Analysis
 open Types
 open Shared
 open Journal
@@ -298,60 +299,152 @@ let balanceSeries renderer filter (request : SeriesRequest) journal =
                      Table (cs, data) |> renderer
 
 
-let lotAnalysis renderer filter (request: LotRequest) journal =
+type private InternalLotRow = {
+  OpeningDate: SQ
+  Account: Account
+  Closed: bool
+  Asset: Commodity
+  Quantity: Decimal
+  Long: bool
+  OpeningPrice: Value
+  ClosingDate: SQ option
+  ClosingPrice: Value option
+  Pnl: Value option
+  ReturnPct: decimal option
+}
+
+let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
   let quoteDPFor commodity = journal.CommodityDecls |> Map.tryFind commodity
                                                     |> Option.bind (fun t -> t.QuoteDP)
                                                     |> Option.defaultValue 3
-  // analysis has already completed, so this runs on the InvestmentAnalysis result for the journal
-  let analysis = journal
-  // run it -> filter it
-  let j2 = prefilter filter journal
+  let nameFor commodity = journal.CommodityDecls |> Map.tryFind commodity
+                                                 |> Option.bind (fun t -> t.Name)
+                                                 |> Option.defaultValue ""
 
-  // define specific filters to crystalise the result
-  let accountFilter xs =
+  let accountFilter (xs: OpeningTrade list) =
     match filter.Accounts with
       | [] -> xs
-      | rs -> xs |> List.filter (fun (_, a, _, _, _, _, _, _) ->
-                                   rs |> List.map (fun r -> getAccount a |> regexfilter r)
-                                      |> List.any id)
+      | rs -> xs |> List.filter (fun ot -> let a = ot.Account |> getAccount
+                                           rs |> List.map (fun r -> regexfilter r a) |> List.any id)
 
-  let virtualAccountFilter xs =
+  let virtualAccountFilter (xs: OpeningTrade list) =
     match filter.VAccount with
       | None -> xs
-      | Some r -> xs |> List.filter (fun (_, a, _, _, _, _, _, _) -> getVirtualAccount a |> function | Some t -> regexfilter r t | _ -> false)
+      | Some r -> xs |> List.filter (fun ot -> let a = ot.Account |> getVirtualAccount
+                                               match a with
+                                                 | None -> false
+                                                 | Some v -> regexfilter r v)
 
-  let commodityFilter xs =
+  let commodityFilter (xs: OpeningTrade list) =
     match filter.Commodities with
       | [] -> xs
-      | rs -> xs |> List.filter (fun (_, _, _, Commodity c, _, _, _, _) ->
-                                   rs |> List.map (fun r -> regexfilter r c)
-                                      |> List.any id)
+      | rs -> xs |> List.filter (fun ot -> let (Commodity c) = ot.Asset
+                                           rs |> List.map (fun r -> regexfilter r c) |> List.any id)
 
-  // get all (risky) trading postings (type T values)
-  let today = System.DateTime.Today
-  let liftT dt (account, amount, _) =
-    let age: TimeSpan = today - dt
-    match amount with
-      | T ((q, c), (p, m), ns) -> Some (dt, account, q, c, p, m, ns, age.Days)
-      | _ -> None
+  // analysis has already completed, so most work here is the filter application
+  let trades =
+    journal.InvestmentAnalysis
+      |> (accountFilter >> virtualAccountFilter >> commodityFilter)
 
-  let tradingEntries =
-    j2.Register |> Map.toList
-                |> List.collect snd
-                |> List.collect (fun e -> e.Postings |> List.choose (liftT (fst e.Date)))
-                |> (accountFilter >> virtualAccountFilter >> commodityFilter)
+  // create an anon-record representing the row data before
+  // transforming to the concrete type, to make it easier to track
+  // calcs and types
+  let createRow (ot: OpeningTrade) =
+    let row (ct: ClosingTrade option) =
+      let rowQty = ct |> Option.map (fun c -> -c.Quantity) |> Option.defaultValue ot.Quantity
+      let retn = ct |> Option.map (fun c -> let cp = fst c.PerUnitPrice
+                                            let op = fst ot.PerUnitPrice
+                                            let sg = if rowQty > 0M then 1M else -1M
+                                            100M * sg * (cp - op) / op)
+      {
+        OpeningDate = ot.Date
+        Account = ot.Account
+        Closed = match ct with Some _ -> true | _ -> false
+        Asset = ot.Asset
+        Quantity = rowQty
+        Long = rowQty > 0M
+        OpeningPrice = ot.PerUnitPrice
+        ClosingDate = ct |> Option.map (fun c -> c.Date)
+        ClosingPrice = ct |> Option.map (fun c -> c.PerUnitPrice)
+        Pnl = ct |> Option.map (fun c -> c.UnadjustedPnL)
+        ReturnPct = retn
+      }
+    match ot.Closings with
+      | [] -> [row None]
+      | xs -> xs |> List.map (fun x -> row (Some x))
 
-  let cs = [{Header = "Date"; Key=true}
-            {Header = "Account"; Key=true}
-            {Header = "Type"; Key=true}
-            {Header = "Commodity"; Key=true}
-            {Header = "Amount"; Key=false}
-            {Header = "Price"; Key=false}
-            {Header = "Measure"; Key=false}
-            {Header = "Age"; Key=false}]
+  let consolidate rows =
+    let grouped = rows |> List.groupBy (fun r -> (r.OpeningDate, r.Long, r.Account, r.Closed, r.Asset, snd r.OpeningPrice))
+    let aggr ((date, long, acct, closed, asset, measure), rs) =
+      let quantity = rs |> List.sumBy (fun r -> r.Quantity)
+      let openingPrice = rs |> List.map (fun r -> (fst r.OpeningPrice, r.Quantity)) |> weightedAverage |> Option.get
+      let closingPrice = rs |> List.choose (fun r -> match r.ClosingPrice with Some p -> Some (fst p, r.Quantity) | _ -> None)
+                            |> weightedAverage
+                            |> Option.map (fun w -> (w, measure))
+      let pnl = rs |> List.choose (fun r -> Option.map fst r.Pnl) |> function [] -> None | xs -> Some (List.sum xs, measure)
+      let retn = closingPrice |> Option.map (fun (cp, _) -> let sg = if long then 1M else -1M
+                                                            100M * sg * (cp - openingPrice) / openingPrice )
+      {
+        OpeningDate = date
+        Account = acct
+        Closed = closed
+        Asset = asset
+        Quantity = quantity
+        Long = long
+        OpeningPrice = (openingPrice, measure)
+        ClosingDate = rs |> List.maxOf (fun r -> r.ClosingDate)
+        ClosingPrice = closingPrice
+        Pnl = pnl
+        ReturnPct = retn
+      }
+    grouped |> List.map aggr
 
-  let createRow (d, a, q, Commodity c, p, Commodity m, ns, age) =
-    [Date d; getAccount a |> Text; Text "O";  Text c; Number (q, 3); Number (p, quoteDPFor (Commodity c)); Text m; Text (sprintf "%d" age)]
+  let combined = trades |> List.collect createRow
+                        |> iftrue request.ClosedOnly (fun xs -> xs |> List.filter (fun x -> x.Closed))
+                        |> iftrue request.OpenOnly (fun xs -> xs |> List.filter (fun x -> not x.Closed))
+                        |> iftrue request.Consolidated consolidate
 
-  let table = Table (cs, tradingEntries |> List.map createRow)
+  // Create table view
+  let cs = [
+    {Header = "Date"; Key=true}
+    {Header = "Account"; Key=true}
+    {Header = "ST"; Key=true}
+    {Header = "Commodity"; Key=true}
+    {Header = "Name"; Key=true}
+    {Header = "Quantity"; Key=false}
+    {Header = "O. Price"; Key=false}
+    {Header = "Denom"; Key=false}
+    {Header = "Age"; Key=false}
+    {Header = "C. Date"; Key = false}
+    {Header = "C. Price"; Key = false}
+    {Header = "Unadj. PnL"; Key = false}
+    {Header = "Unadj. %PnL"; Key = false}
+    {Header = "Days"; Key = false}
+  ]
+
+  let createTableRow row =
+    let (Commodity c) = row.Asset
+    let (Commodity m) = snd row.OpeningPrice
+    let age = (DateTime.Today - fst row.OpeningDate).Days
+    let days = match row.ClosingDate with
+                 | Some dt -> Number (decimal ((fst dt) - (fst row.OpeningDate)).Days, 0)
+                 | None -> Empty
+    [
+      Date (fst row.OpeningDate)
+      Text (getAccount row.Account)
+      Text (if row.Closed then "X" else "O")
+      Text c
+      Text (nameFor row.Asset)
+      Number (row.Quantity, 2)
+      Number (fst row.OpeningPrice, quoteDPFor row.Asset)
+      Text m
+      Number (decimal age, 0)
+      row.ClosingDate |> function | Some sq -> Date (fst sq) | _ -> Empty
+      row.ClosingPrice |> function | Some o -> Number (fst o, quoteDPFor row.Asset) | _ -> Empty
+      row.Pnl |> function | Some v -> Number (fst v, quoteDPFor row.Asset) | _ -> Empty
+      row.ReturnPct |> function | Some v -> Number (v, 1) | _ -> Empty
+      days
+    ]
+
+  let table = Table(cs, combined |> List.map createTableRow)
   renderer table
