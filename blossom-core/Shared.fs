@@ -58,6 +58,15 @@ let regexfilter p v =
 
 let iftrue b f a = if b then f a else a
 
+let inline weightedAverage xs =
+  match xs with
+    | [] -> None
+    | ys -> let sp = ys |> List.sumBy (fun (a,b) -> a * b)
+            let ws = ys |> List.sumBy snd
+            Some (sp / ws)
+
+let inline weightedAverage2 xs ws = List.zip xs ws |> weightedAverage
+
 module List =
   let groupByApply keyProjection valueProjection list =
     let grouped = list |> List.groupBy keyProjection
@@ -66,6 +75,9 @@ module List =
 
   let all f list = List.map f list |> List.fold (&&) true
   let any f list = List.map f list |> List.fold (||) false
+
+  let maxOf f list = List.map f list |> List.max
+  let minOf f list = List.map f list |> List.max
 
 module Map =
   let merge (m1 : Map<'a, 'b>) (m2 : Map<'a, 'b>) = Map.fold (fun s k v -> Map.add k v s) m2 m1
