@@ -58,9 +58,7 @@ let blossom2beancount inputfn outputfn  =
       let s1 = match e.Payee with | Some x -> x | None -> e.Narrative
       let s2 = match e.Payee with | Some x -> e.Narrative | None -> ""
       let r1 = $"{dts} * \"{s1}\" \"{s2}\""
-      let am2s = function | V (a, Commodity b) -> $"{a} {safeCommodity b}"
-                          | T ((q1, Commodity c1), (q2, Commodity c2), _) -> $"{q1} X{safeCommodity c1} {{{q2} {safeCommodity c2}}}"
-                          | X _ -> ""
+      let am2s = function (a, Commodity b) -> $"{a} {safeCommodity b}"
       let rs2 = [for (a,am,_) in e.Postings
                   do $"  {getAccount a |> safeAccount}    {am2s am}".TrimEnd()]
       [r1] @ rs2

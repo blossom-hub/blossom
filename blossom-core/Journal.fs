@@ -34,9 +34,9 @@ let liftBasicEntry position date flagged dtransfer =
 
   // Split postings up into categories before linking to their contra
   let emptyPostings     = postings |> List.choose (function (account, None, _)                        -> Some account | _ -> None)
-  let unmatchedPostings = postings |> List.choose (function (account, Some value, None)               -> Some (account, V value) | _ -> None)
+  let unmatchedPostings = postings |> List.choose (function (account, Some value, None)               -> Some (account, value) | _ -> None)
   let directedPostings  = postings |> List.choose (function (account, Some value, Some contraAccount) -> let caccount = match contraAccount with CS -> account | CV c -> c
-                                                                                                         Some (account, V value, caccount) | _ -> None)
+                                                                                                         Some (account, value, caccount) | _ -> None)
 
   let lift liftedPostings = {
     Flagged = flagged
@@ -66,8 +66,8 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
     let multiplier = multiplierOf commodityDecls alot.Asset
     let mtm = isMtm commodityDecls alot.Asset
     let openingNotional = first (fun p -> -p * decimal alot.Quantity * multiplier) alot.PerUnitPrice
-    let physicalTransfer = (alot.Account, V (alot.Quantity, alot.Asset), marketAccount)
-    let notionalTransfer = (alot.Settlement, V openingNotional, marketAccount)
+    let physicalTransfer = (alot.Account, (alot.Quantity, alot.Asset), marketAccount)
+    let notionalTransfer = (alot.Settlement, openingNotional, marketAccount)
     let openPostings =
       if mtm
         then [physicalTransfer] @ alot.Expenses
@@ -88,10 +88,10 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
                          // 1. Return the "physical asset"
                          // 2. Return the cash notional, if not mtm
                          // 3. Realise the pnl
-                         let physicalTransfer2 = (alot.Account, V (mlot.Quantity, alot.Asset), marketAccount)
-                         let notionalTransfer2 = (marketAccount, V closingNotional, mlot.Settlement)
-                         let incomeTransfer2 = (marketAccount, V mlot.UnadjustedPnL, capitalGainsAccount)
-                         let incomeTransfer3 = (mlot.Settlement, V mlot.UnadjustedPnL, capitalGainsAccount)
+                         let physicalTransfer2 = (alot.Account, (mlot.Quantity, alot.Asset), marketAccount)
+                         let notionalTransfer2 = (marketAccount, closingNotional, mlot.Settlement)
+                         let incomeTransfer2 = (marketAccount, mlot.UnadjustedPnL, capitalGainsAccount)
+                         let incomeTransfer3 = (mlot.Settlement, mlot.UnadjustedPnL, capitalGainsAccount)
                          let closePostings =
                           if mtm
                             then [physicalTransfer2; incomeTransfer3] @ mlot.Expenses
@@ -173,24 +173,12 @@ let loadJournal filename =
     Assertions = assertions
   }
 
-let expandPosting commodityDecls account amount caccount =
-  match amount with
-      | V (qty, commodity) ->
-          [account, qty, commodity; caccount, -qty, commodity]
-      | T ((qty, commodity), (price, measure), _) ->
-          let cash = qty * price * multiplierOf commodityDecls commodity * navIndicatorOf commodityDecls commodity
-          [account, qty, commodity
-           marketAccount, -qty, commodity
-           marketAccount, cash, measure
-           caccount, -cash, measure]
-      | X ((qty1, commodity1), (qty2, commodity2)) ->
-          [account, qty1, commodity1
-           conversionsAccount, -qty1, commodity1
-           conversionsAccount, qty2, commodity2
-           caccount, -qty2, commodity2]
+let expandPosting account (qty, commodity) caccount =
+  [account, qty, commodity
+   caccount, -qty, commodity]
 
-let evaluateMovements commodityDecls register = // : Map<DateTime, (Account * decimal * Commodity) list> =
-  let expandEntry entry = entry.Postings |> List.collect (fun (a,b,c) -> expandPosting commodityDecls a b c)
+let evaluateMovements register = // : Map<DateTime, (Account * decimal * Commodity) list> =
+  let expandEntry entry = entry.Postings |> List.collect (fun (a,b,c) -> expandPosting a b c)
   register |> Map.map (fun _ es -> List.collect expandEntry es)
 
 let inline summateAQCs iv (xs : (Account * decimal * Commodity) list) =
@@ -199,7 +187,7 @@ let inline summateAQCs iv (xs : (Account * decimal * Commodity) list) =
      |> List.map (fun ((a,b),c) -> a,c,b)
 
 let evaluateBalances journal =
-  let movements = evaluateMovements journal.CommodityDecls journal.Register
+  let movements = evaluateMovements journal.Register
   let msq = (DateTime.MinValue, None)
   // Group each date first, then calculate the cumulative balances per transition
   movements |> Map.map (fun _ es -> summateAQCs true es)
@@ -252,13 +240,10 @@ let prefilter (filter: Filter) journal =
 
     let h = match filter.Commodities with
               | [] -> fun _ -> true
-              | rs -> fun (_, amt, _) ->
-                        rs |> List.map (fun r ->
-                                match amt with
-                                  | V (_, Types.Commodity c) -> regexfilter r c
-                                  | T ((_, Types.Commodity c1), (_, Types.Commodity c2), _) -> regexfilter r c1 || regexfilter r c2
-                                  | X ((_, Types.Commodity c1), (_, Types.Commodity c2))    -> regexfilter r c1 || regexfilter r c2)
+              | rs -> fun (_, (_, Types.Commodity c), _) ->
+                        rs |> List.map (fun r -> regexfilter r c)
                            |> List.any id
+
     es |> List.filter (fun e -> e.Postings |> List.exists (fun p -> f p && g p && h p))
 
   let apply sq es =

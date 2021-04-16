@@ -113,7 +113,7 @@ let analyseInvestments commodityDecls
                     UnadjustedPnL = pnl, snd ocm.Closing.PerUnitPrice
                     LotName = ""
                     Reference = ocm.Closing.Reference
-                    Expenses =  ocm.Closing.Expenses |> List.map (fun (a, v, c) -> (a, V v, match c with | Some CS -> a | Some (CV a2) -> a2 | None -> closingSettlement))
+                    Expenses =  ocm.Closing.Expenses |> List.map (fun (a, v, c) -> (a, v, match c with | Some CS -> a | Some (CV a2) -> a2 | None -> closingSettlement))
                   }
                 else None)
         let openingSettlement = Option.defaultValue dtrade.Account dtrade.Settlement
@@ -126,7 +126,7 @@ let analyseInvestments commodityDecls
           PerUnitPrice = dtrade.PerUnitPrice
           LotName = ""
           Reference = dtrade.Reference
-          Expenses = dtrade.Expenses |> List.map (fun (a, v, c) -> (a, V v, match c with | Some CS -> a | Some (CV a2) -> a2 | None -> openingSettlement))
+          Expenses = dtrade.Expenses |> List.map (fun (a, v, c) -> (a, v, match c with | Some CS -> a | Some (CV a2) -> a2 | None -> openingSettlement))
           Closings = closings
         })
   matched2

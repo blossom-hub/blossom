@@ -18,11 +18,6 @@ type Tenor = Y | M | H | Q | W of DayOfWeek | D
 
 type LotType = Open | Extend | Reduce | Close
 
-type Amount =
-  | V of Value
-  | T of Value * Value * LotName List
-  | X of Value * Value
-
 type ValuationMode =
   | Latest
   | Historical
@@ -69,7 +64,7 @@ type ClosingTrade = {
   UnadjustedPnL: Value
   LotName: string
   Reference: string option
-  Expenses: (Account * Amount * Account) list
+  Expenses: (Account * Value * Account) list
 }
 
 type OpeningTrade = {
@@ -81,7 +76,7 @@ type OpeningTrade = {
   PerUnitPrice: Value
   LotName: string
   Reference: string option
-  Expenses: (Account * Amount * Account) list
+  Expenses: (Account * Value * Account) list
   Closings: ClosingTrade list
 }
 
@@ -91,7 +86,7 @@ type Entry = {
   Payee: string option
   Narrative: string
   Tags: string Set
-  Postings: (Account * Amount * Account) list
+  Postings: (Account * Value * Account) list
 }
 
 type Journal = {

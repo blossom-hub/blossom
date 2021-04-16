@@ -21,13 +21,7 @@ let meta renderer request journal =
                 match b with Some c -> [a; $"{a}/{c}"] | None -> [a]
     entry.Postings |> List.collect (fun (acc, _, ca) -> f acc @ f ca) |> List.distinct
 
-  let commoditiesFromAmount =
-    function | V (_, Commodity c)                          -> [c]
-             | T ((_, Commodity c1), (_, Commodity c2), _) -> [c1; c2]
-             | X ((_, Commodity c1), (_, Commodity c2))    -> [c1; c2]
-
-  let commoditiesFromEntry entry =
-    entry.Postings |> List.collect (fun (_, a, _) -> commoditiesFromAmount a)
+  let commoditiesFromEntry entry = entry.Postings |> List.map (fun (_, (_, Commodity c), _) -> c)
 
   let accounts =
     let entryAccounts = journalList |> List.collect (snd >> List.collect accountsFromEntry)
@@ -173,7 +167,7 @@ let journal renderer filter (request : JournalRequest) journal =
   let items =
     j2.Register |> Map.toList
                 |> List.collect snd
-                |> List.collect (fun e -> e.Postings |> List.collect (fun (a,b,c) -> expandPosting journal.CommodityDecls a b c)
+                |> List.collect (fun e -> e.Postings |> List.collect (fun (a,b,c) -> expandPosting a b c)
                                                      |> List.map (fun (a,b,c) -> (e.Flagged, e.Date, e.Payee, e.Narrative, a, b, c)))
 
   // re-apply specific filters to crystalise the result
