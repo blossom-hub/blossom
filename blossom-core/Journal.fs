@@ -8,18 +8,12 @@ open Definitions
 open JournalParser
 open Analysis
 
-let getAccount (Types.Account (stub, _)) = stub
-
-let getVirtualAccount (Types.Account (_, virt)) = virt
-
-let stripVirtualAccount (Types.Account (stub, _)) = Types.Account (stub, None)
-
-let splitAccounts (Types.Account (stub, virt)) =
+let splitAccounts (Types.Account stub) =
   let f (a :string) = a.Split(':') |> List.ofArray
-  f stub, virt
+  f stub
 
-let joinAccounts elts virt=
-  Types.Account (elts |> String.concat ":", virt)
+let joinAccounts elts =
+  Types.Account (elts |> String.concat ":")
 
 // let stripComments = function
 //   | Commented (elt, _) -> elt
@@ -181,18 +175,17 @@ let evaluateMovements register = // : Map<DateTime, (Account * decimal * Commodi
   let expandEntry entry = entry.Postings |> List.collect (fun (a,b,c) -> expandPosting a b c)
   register |> Map.map (fun _ es -> List.collect expandEntry es)
 
-let inline summateAQCs iv (xs : (Account * decimal * Commodity) list) =
-  let gk = match iv with | true -> (fst3 &&& thd3) | false -> ((fst3 >> stripVirtualAccount) &&& thd3)
-  xs |> List.groupByApply gk (List.sumBy snd3)
+let inline summateAQCs  (xs : (Account * decimal * Commodity) list) =
+  xs |> List.groupByApply (fst3 &&& thd3) (List.sumBy snd3)
      |> List.map (fun ((a,b),c) -> a,c,b)
 
 let evaluateBalances journal =
   let movements = evaluateMovements journal.Register
   let msq = (DateTime.MinValue, None)
   // Group each date first, then calculate the cumulative balances per transition
-  movements |> Map.map (fun _ es -> summateAQCs true es)
+  movements |> Map.map (fun _ es -> summateAQCs es)
             |> Map.toList
-            |> List.scan (fun (dp, bp) (dt, xs) -> (dt, summateAQCs true (bp @ xs))) (msq, [])
+            |> List.scan (fun (dp, bp) (dt, xs) -> (dt, summateAQCs (bp @ xs))) (msq, [])
             |> List.tail
             |> Map.ofList
 
@@ -227,16 +220,9 @@ let prefilter (filter: Filter) journal =
   let postingSemiFilter (es : List<Entry>) =
     let f = match filter.Accounts with
               | [] -> fun _ -> true
-              | rs -> fun (acc, _, ca) ->
-                        rs |> List.map (fun r -> getAccount acc |> regexfilter r || getAccount ca |> regexfilter r)
+              | rs -> fun (Types.Account acc, _, Types.Account ca) ->
+                        rs |> List.map (fun r -> regexfilter r acc || regexfilter r ca)
                            |> List.any id
-
-    let g = match filter.VAccount with
-              | None -> fun _ -> true
-              | Some r -> fun (Types.Account (_, vacc), _, Types.Account (_, vca)) ->
-                            let q1 = match vacc with Some s -> r = s | _ -> false
-                            let q2 = match vca  with Some s -> r = s | _ -> false
-                            q1 || q2
 
     let h = match filter.Commodities with
               | [] -> fun _ -> true
@@ -244,7 +230,7 @@ let prefilter (filter: Filter) journal =
                         rs |> List.map (fun r -> regexfilter r c)
                            |> List.any id
 
-    es |> List.filter (fun e -> e.Postings |> List.exists (fun p -> f p && g p && h p))
+    es |> List.filter (fun e -> e.Postings |> List.exists (fun p -> f p && h p))
 
   let apply sq es =
     match dateFilter sq with

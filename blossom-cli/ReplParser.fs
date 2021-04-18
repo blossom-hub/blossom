@@ -57,8 +57,7 @@ let balances =
     |>> fun (fs, f) ->
           let br = {GroupToTop = flagged fs 'g'
                     HideZeros = flagged fs 'z'
-                    Flex = flagged fs 'x'
-                    ShowVirtual = flagged fs 'v'}
+                    Flex = flagged fs 'x'}
           Balances (f, br)
 
 let journal =
@@ -69,8 +68,7 @@ let journal =
     |>> fun (fs, f) ->
           let fr = {HideZeros = flagged fs 'z'
                     FlaggedOnly = flagged fs 'f'
-                    Flex = flagged fs 'x'
-                    ShowVirtual = flagged fs 'v'}
+                    Flex = flagged fs 'x'}
           Journal (f, fr)
 
 let series =
@@ -84,7 +82,6 @@ let series =
           let sr = {GroupToTop = flagged fs 'g'
                     HideZeros = flagged fs 'z'
                     Flex = flagged fs 'x'
-                    ShowVirtual = flagged fs 'v'
                     Cumulative = flagged fs 'c'
                     Tenor = t}
           BalanceSeries (f, sr)

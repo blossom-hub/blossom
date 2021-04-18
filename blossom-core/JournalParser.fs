@@ -191,7 +191,7 @@ let pAccountConvention : Parser<AccountConvention, UserState> =
 let pAccount =
   let accountValidChars = letter <|> digit <|> anyOf "()[]{}"
   let pAccountElt = many1Chars2 upper accountValidChars
-  let hierarchy = sepBy1 pAccountElt (pchar ':') .>>. opt (skipChar '/' >>. pAccountElt)
+  let hierarchy = sepBy1 pAccountElt (pchar ':')
   // Parsing depends upon the convention. If no convention, anything goes.
   // A convention mandates that the stub is part of a hierarchy (no 1 level accounts)
   let parser =
@@ -199,8 +199,8 @@ let pAccount =
       fun st -> match st.AccountConvention with
                   | None    -> hierarchy
                   | Some ac -> let stub = ac |> getAccountConventionStubs |> List.map (fun x -> pstring x .>> skipChar ':') |> choice
-                               pipe2 stub hierarchy (fun a (b,c) -> [a] @ b, c)
-  parser |>> fun (xs, v) -> Types.Account (String.concat ":" xs, v)
+                               pipe2 stub hierarchy (fun a b -> [a] @ b)
+  parser |>> fun xs -> Types.Account (String.concat ":" xs)
 
 let pPosting =
   let contra = sstr "~" >>. opt pAccount

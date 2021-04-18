@@ -10,7 +10,7 @@ type AccountConvention = Financial5 | Financial7
 type Comment = Comment of string
 type Commodity = Commodity of string
 type LotName = AutoLotName of string | CustomLotName of string
-type Account = Account of string * string option
+type Account = Account of string
 
 type Value = decimal * Commodity
 
@@ -108,28 +108,24 @@ type Filter = {
   Commodities: string list
   Denominations: string list
   Tags: string list
-  VAccount: string option
 }
 
 type BalancesRequest = {
   GroupToTop: bool
   HideZeros: bool
   Flex: bool
-  ShowVirtual: bool
 }
 
 type JournalRequest = {
   HideZeros: bool
   Flex: bool
   FlaggedOnly: bool
-  ShowVirtual: bool
 }
 
 type SeriesRequest = {
   GroupToTop: bool
   HideZeros: bool
   Flex: bool
-  ShowVirtual: bool
   Cumulative: bool
   Tenor: Tenor
 }

@@ -2,12 +2,12 @@ module Definitions
 
 open Types
 
-let capitalGainsAccount = Account ("_CapitalGains", None)
-let dividendsAccount = Account ("_Dividends", None)
+let capitalGainsAccount = Account "_CapitalGains"
+let dividendsAccount = Account "_Dividends"
 
-let marketAccount = Account ("_Market", None)
+let marketAccount = Account "_Market"
 
-let conversionsAccount = Account ("_Conversions", None)
+let conversionsAccount = Account "_Conversions"
 
 let internalDefaultCommodity = Commodity "$"  // this is not a parsable value
 

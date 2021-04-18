@@ -33,7 +33,7 @@ let pPartialDate =
   pipe3 pint32 pelt pelt mk
 
 let pFilterTags =
-  let symbols = "><@=?%#/"
+  let symbols = "><@=?%#"
   let stn = " \t\n"
   let nnlQ q = manySatisfy (function| x when x = q -> false
                                     |'\t'|'\n' -> false
@@ -51,10 +51,9 @@ let pFilterTags =
   let pCommod = pchar '%' >>. text |>> C
   let pDenom = skipString "%%" >>. text |>> D
   let pTag = pchar '+' >>. text |>> H
-  let pVAcc = pchar '/' >>. text |>> V
   let pAcc = text |>> A
 
-  let pelt = choice [pFrom; pTo; pPayee; pNarr; pDenom; pCommod; pTag; pVAcc; pAcc]
+  let pelt = choice [pFrom; pTo; pPayee; pNarr; pDenom; pCommod; pTag; pAcc]
 
   nSpaces0 >>. sepBy pelt nSpaces1 .>> eof
 
@@ -64,7 +63,6 @@ let pFilter : Parser<Filter> =
     let t = glse tags (function T (e, d) -> Some (e,d) | _ -> None)
 
     let a = tags |> List.choose (function A v -> Some v | _ -> None)
-    let va = glse tags (function V v -> Some v | _ -> None)
     let p = tags |> List.choose (function P v -> Some v | _ -> None)
     let n = glse tags (function N v -> Some v | _ -> None)
     let c = tags |> List.choose (function C v -> Some v | _ -> None)
@@ -74,7 +72,6 @@ let pFilter : Parser<Filter> =
     {
       Timespan = match (f,t) with (None, None) -> None | _ -> Some (f,t)
       Accounts = a
-      VAccount = va
       Payees = p
       Narrative = n
       Commodities = c

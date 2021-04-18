@@ -59,8 +59,8 @@ let blossom2beancount inputfn outputfn  =
       let s2 = match e.Payee with | Some x -> e.Narrative | None -> ""
       let r1 = $"{dts} * \"{s1}\" \"{s2}\""
       let am2s = function (a, Commodity b) -> $"{a} {safeCommodity b}"
-      let rs2 = [for (a,am,_) in e.Postings
-                  do $"  {getAccount a |> safeAccount}    {am2s am}".TrimEnd()]
+      let rs2 = [for (Account a,am,_) in e.Postings
+                  do $"  {safeAccount a}    {am2s am}".TrimEnd()]
       [r1] @ rs2
     es |> List.collect g
   let entries = rs |> List.collect (fun (d,e) -> f (fst d) e)
