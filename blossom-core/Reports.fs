@@ -15,27 +15,15 @@ let groupTopn n =
 let meta renderer request journal =
   let journalList = journal.Register |> Map.toList
 
-  let accountsFromEntry entry =
-    entry.Postings |> List.collect (fun (Account acc, _, Account ca) -> [acc; ca]) |> List.distinct
-
   let commoditiesFromEntry entry = entry.Postings |> List.map (fun (_, (_, Commodity c), _) -> c)
 
-  let accounts =
-    let entryAccounts = journalList |> List.collect (snd >> List.collect accountsFromEntry)
-    let declAccounts = journal.AccountDecls |> Map.toList
-                                            |> List.map (fun (Types.Account acc, _) -> acc)
-    let assertAccounts = journal.Assertions |> List.map (fun (_, Types.Account acc, _) -> acc)
-    [entryAccounts; declAccounts; assertAccounts] |> List.concat |> Set.ofList
+  let accounts = journal.AccountDecls |> Map.toList
+                                      |> List.map (function (Account acc, _) -> acc)
+                                      |> Set.ofList
 
-  let commodities =
-    let entryCommodities = journalList |> List.collect (snd >> List.collect commoditiesFromEntry)
-    let declCommodities = journal.CommodityDecls |> Map.toList
-                                                 |> List.map (fun (Commodity c, _) -> c)
-    let priceCommodities = journal.Prices |> Map.toList
-                                          |> List.collect (fun ((Commodity c1, Commodity c2), _) -> [c1; c2])
-    let splitCommodities = journal.Splits |> Map.toList
-                                          |> List.map (fun (Commodity c, _) -> c)
-    [entryCommodities; declCommodities; priceCommodities; splitCommodities] |> List.concat |> Set.ofList
+  let commodities = journal.CommodityDecls |> Map.toList
+                                           |> List.map (function (Commodity c, _) -> c)
+                                           |> Set.ofList
 
   let payees = journalList |> List.collect (snd >> List.choose (fun p -> p.Payee)) |> Set.ofList
 

@@ -52,7 +52,6 @@ let liftBasicEntry position date flagged dtransfer =
                                 |> Choice1Of2
     | _, _ -> $"Only one empty balance entry is supported. {position}" |> Choice2Of2
 
-
 let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLots =
   // Build up transfer entries based on the lot details occuring in the InvestmentAnalysis
   // Notionals are not transferred if the traded instrument is MTM.
@@ -122,11 +121,11 @@ let loadJournal filename =
                     |> List.tryHead
                     |> Option.defaultValue {Name = "Untitled"; Commodity = None; Note = None; Convention = None}
 
-  let accountDecls = elts |> List.choose (function (_, Account a) -> Some (a.Account, a) | _ -> None)
-                          |> Map.ofList
+  let accountDecls0 = elts |> List.choose (function (_, Account a) -> Some (a.Account, a) | _ -> None)
+                           |> Map.ofList
 
-  let commodityDecls = elts |> List.choose (function (_, RJournalElement.Commodity c) -> Some (c.Symbol, c) | _ -> None)
-                            |> Map.ofList
+  let commodityDecls0 = elts |> List.choose (function (_, RJournalElement.Commodity c) -> Some (c.Symbol, c) | _ -> None)
+                             |> Map.ofList
 
   // handle each type of dated element here (aside from Comment2, these are only kept by the parser for admin purposes)
   let assertions = items |> List.choose (function (_, sq, flagged, Assertion dassertion) -> Some (fst sq, dassertion.Account, dassertion.Value) | _ -> None)
@@ -152,8 +151,26 @@ let loadJournal filename =
   let trades = items |> List.choose (function | (ps, sq, flagged, Trade dtrade) -> Some (ps, sq, flagged, dtrade)
                                               | _ -> None)
 
-  let investments = analyseInvestments commodityDecls trades dividends [] []
-  let register = integrateRegister commodityDecls transfers investments
+  let investments = analyseInvestments commodityDecls0 trades dividends [] []
+  let register = integrateRegister commodityDecls0 transfers investments
+
+  // collect all accounts and merge with decls
+  let accountDecls =
+    let mk acc = {Account = acc; ValuationMode = Latest; Commodity = None; Note = None}
+    register |> Map.toList
+             |> List.collect (fun (_, xs) -> xs |> List.collect (fun e -> e.Postings |> List.collect (fun (a,_,c) -> [a, mk a; c, mk c])))
+             |> List.distinct
+             |> Map.ofList
+             |> Map.merge accountDecls0
+
+  // collect all commodities and merge with decls
+  let commodityDecls =
+    let mk c = {Symbol = c; Measure = None; QuoteDP = None; Underlying = None; Name = None; Klass = None; Multiplier = None; Mtm = false; ExternalIdents = Map.empty}
+    register |> Map.toList
+             |> List.collect (fun (_, xs) -> xs |> List.collect (fun e -> e.Postings |> List.collect (fun (_,(_,c),_) -> [c, mk c])))
+             |> List.distinct
+             |> Map.ofList
+             |> Map.merge commodityDecls0
 
   // Avengers... assemble!
   {

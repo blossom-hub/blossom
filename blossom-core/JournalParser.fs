@@ -128,7 +128,6 @@ type private RSubElement =
   | SName of string
   | SNote of string
   | SPaydate of DateTime
-  | SPropagate
   | SReference of string
   | SQuoteDP of int
   | SValuationMode of ValuationMode
@@ -235,7 +234,6 @@ let private spExternalIdent = sstr1 "externalid" >>. many1CharsTill (letter <|> 
                                                  |>> SExternalIdent
 let private spPaydate = sstr1 "paydate" >>. pdate |>> SPaydate
 let private spMTM = sstr "mtm" >>% SMTM
-let private spPropagate = sstr "propagate" >>% SPropagate
 let private spLotNames = sstr1 "lot" >>. sepBy1 pWordPlus (skipChar ',' >>. nSpaces0) |>> SLotNames
 let private spReference = sstr1 "reference" >>. pWordPlus |>> SReference
 let private spExpensePosting = sstr1 "expense" >>. pPostingM |>> SExpensePosting
@@ -275,14 +273,13 @@ let pImport = sstr1 "import" >>. rol true |>> Import
 let pAlias = sstr1 "alias" >>. p1 (many1Chars2 letter (letter <|> digit)) .>>. pAccount .>> newline |>> Alias
 
 let pAccountDecl =
-  let subitems = [spCommodity "commodity"; spNote; spValuationMode; spPropagate]
+  let subitems = [spCommodity "commodity"; spNote; spValuationMode]
   sstr1 "account" >>. pAccount .>> skipNewline .>>. increaseIndent (pSubItems subitems)
     |>> fun (a, ss) -> Account {Account = a
                                 Commodity = ss |> List.tryPick (function SCommodity ("commodity", x) -> Some x | _ -> None)
                                 Note = ss |> List.tryPick  (function SNote x -> Some x | _ -> None)
                                 ValuationMode = ss |> List.tryPick (function SValuationMode x -> Some x | _ -> None)
-                                                   |> Option.defaultValue Historical
-                                Propagate = List.contains SPropagate ss}
+                                                   |> Option.defaultValue Historical}
 
 let pCommodityDecl =
   let subitems = [spName; spCommodity "measure"; spQuoteDP; spCommodity "underlying"; spCommodityClass; spMultiplier; spMTM; spExternalIdent]

@@ -40,7 +40,6 @@ type AccountDecl = {
   ValuationMode: ValuationMode
   Commodity: Commodity option
   Note: string option
-  Propagate: bool
 }
 
 type CommodityDecl = {
