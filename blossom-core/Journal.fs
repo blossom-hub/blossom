@@ -45,7 +45,7 @@ let liftBasicEntry position date flagged dtransfer =
   match List.length emptyPostings, List.length unmatchedPostings with
     | 0, 0 -> Choice1Of2 (lift [])
     | 1, 0 -> $"Contra account is specified, but not required. {position}" |> Choice2Of2
-    | 0, _ -> $"" |> Choice2Of2
+    | 0, _ -> $"Empty vs. unmatched issue 1 {position}" |> Choice2Of2
     | 1, _ -> let empty = List.exactlyOne emptyPostings
               unmatchedPostings |> List.map (fun (a, v) -> (a, v, empty))
                                 |> lift
