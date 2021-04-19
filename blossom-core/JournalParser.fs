@@ -189,8 +189,8 @@ let pAccountConvention : Parser<AccountConvention, UserState> =
           stringReturn "F7" Financial7]
 
 let pAccount =
-  let accountValidChars = letter <|> digit <|> anyOf "()[]{}"
-  let pAccountElt = many1Chars2 upper accountValidChars
+  let accountValidChars = letter <|> digit <|> anyOf "()[]{}_"
+  let pAccountElt = many1Chars2 (upper <|> digit) accountValidChars
   let hierarchy = sepBy1 pAccountElt (pchar ':')
   // Parsing depends upon the convention. If no convention, anything goes.
   // A convention mandates that the stub is part of a hierarchy (no 1 level accounts)
