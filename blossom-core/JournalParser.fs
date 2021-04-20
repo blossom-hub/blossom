@@ -39,6 +39,7 @@ type UserState =
 type DAssertion = {
   Account: Account
   Value: Value
+  Comment: string option
 }
 
 type DPrice = {
@@ -55,9 +56,8 @@ type DSplit = {
 type Contra = CS | CV of Account
 
 type DTransferEntry =
-  | Posting of account:Account * value:Value option * contra:Contra option
-  | PComment of Comment
-  | PCommented of DTransferEntry * Comment
+  | Posting of account:Account * value:Value option * contra:Contra option * comment:string option
+  | PComment of string
 
 type DTransfer = {
   Payee: string option
@@ -141,6 +141,8 @@ let nSpaces0 = skipMany (skipChar ' ')
 let nSpaces1 = skipMany1 (skipChar ' ')
 let rol b = restOfLine b |>> fun s -> s.TrimEnd()
 
+let lcmt = nSpaces0 >>. opt (skipChar ';' >>. rol false) .>> newline
+
 let str = pstring
 let sstr = skipString
 let sstr1 s = skipString s >>. nSpaces1
@@ -202,13 +204,13 @@ let pAccount =
   parser |>> fun xs -> Types.Account (String.concat ":" xs)
 
 let pPosting =
-  let contra = sstr "~" >>. opt pAccount
-  p0 pAccount .>>. opt (pValue .>>. opt (nSpaces1 >>. contra)) .>> skipNewline
-    |>> fun (a, vx) -> match vx with
-                         | None                    -> (a, None, None)
-                         | Some (v, None)          -> (a, Some v, None)
-                         | Some (v, Some None)     -> (a, Some v, Some CS)
-                         | Some (v, Some (Some x)) -> (a, Some v, Some (CV x))
+  let contra = nSpaces1 >>? sstr "~" >>? opt pAccount
+  p0 pAccount .>>. opt (pValue .>>. opt contra) .>>. lcmt
+    |>> fun ((a, vx), cmt) -> Posting <| match vx with
+                                           | None                    -> (a, None, None, cmt)
+                                           | Some (v, None)          -> (a, Some v, None, cmt)
+                                           | Some (v, Some None)     -> (a, Some v, Some CS, cmt)
+                                           | Some (v, Some (Some x)) -> (a, Some v, Some (CV x), cmt)
 
 let pPostingM =
   let contra = sstr "~" >>. opt pAccount
@@ -297,7 +299,7 @@ let pCommodityDecl =
 let pElement =
   // Fairly simple entries
   let pComment = sstr1 "comment" >>. rol false |>> Comment2
-  let pAssertion = sstr1 "assert" >>. p1 pAccount .>>. pValue |>> fun (a, v) -> Assertion {Account = a; Value = v}
+  let pAssertion = sstr1 "assert" >>. p1 pAccount .>>. pValue .>>. lcmt |>> fun ((a, v), cmt) -> Assertion {Account = a; Value = v; Comment = cmt}
   let pPrice = sstr1 "price" >>. p1 pCommodity .>>. pValue |>> fun (c, v) -> Price {Commodity = c; Price = v}
   let pSplit = sstr1 "split" >>. tuple3 (p1 pCommodity) (p1 pint32 ) pint32 |>> fun (c, k1, k2) -> Split {Commodity = c; K1 = k1; K2 = k2}
 
@@ -305,8 +307,7 @@ let pElement =
   let pTransfer =
     let spn (n:string) = n.Split([|'|'|], 2) |> List.ofArray
                                              |> function | [x] -> (None, x) | x::xs -> (Some (x.Trim()), List.head xs) | _ -> (None, n)
-
-    let subitems = choice [pPosting |>> Posting] |> indented |> many
+    let subitems = choice [pPosting; lcmt |>> (Option.get >> PComment)] |> indented |> many
     rol true .>>. increaseIndent subitems
       |>> fun (header, entries) -> let payee, narrative = spn header
                                    Transfer {Payee = payee; Narrative = narrative; Tags = Set.empty; Entries = entries}

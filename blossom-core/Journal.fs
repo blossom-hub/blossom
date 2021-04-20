@@ -24,7 +24,7 @@ let joinAccounts elts =
 
 let liftBasicEntry position date flagged dtransfer =
   // Temporarily look only at postings, come back to comments etc later
-  let postings = dtransfer.Entries |> List.choose (function Posting (a,b,c) -> Some (a,b,c) | _ -> None)
+  let postings = dtransfer.Entries |> List.choose (function Posting (a,b,c,_) -> Some (a,b,c) | _ -> None)
 
   // Split postings up into categories before linking to their contra
   let emptyPostings     = postings |> List.choose (function (account, None, _)                        -> Some account | _ -> None)
