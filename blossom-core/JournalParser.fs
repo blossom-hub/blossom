@@ -342,7 +342,10 @@ let pElement =
 
   choice [pComment; pAssertion; pPrice; pSplit; pDividend; pTrade; pTransfer]
 
-let pItem = p1 psequence .>>. pElement |>> fun (s, e) -> Item (s, false, e)
+let pItem = tuple3 (p1 psequence)
+                   ((opt (p1 (charReturn '*' true))) |>> function Some true -> true | _ -> false)
+                   pElement
+              |>> Item
 
 let pPrices =
   let subitems = (p1 pdate .>>. p0 pnumber .>> skipNewline) |> indented |> many
