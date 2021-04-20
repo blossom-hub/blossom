@@ -58,6 +58,7 @@ type Contra = CS | CV of Account
 type DTransferEntry =
   | Posting of account:Account * value:Value option * contra:Contra option * comment:string option
   | PComment of string
+  | PNote of string
 
 type DTransfer = {
   Payee: string option
@@ -240,15 +241,6 @@ let private spLotNames = sstr1 "lot" >>. sepBy1 pWordPlus (skipChar ',' >>. nSpa
 let private spReference = sstr1 "reference" >>. pWordPlus |>> SReference
 let private spExpensePosting = sstr1 "expense" >>. pPostingM |>> SExpensePosting
 
-// TODO Support detecting comments on restOfLine items (or parse till ';' etc)
-// let wrapCommented c elt = match c with | Some c -> Commented(elt, c)
-//                                        | None   -> elt
-
-// let pComment0 xs = anyOf xs >>. restOfLine false |>> Types.Comment
-// let pComment = pComment0 ";*" |>> Comment
-
-// let pOptLineComment p = p .>> nSpaces0 .>>. opt (pComment0 ";").>> optional newline
-
 // RJournalElement Parsers
 
 let pIndent =
@@ -307,7 +299,8 @@ let pElement =
   let pTransfer =
     let spn (n:string) = n.Split([|'|'|], 2) |> List.ofArray
                                              |> function | [x] -> (None, x) | x::xs -> (Some (x.Trim()), List.head xs) | _ -> (None, n)
-    let subitems = choice [pPosting; lcmt |>> (Option.get >> PComment)] |> indented |> many
+    let pNote = sstr1 "note" >>. rol true |>> PNote
+    let subitems = choice [pPosting; pNote; lcmt |>> (Option.get >> PComment)] |> indented |> many
     rol true .>>. increaseIndent subitems
       |>> fun (header, entries) -> let payee, narrative = spn header
                                    Transfer {Payee = payee; Narrative = narrative; Tags = Set.empty; Entries = entries}
