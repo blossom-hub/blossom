@@ -87,6 +87,7 @@ type DTrade = {
   LotName: string list
   Reference: string option
   Expenses: (Account * Value * Contra option) list
+  Note: string list
 }
 
 type RElement =
@@ -316,7 +317,7 @@ let pElement =
                                            Settlement = s; Receivable = r; Income = i}
 
   let pTrade =
-    let subitems = [spLotNames; spReference; spAccount "settlement"; spAccount "cg"; spExpensePosting]
+    let subitems = [spLotNames; spReference; spAccount "settlement"; spAccount "cg"; spExpensePosting; spNote]
     sstr1 "trade" >>. (p1 pAccount) .>>. (p1 pValue .>> sstr1 "@" .>>. pValue) .>> skipNewline .>>. increaseIndent (pSubItems subitems)
       |>> fun ((account, ((q, c), price)), ss) -> let lns = ss |> List.tryPick (function SLotNames xs -> Some xs | _ -> None)
                                                                |> Option.defaultValue []
@@ -324,6 +325,7 @@ let pElement =
                                                   let s = ss |> List.tryPick (function SAccount ("settlement", d) -> Some d | _ -> None)
                                                   let cg = ss |> List.tryPick (function SAccount ("cg", d) -> Some d | _ -> None)
                                                   let expenses = ss |> List.choose (function SExpensePosting (a,b,c) -> Some (a,b,c) | _ -> None)
+                                                  let notes = ss |> List.choose (function SNote s -> Some s | _ -> None)
                                                   Trade {Account = account
                                                          Settlement = s
                                                          CapitalGains = cg
@@ -332,7 +334,8 @@ let pElement =
                                                          PerUnitPrice = price
                                                          LotName = lns
                                                          Reference = reference
-                                                         Expenses = expenses}
+                                                         Expenses = expenses
+                                                         Note = notes}
 
   choice [pComment; pAssertion; pPrice; pSplit; pDividend; pTrade; pTransfer]
 
