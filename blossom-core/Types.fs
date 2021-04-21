@@ -25,8 +25,11 @@ type ValuationMode =
 type CommodityClass =
   | Currency
   | Equity
+  | ETF
   | Option
   | Future
+  | Fund
+  | Other
 
 type JournalMeta = {
   Name: string

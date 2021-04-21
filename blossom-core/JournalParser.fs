@@ -179,8 +179,11 @@ let pWordPlus = many1Chars2 letter (letter <|> digit <|> anyOf "._-")
 let pCommodityClass : Parser<CommodityClass, UserState> =
   choice [stringReturn "Currency" Currency
           stringReturn "Equity"   Equity
+          stringReturn "ETF"      ETF
           stringReturn "Option"   Option
-          stringReturn "Future"   Future]
+          stringReturn "Future"   Future
+          stringReturn "Fund"     Fund
+          stringReturn "Other"    Other]
 
 let pValuationMode : Parser<ValuationMode, UserState> =
   choice [stringReturn "Latest" Latest
