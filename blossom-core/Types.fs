@@ -47,7 +47,7 @@ type AccountDecl = {
 
 type CommodityDecl = {
   Symbol: Commodity
-  Measure: Commodity option
+  Measure: Commodity
   QuoteDP: int option
   Underlying: Commodity option
   Name: string option
@@ -108,7 +108,7 @@ type Filter = {
   Payees: string list
   Narrative: string option
   Commodities: string list
-  Denominations: string list
+  Measures: string list
   Tags: string list
 }
 

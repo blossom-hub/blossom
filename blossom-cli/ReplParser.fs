@@ -22,7 +22,7 @@ let pbool =
 let pTenor : Parser<Tenor, unit>  =
   let z = anyOf "YMHQ"
            |>> function | 'Y' -> Y
-                        | 'M' -> M
+                        | 'M' -> Tenor.M
                         | 'H' -> Tenor.H
                         | 'Q' -> Q
                         | _   -> Y  // which shouldn't happen by design

@@ -66,7 +66,7 @@ let showHelp state =
   printfn "    payee: @"
   printfn "    narrative: ?"
   printfn "    commodity: %%"
-  printfn "    denomination: %%%%"
+  printfn "    measure: %%%%"
   printfn "    tag: +"
   printfn "    virtual account: /"
   printfn "    account: no symbol"

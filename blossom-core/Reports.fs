@@ -113,9 +113,17 @@ let balances renderer filter (request : BalancesRequest) journal =
                                   rs |> List.map (fun r -> regexfilter r c)
                                      |> List.any id)
 
+  let measureFilter xs =
+    match filter.Measures with
+      | [] -> xs
+      | rs -> xs |> List.filter (fun (_, _, c) ->
+                                  let (Commodity measure) = journal.CommodityDecls |> Map.find c |> fun d -> d.Measure
+                                  rs |> List.map (fun r -> regexfilter r measure)
+                                     |> List.any id)
+
   let zeroFilter = List.filter (fun (_, q, _) -> q <> 0M)
 
-  let result2 = result |> iftrue (not request.Flex) (accountFilter >> commodityFilter)
+  let result2 = result |> iftrue (not request.Flex) (accountFilter >> commodityFilter >> measureFilter)
                        |> iftrue request.GroupToTop (groupTopn 1)
                        |> iftrue request.HideZeros zeroFilter
 
@@ -157,10 +165,18 @@ let journal renderer filter (request : JournalRequest) journal =
                                    rs |> List.map (fun r -> regexfilter r c)
                                       |> List.any id)
 
+  let measureFilter xs =
+    match filter.Measures with
+      | [] -> xs
+      | rs -> xs |> List.filter (fun (_, _, _, _, _, _, c) ->
+                                  let (Commodity measure) = journal.CommodityDecls |> Map.find c |> fun d -> d.Measure
+                                  rs |> List.map (fun r -> regexfilter r measure)
+                                     |> List.any id)
+
   let flaggedFilter xs =
     xs |> List.filter (fun (x, _, _, _, _, _, _) -> x)
 
-  let result2 = items |> iftrue (not request.Flex) (accountFilter >> commodityFilter)
+  let result2 = items |> iftrue (not request.Flex) (accountFilter >> commodityFilter >> measureFilter)
                       |> iftrue request.FlaggedOnly flaggedFilter
 
   let cs = [{Header = "Date"; Key=true}
@@ -201,10 +217,18 @@ let balanceSeries renderer filter (request : SeriesRequest) journal =
                                    rs |> List.map (fun r -> regexfilter r c)
                                       |> List.any id)
 
+  let measureFilter xs =
+    match filter.Measures with
+      | [] -> xs
+      | rs -> xs |> List.filter (fun (_, _, c) ->
+                                  let (Commodity measure) = journal.CommodityDecls |> Map.find c |> fun d -> d.Measure
+                                  rs |> List.map (fun r -> regexfilter r measure)
+                                     |> List.any id)
+
   let zeroFilter = List.filter (fun (_, q, _) -> q <> 0M)
 
   let result = evaluateBalances j2 |> Map.toList
-                  |> iftrue (not request.Flex) (List.map (second (accountFilter >> commodityFilter)))
+                  |> iftrue (not request.Flex) (List.map (second (accountFilter >> commodityFilter >> measureFilter)))
                   |> iftrue request.GroupToTop (List.map (second (groupTopn 1)))
 
   let dates = result |> List.map (fst >> fst)
@@ -269,9 +293,16 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
       | rs -> xs |> List.filter (fun ot -> let (Commodity c) = ot.Asset
                                            rs |> List.map (fun r -> regexfilter r c) |> List.any id)
 
+  let measureFilter xs =
+    match filter.Measures with
+      | [] -> xs
+      | rs -> xs |> List.filter (fun ot -> let (Commodity measure) = snd ot.PerUnitPrice
+                                           rs |> List.map (fun r -> regexfilter r measure)
+                                              |> List.any id)
+
   // analysis has already completed, so most work here is the filter application
   let trades =
-    journal.InvestmentAnalysis |> accountFilter |>  commodityFilter
+    journal.InvestmentAnalysis |> accountFilter |> commodityFilter |> measureFilter
 
   // create an anon-record representing the row data before
   // transforming to the concrete type, to make it easier to track
@@ -340,7 +371,7 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
     {Header = "Name"; Key=true}
     {Header = "Quantity"; Key=false}
     {Header = "O. Price"; Key=false}
-    {Header = "Denom"; Key=false}
+    {Header = "Ms"; Key=false}
     {Header = "Age"; Key=false}
     {Header = "C. Date"; Key = false}
     {Header = "C. Price"; Key = false}

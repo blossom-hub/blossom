@@ -280,10 +280,10 @@ let pAccountDecl =
                                                    |> Option.defaultValue Historical}
 
 let pCommodityDecl =
-  let subitems = [spName; spCommodity "measure"; spQuoteDP; spCommodity "underlying"; spCommodityClass; spMultiplier; spMTM; spExternalIdent]
+  let subitems = [spName; spQuoteDP; spCommodity "underlying"; spCommodityClass; spMultiplier; spMTM; spExternalIdent]
   sstr1 "commodity" >>. pCommodity .>> skipNewline .>>. increaseIndent (pSubItems subitems)
     |>> fun (t, ss) -> Commodity {Symbol = t
-                                  Measure = ss |> List.tryPick  (function SCommodity ("measure", m) -> Some m | _ -> None)
+                                  Measure = internalDefaultCommodity // will be set "properly" later
                                   QuoteDP = ss |> List.tryPick (function SQuoteDP i -> Some i | _ -> None)
                                   Underlying = ss |> List.tryPick (function SCommodity ("underlying", m) -> Some m | _ -> None)
                                   Name = ss |> List.tryPick  (function SName n -> Some n | _ -> None)

@@ -164,13 +164,17 @@ let loadJournal filename =
              |> Map.merge accountDecls0
 
   // collect all commodities and merge with decls
+  // implied measures
+  let impliedMeasures = investments |> List.groupByApply (fun i -> i.Asset) (fun xs -> xs |> List.head |> fun j -> snd j.PerUnitPrice) |> Map.ofList
   let commodityDecls =
-    let mk c = {Symbol = c; Measure = None; QuoteDP = None; Underlying = None; Name = None; Klass = None; Multiplier = None; Mtm = false; ExternalIdents = Map.empty}
+    let mk c = {Symbol = c; Measure = c; QuoteDP = None; Underlying = None; Name = None; Klass = None; Multiplier = None; Mtm = false; ExternalIdents = Map.empty}
+    let setMeasure decl = {decl with Measure = impliedMeasures |> Map.tryFind decl.Symbol |> Option.defaultValue decl.Symbol}
     register |> Map.toList
              |> List.collect (fun (_, xs) -> xs |> List.collect (fun e -> e.Postings |> List.collect (fun (_,(_,c),_) -> [c, mk c])))
              |> List.distinct
              |> Map.ofList
              |> Map.merge commodityDecls0
+             |> Map.map (fun _k v -> setMeasure v)
 
   // Avengers... assemble!
   {
@@ -247,7 +251,14 @@ let prefilter (filter: Filter) journal =
                         rs |> List.map (fun r -> regexfilter r c)
                            |> List.any id
 
-    es |> List.filter (fun e -> e.Postings |> List.exists (fun p -> f p && h p))
+    let g = match filter.Measures with
+              | [] -> fun _ -> true
+              | rs -> fun (_, (_, c), _) ->
+                        let (Types.Commodity measure) = journal.CommodityDecls |> Map.find c |> fun d -> d.Measure
+                        rs |> List.map (fun r -> regexfilter r measure)
+                           |> List.any id
+
+    es |> List.filter (fun e -> e.Postings |> List.exists (fun p -> f p && h p && g p))
 
   let apply sq es =
     match dateFilter sq with
