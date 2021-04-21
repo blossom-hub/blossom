@@ -45,8 +45,8 @@ let set =
   str "set" >>. opt (ws1 >>. choice [gpv]) |>> Set
 
 // File management
-let load = choice [str "load"] >>. ws1 >>. restOfLine false |>> Load
-let reload = choice [str "reload"] >>. preturn Reload
+let load = choice [str "load"; str ":l"] >>. ws1 >>. restOfLine false |>> Load
+let reload = choice [str "reload"; str ":r"] >>. preturn Reload
 
 // Accounting
 let balances =
@@ -88,7 +88,7 @@ let series =
 
 // Investment
 let lotAnalysis =
-  choice [str "lots"; str ":l"]
+  choice [str "lots"]
    >>. ws
    >>. pFlags "xog"
    .>>. pFilter
