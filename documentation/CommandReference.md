@@ -9,7 +9,11 @@ Welcome to Blossom v0.1
 ] :b >2020-01-01
 ```
 
-Most commands have a on letter shortform (starting with a `:`) for those who like to type less, understand more.
+Most commands have a on letter shortform (starting with a `:`) for those who like to type less, understand more. Some take optional flags, which are provided using the syntax
+```
+] :c -abc <other args>
+```
+where a,b,c and are all flags.
 
 > Many of these commands will translate to the interface inside the VSCode plugin later.
 
@@ -23,8 +27,23 @@ Most commands have a on letter shortform (starting with a `:`) for those who lik
 ] reload
 ```
 
-### Validate
-Print the validation results
+### Help
+A short help message is printed to remind some syntax.
+```
+] help
+  Filters
+    date: >,>=,<, or <=
+    payee: @
+    narrative: ?
+    commodity: %
+    measure: %%
+    tag: +
+    virtual account: /
+    account: no symbol
+```
+
+### Validation
+Print the validation results (not yet implemented).
 ```
 ] :v
 ] validate
@@ -44,14 +63,13 @@ Print the validation results
 ### Meta
 View the list of accounts / commodities etc.
 ```
-] :meta accounts
-] :meta commodities
-] :meta payees
+] meta accounts
+] meta commodities
+] meta payees
+] meta <others>
 ```
 
-## Reporting commands
-
-### Common filters
+## Common filters
 The following filters generally apply to most commands detailed below. `:c` is a stand-in for any command in the examples. Most textural entries accept regular expressions, and can be quoted for more complex expressions.
 
 Filters run in two modes (where supported) with respect to commodities/postings: `strict` (default) will filter everything down to give a precise result, whereas `flex` mode will keep related postings if the entry passes initial scanning. Consider the following entry:
@@ -65,25 +83,27 @@ And now consider these two outputs:
 ] :b Assets
       Account   Balance   Commodity
 Assets:Wallet      -120         USD
-] :b -flex Assets
+] :b -x Assets
          Account   Balance   Commodity
    Assets:Wallet      -120         USD
 Expenses:Flowers       120         USD
 ```
 In the second output, the whole of the entry is considered for reporting, whereas in the first, only the `Assets:Wallet` will be reported.
 
-This flag is controlled (as seen above) using the `-flex` flag on the query.
+This flag is controlled (as seen above) using the `-x` flag on the query.
 
 ### Common flags
 Some commands support other flags, which must be specified near the start of the command.
 
-`-t` collapses accounts names to the top value; currently supported by balances and series.
+`-g` collapses accounts names to the top value; currently supported by balances and series.
 
-`-flex` as per above on most commands.
+`-x` as per above on most commands.
 
-> Excess flags do not yet provide a warning/error, but this will be added later.
+`-z` hide some zero rows if applicable.
 
-#### No filter symbol - filter accounts
+If an invalid flag is provided, an error will be provided.
+
+### No filter symbol - filter accounts
 No symbol means that the text is applied as a regular expression on the account name.
 
 ```
@@ -91,7 +111,7 @@ No symbol means that the text is applied as a regular expression on the account 
 ] :c Wallet$        ; all accounts ending with "Wallet"
 ```
 
-#### Date ranges: `>`, `<`, `>=`, and `<=`
+### Date ranges: `>`, `<`, `>=`, and `<=`
 The date is in the common format of `yyyy-MM-dd` _except_ that it the month and day elements are optional. If they are omitted, then the January or 1 day are used.
 
 ```
@@ -104,47 +124,48 @@ The date is in the common format of `yyyy-MM-dd` _except_ that it the month and 
 ] :c >2020-04-04 <2021-10  ; [2020-04-05, 2020-09-30]
 ```
 
-#### Payee filter: `@`
+### Payee filter: `@`
 A regular expression against the payee field in transactions.
 ```
 ] :c @Google      ; Payee contains "Google"
 ```
 
-#### Narrative: `?`
+### Narrative: `?`
 Similar to payee filter, except on the narrative field.
 ```
 ] :c ?"Work lunch"
 ```
 
-#### Commodity: `%`
+### Commodity: `%`
 Getting results with the specific commodity:
 ```
 ] :c %JPY     ; query by those including Japanese Yen
 ```
 
-#### Hashtag: `#`
-A non-regex filter to match the exact tag; you can provide multiple tags in one request (each tag must be present for the filter to run)
+### Measure: `%%`
+Getting results with the specific commodity as a measure. For example, stocks in Japanese Yen. Cash items are measured in their own commodity.
+> The measure commodity is determined by the first trading entry for a commodity, or otherwise, defaults to itself.
 ```
-] :c #ABC #DEF    ; all transactions which are tagged with ABC _and_ DEF
+] :c %%JPY     ; query all assets meausured (denominated) in Japanese Yen
 ```
 
-### Expanded examples
-```
-] :c Income >2020 <2021 %JPY    ; All income accounts with transactions in 2020
-] :s "Groceries|Eating out" %USD >2020 <2020-06
-```
+## Accounting commands
 
 ### Balance query - `:b` / `bal` / `balances`
 ```
-] :b <filter string>
+] :b [-gzxv] <filter string>
+             Account  Balance  Commodity  Name
+     Asset:Bank:Cash      100        USD
+Asset:Broker:Trading        5       MSFT  Microsoft Corp.
 ```
-(see above for general example)
+Balances now contain the commodity name, if provided in a `commodity` declaration.
+
 
 ### Balance series query - `:s` / `series`
 ```
-] :s <tenor>[+] <filter string>
+] :s <tenor> [-gzxvc] <filter string>
 ```
-Group balances by the tenor at the account level. The default output is on a periodic basis, add the `+` sign to run on a cumulative basis instead.
+Group balances by the tenor at the account level. The default output is on a periodic basis, add the `c` flag to run on a cumulative basis instead.
 A tenor is defined as Y/H/Q/M (W is not yet supported). The final date is used for each period, capped/floored if there are insufficent dates.
 
 ```
@@ -164,7 +185,7 @@ A tenor is defined as Y/H/Q/M (W is not yet supported). The final date is used f
 
 ### View journal - `:j` / `journal`
 ```
-] :j <filter string>
+] :j [-zfxv] <filter string>
 ```
 Displays the register from the journal.
 ```
@@ -176,7 +197,16 @@ Displays the register from the journal.
                                                                            -100
 ```
 
-### Check functionality - `:c` / `check`
+## Investment commands
+These commands operate slightly differently to the reporting commands, but typically keep the same filters if they make sense.
+
+### Lots summary - `lots`
+Displays a lot report, showing opening / closing pairs, PnL etc. This is a new report and under development. See [Trading with Blossom](trading.md).
+```
+] lots [-xog]
+```
+
+## "Checks and balances" commands
 ```
 ] :c <type of check>
 ```
