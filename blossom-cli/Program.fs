@@ -50,7 +50,7 @@ and Arguments =
 
 [<EntryPoint>]
 let main argv =
-    printfn "Blossom 0.1"
+    printfn "Blossom 0.5"
     let errorHandler = ProcessExiter(colorizer = function ErrorCode.HelpText -> None | _ -> Some ConsoleColor.Red)
     let parser = ArgumentParser.Create<Arguments>(errorHandler = errorHandler)
     let results = parser.Parse argv
