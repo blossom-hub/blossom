@@ -76,7 +76,7 @@ Filters run in two modes (where supported) with respect to commodities/postings:
 ```
 2020-01-01 Buy some flowers
   Assets:Wallet     -120 USD
-  Expenses:Flowers   120 USD
+  Expenses:Flowers
 ```
 And now consider these two outputs:
 ```
