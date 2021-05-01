@@ -15,22 +15,36 @@ let splitAccounts (Types.Account stub) =
 let joinAccounts elts =
   Types.Account (elts |> String.concat ":")
 
-// let stripComments = function
-//   | Commented (elt, _) -> elt
-//   | Entry (flagged, dt, payee, narrative, hs, xs) -> let zs = xs |> List.map    (function | PCommented (elt2, _) -> elt2 | elt2 -> elt2)
-//                                                                  |> List.filter (function | PComment _ -> false | _ -> true)
-//                                                      Entry (flagged, dt, payee, narrative, hs, zs)
-//   | elt -> elt
+let liftBasicEntry2 position date flagged dtransfer =
+  let postings = dtransfer.Entries |> List.choose (function Posting (a,b,c,_,e) -> Some (a,b,c,e) | _ -> None)
+  0
 
 let liftBasicEntry position date flagged dtransfer =
-  // Temporarily look only at postings, come back to comments etc later
-  let postings = dtransfer.Entries |> List.choose (function Posting (a,b,c,_) -> Some (a,b,c) | _ -> None)
+  (* Highest priority is an individual split pair,
+       followed by the residual post split to a specified contra,
+       followed by the residual matched with an catch account
+  *)
+  let normalise (account, (q, m), contra) = if q < 0M then (contra, (-q, m), account) else (account, (q,m), contra)
+
+  let postings = dtransfer.Entries |> List.choose (function Posting (a,b,c,_,d) -> Some (a,b,c,d) | _ -> None)
+
+  let processSplits (account: Account) (qq: Value option) (contra: Contra option) splits =
+    match splits with
+      | [] -> [(account, qq, contra)]
+      | xs -> let total = xs |> List.sumBy snd3
+              let q, m = Option.get qq
+              let splits2 = xs |> List.map (fun (splitContra, q1, _) -> (account, Some (-q1, m), Some (CV splitContra)))
+              splits2 @ match q + total with
+                          | 0M -> []
+                          | x  -> [(account, Some (x, m), contra)]
+
+  let flatPostings = postings |> List.collect (fun (a,b,c,d) -> processSplits a b c d)
 
   // Split postings up into categories before linking to their contra
-  let emptyPostings     = postings |> List.choose (function (account, None, _)                        -> Some account | _ -> None)
-  let unmatchedPostings = postings |> List.choose (function (account, Some value, None)               -> Some (account, value) | _ -> None)
-  let directedPostings  = postings |> List.choose (function (account, Some value, Some contraAccount) -> let caccount = match contraAccount with CS -> account | CV c -> c
-                                                                                                         Some (account, value, caccount) | _ -> None)
+  let emptyPostings     = flatPostings |> List.choose (function (account, None, _)                        -> Some account | _ -> None)
+  let unmatchedPostings = flatPostings |> List.choose (function (account, Some value, None)               -> Some (account, value) | _ -> None)
+  let directedPostings  = flatPostings |> List.choose (function (account, Some value, Some contraAccount) -> let caccount = match contraAccount with CS -> account | CV c -> c
+                                                                                                             Some (account, value, caccount) | _ -> None)
 
   let lift liftedPostings = {
     Flagged = flagged
@@ -38,7 +52,7 @@ let liftBasicEntry position date flagged dtransfer =
     Payee = dtransfer.Payee
     Narrative = dtransfer.Narrative
     Tags = dtransfer.Tags
-    Postings = directedPostings @ liftedPostings
+    Postings = directedPostings @ liftedPostings |> List.map normalise
   }
 
   // todo enhance the error propagation here to keep it coming
@@ -51,6 +65,7 @@ let liftBasicEntry position date flagged dtransfer =
                                 |> lift
                                 |> Choice1Of2
     | _, _ -> $"Only one empty balance entry is supported. {position}" |> Choice2Of2
+
 
 let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLots =
   // Build up transfer entries based on the lot details occuring in the InvestmentAnalysis

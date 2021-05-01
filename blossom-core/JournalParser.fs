@@ -56,7 +56,9 @@ type DSplit = {
 type Contra = CS | CV of Account
 
 type DTransferEntry =
-  | Posting of account:Account * value:Value option * contra:Contra option * comment:string option
+  | Posting of account:Account * value:Value option * contra:Contra option
+                  * comment:string option
+                  * splits:(Account * decimal * string option) list
   | PComment of string
   | PNote of string
 
@@ -152,7 +154,7 @@ let p0 p = p .>> nSpaces0
 let p1 p = p .>> nSpaces1
 
 let indented p =
-  let sp n m = skipArray (n*m) (skipChar ' ') >>? p
+  let sp n m = skipString (String.replicate (n*m) " ") >>? p
   getUserState >>= fun s -> sp s.IndentCount s.IndentSize
 
 let increaseIndent p =
@@ -209,13 +211,15 @@ let pAccount =
   parser |>> fun xs -> Types.Account (String.concat ":" xs)
 
 let pPosting =
-  let contra = nSpaces1 >>? sstr "~" >>? opt pAccount
-  p0 pAccount .>>. opt (pValue .>>. opt contra) .>>. lcmt
-    |>> fun ((a, vx), cmt) -> Posting <| match vx with
-                                           | None                    -> (a, None, None, cmt)
-                                           | Some (v, None)          -> (a, Some v, None, cmt)
-                                           | Some (v, Some None)     -> (a, Some v, Some CS, cmt)
-                                           | Some (v, Some (Some x)) -> (a, Some v, Some (CV x), cmt)
+  let fullContra = nSpaces1 >>? sstr "~" >>? opt pAccount
+  let splitContra = sstr "~" >>. tuple3 (p1 pAccount) pnumber lcmt
+  p0 pAccount .>>. opt (pValue .>>. opt fullContra) .>>. lcmt
+    .>>. increaseIndent (splitContra |> indented |> many)
+    |>> fun (((a, vx), cmt), splits) -> Posting <| match vx with
+                                                     | None                    -> (a, None, None, cmt, splits)
+                                                     | Some (v, None)          -> (a, Some v, None, cmt, splits)
+                                                     | Some (v, Some None)     -> (a, Some v, Some CS, cmt, splits)
+                                                     | Some (v, Some (Some x)) -> (a, Some v, Some (CV x), cmt, splits)
 
 let pPostingM =
   let contra = sstr "~" >>. opt pAccount
