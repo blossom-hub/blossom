@@ -29,12 +29,14 @@ type State =
     Filename: string option
     Journal: Journal option
     GlobalOptions: GlobalOptions
+    LastResult: string list option
   }
   with
     static member Default = {
       Filename = None
       Journal = None
       GlobalOptions = GlobalOptions.Default
+      LastResult = None
     }
 
 let time action =
@@ -83,14 +85,22 @@ let showHelp state =
 let execute state input =
   let withJournal op =
     match state.Journal with
-      | Some j -> op j
+      | Some j -> let result = op j
+                  Some {state with LastResult = Some result}
       | None   -> printfn "You must load a journal first."
+                  Some state
+
+  let writeLast state filename =
+    match state.LastResult with
+      | Some xs -> File.WriteAllLines (filename, xs)
+      | None    -> printfn "No result to output"
     Some state
 
   let action = function
     | Quit                               -> None
     | Clear                              -> Console.Clear()
                                             Some state
+    | Output filename                    -> writeLast state filename
     | Set value                          -> set state value
     | Load filename                      -> load state filename
     | Reload                             -> reload state
@@ -98,7 +108,7 @@ let execute state input =
     | Journal (filter, request)          -> withJournal <| journal HumanReadable.renderTable filter request
     | BalanceSeries (filter, request)    -> withJournal <| balanceSeries HumanReadable.renderTable filter request
     | LotAnalysis (filter, request)      -> withJournal <| lotAnalysis HumanReadable.renderTable filter request
-    | HoldingsAnalysis filter -> withJournal <| holdingsAnalysis HumanReadable.renderTable filter
+    | HoldingsAnalysis filter            -> withJournal <| holdingsAnalysis HumanReadable.renderTable filter
     | Check request                      -> withJournal <| checkJournal HumanReadable.renderTable request
     | Meta request                       -> withJournal <| meta HumanReadable.renderMetaResult request
     | Help                               -> showHelp state

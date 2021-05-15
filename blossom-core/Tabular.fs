@@ -30,7 +30,7 @@ let renderText (Table (hs,data)) =
   let getWidth i (xs : string list list) = xs |> List.map (fun r -> r.[i] |> String.length) |> List.max
 
   match rows with
-    | [] -> ()
+    | [] -> []
     | rs -> let widths = hs |> List.mapi (fun i h -> max (String.length h.Header) (getWidth i rs))
 
             // elidables will be a Some
@@ -55,7 +55,9 @@ let renderText (Table (hs,data)) =
             let printed, _ = rows |> List.mapFold f initialLast
 
             let combined = [headers] @ printed
-            combined |> List.map (String.concat "   ") |> String.concat Environment.NewLine |> printfn "%s"
-            printfn "  (%A rows)" (List.length rs)
+            let lines1 = combined |> List.map (String.concat "   ")
+            let lines2 = [sprintf "  (%A rows)" (List.length rs)]
+            lines1 @ lines2
+
 
 

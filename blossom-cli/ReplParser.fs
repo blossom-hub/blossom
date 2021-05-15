@@ -45,6 +45,7 @@ let set =
   let gfd = str "filter_debug" >>. ws1 >>. pbool |>> GFilterDebug
   let glt = str "load_tracing" >>. ws1 >>. pbool |>> GLoadTracing
   str "set" >>. opt (ws1 >>. choice [gpv; gfd; glt]) |>> Set
+let output = str "output" >>. ws1 >>. restOfLine false |>> Output
 
 // File management
 let load = choice [str "load"; str ":l"] >>. ws1 >>. restOfLine false |>> Load
@@ -121,7 +122,7 @@ let meta = str "meta" >>. ws1 >>.
             |>> fun m -> Meta {RequestType = m; Regex = None}
 
 let applicationCommands = [quit; clear; set]
-let fileCommands = [load; reload;]
+let fileCommands = [load; reload; output]
 let accountingCommands = [balances; journal; series]
 let investmentCommands = [lotAnalysis; holdingsAnalysis]
 let otherCommands = [meta; check; help]
