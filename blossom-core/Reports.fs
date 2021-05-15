@@ -393,10 +393,10 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
   // Create table view
   let cs = [
     {Header = "Date"; Key=true}
-    {Header = "Account"; Key=true}
-    {Header = "ST"; Key=true}
-    {Header = "Commodity"; Key=true}
-    {Header = "Name"; Key=true}
+    {Header = "Account"; Key=false}
+    {Header = "ST"; Key=false}
+    {Header = "Commodity"; Key=false}
+    {Header = "Name"; Key=false}
     {Header = "Quantity"; Key=false}
     {Header = "O. Price"; Key=false}
     {Header = "O. K"; Key = false}
@@ -461,8 +461,8 @@ let holdingsAnalysis renderer (filter: Filter) (journal: Journal) =
 
   let cs = [
     {Header = "Account"; Key=true}
-    {Header = "Commodity"; Key=true}
-    {Header = "Name"; Key=true}
+    {Header = "Commodity"; Key=false}
+    {Header = "Name"; Key=false}
     {Header = "Ms"; Key=true}
     {Header = "Position"; Key=false}
     {Header = "Avg. Price"; Key=false}
