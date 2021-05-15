@@ -11,20 +11,18 @@ type ColumnData =
   | Date of DateTime
   | Text of string
   | Number of decimal * int
-  | List of ColumnData list
   | Empty
 
 type Table = Table of columns:ColumnSpec list * rows:ColumnData list list
 
-let isElidable = function | Number _ | List _ -> false
+let isElidable = function | Number _ -> false
                           | _ -> true
 
 let rec initialRender =
-  function | Date d        -> d.ToString("yyyy-MM-dd")
-           | Text s        -> s
+  function | Date d         -> d.ToString("yyyy-MM-dd")
+           | Text s         -> s
            | Number (v, dp) -> v.ToString("0." + String.replicate dp "0" + "##")
-           | Empty         -> ""
-           | List xs       -> xs |> List.map initialRender |> String.concat ", "
+           | Empty          -> ""
 
 let renderText (Table (hs,data)) =
   let elidables0 = data |> List.tryHead |> Option.map (List.map isElidable)
