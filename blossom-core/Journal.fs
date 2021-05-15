@@ -73,9 +73,9 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
   let f1 (alot: OpeningTrade) =
     let multiplier = multiplierOf commodityDecls alot.Asset
     let mtm = isMtm commodityDecls alot.Asset
-    let openingNotional = first (fun p -> -p * decimal alot.Quantity * multiplier) alot.PerUnitPrice
+    let openingNotional = -alot.PerUnitPrice * decimal alot.Quantity * multiplier
     let physicalTransfer = (alot.Account, (alot.Quantity, alot.Asset), marketAccount)
-    let notionalTransfer = (alot.Settlement, openingNotional, marketAccount)
+    let notionalTransfer = (alot.Settlement, (openingNotional, alot.Measure), marketAccount)
     let openPostings =
       if mtm
         then [physicalTransfer] @ alot.Expenses
@@ -90,16 +90,16 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
     }
     let closingEntries =
       alot.Closings |> List.map (fun mlot ->
-                         let closingNotional = first (fun p -> p * mlot.Quantity * multiplier) mlot.PerUnitPrice
+                         let closingNotional = mlot.PerUnitPrice * mlot.Quantity * multiplier
                          let capitalGainsAccount = Option.defaultValue capitalGainsAccount mlot.CapitalGains
                          // Postings
                          // 1. Return the "physical asset"
                          // 2. Return the cash notional, if not mtm
                          // 3. Realise the pnl
                          let physicalTransfer2 = (alot.Account, (mlot.Quantity, alot.Asset), marketAccount)
-                         let notionalTransfer2 = (marketAccount, closingNotional, mlot.Settlement)
-                         let incomeTransfer2 = (marketAccount, mlot.UnadjustedPnL, capitalGainsAccount)
-                         let incomeTransfer3 = (mlot.Settlement, mlot.UnadjustedPnL, capitalGainsAccount)
+                         let notionalTransfer2 = (marketAccount, (closingNotional, alot.Measure), mlot.Settlement)
+                         let incomeTransfer2 = (marketAccount, (mlot.UnadjustedPnL, alot.Measure), capitalGainsAccount)
+                         let incomeTransfer3 = (mlot.Settlement, (mlot.UnadjustedPnL, alot.Measure), capitalGainsAccount)
                          let closePostings =
                           if mtm
                             then [physicalTransfer2; incomeTransfer3] @ mlot.Expenses
@@ -145,7 +145,10 @@ let loadJournal filename =
   // handle each type of dated element here (aside from Comment2, these are only kept by the parser for admin purposes)
   let assertions = items |> List.choose (function (_, sq, flagged, Assertion dassertion) -> Some (fst sq, dassertion.Account, dassertion.Value) | _ -> None)
 
+  let prices0 = items |> List.choose (function (_, sq, flagged, Price dprice) -> Some ((dprice.Commodity, snd dprice.Price), [fst sq, fst dprice.Price]) | _ -> None)
+
   let prices = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
+                    |> List.append prices0
                     |> List.groupByApply fst (List.collect snd >> Map.ofList)
                     |> Map.ofList
 
@@ -166,7 +169,7 @@ let loadJournal filename =
   let trades = items |> List.choose (function | (ps, sq, flagged, Trade dtrade) -> Some (ps, sq, flagged, dtrade)
                                               | _ -> None)
 
-  let investments = analyseInvestments commodityDecls0 trades dividends [] []
+  let investments = analyseInvestments commodityDecls0 trades dividends prices []
   let register = integrateRegister commodityDecls0 transfers investments
 
   // collect all accounts and merge with decls
@@ -180,10 +183,10 @@ let loadJournal filename =
 
   // collect all commodities and merge with decls
   // implied measures
-  let impliedMeasures = investments |> List.groupByApply (fun i -> i.Asset) (fun xs -> xs |> List.head |> fun j -> snd j.PerUnitPrice) |> Map.ofList
+  let impliedMeasures = investments |> List.groupByApply (fun i -> i.Asset) (fun xs -> xs |> List.head |> fun j -> j.Measure) |> Map.ofList
   let commodityDecls =
     let mk c = {Symbol = c; Measure = c; QuoteDP = None; Underlying = None; Name = None; Klass = None; Multiplier = None; Mtm = false; ExternalIdents = Map.empty}
-    let setMeasure decl = {decl with Measure = impliedMeasures |> Map.tryFind decl.Symbol |> Option.defaultValue decl.Symbol}
+    let setMeasure (decl: CommodityDecl) = {decl with Measure = impliedMeasures |> Map.tryFind decl.Symbol |> Option.defaultValue decl.Symbol}
     register |> Map.toList
              |> List.collect (fun (_, xs) -> xs |> List.collect (fun e -> e.Postings |> List.collect (fun (_,(_,c),_) -> [c, mk c])))
              |> List.distinct

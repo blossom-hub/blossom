@@ -80,19 +80,20 @@ let execute state input =
     Some state
 
   let action = function
-    | Quit                            -> None
-    | Clear                           -> Console.Clear()
-                                         Some state
-    | Set value                       -> set state value
-    | Load filename                   -> load state filename
-    | Reload                          -> reload state
-    | Balances (filter, request)      -> withJournal <| balances HumanReadable.renderTable filter request
-    | Journal (filter, request)       -> withJournal <| journal HumanReadable.renderTable filter request
-    | BalanceSeries (filter, request) -> withJournal <| balanceSeries HumanReadable.renderTable filter request
-    | LotAnalysis (filter, request)   -> withJournal <| lotAnalysis HumanReadable.renderTable filter request
-    | Check request                   -> withJournal <| checkJournal HumanReadable.renderTable request
-    | Meta request                    -> withJournal <| meta HumanReadable.renderMetaResult request
-    | Help                            -> showHelp state
+    | Quit                               -> None
+    | Clear                              -> Console.Clear()
+                                            Some state
+    | Set value                          -> set state value
+    | Load filename                      -> load state filename
+    | Reload                             -> reload state
+    | Balances (filter, request)         -> withJournal <| balances HumanReadable.renderTable filter request
+    | Journal (filter, request)          -> withJournal <| journal HumanReadable.renderTable filter request
+    | BalanceSeries (filter, request)    -> withJournal <| balanceSeries HumanReadable.renderTable filter request
+    | LotAnalysis (filter, request)      -> withJournal <| lotAnalysis HumanReadable.renderTable filter request
+    | HoldingsAnalysis filter -> withJournal <| holdingsAnalysis HumanReadable.renderTable filter
+    | Check request                      -> withJournal <| checkJournal HumanReadable.renderTable request
+    | Meta request                       -> withJournal <| meta HumanReadable.renderMetaResult request
+    | Help                               -> showHelp state
 
   try
     let result = runParser parse () (FromString input)

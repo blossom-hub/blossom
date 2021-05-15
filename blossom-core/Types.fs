@@ -62,8 +62,8 @@ type ClosingTrade = {
   Settlement: Account
   CapitalGains: Account option
   Quantity: decimal
-  PerUnitPrice: Value
-  UnadjustedPnL: Value
+  PerUnitPrice: decimal
+  UnadjustedPnL: decimal
   LotName: string
   Reference: string option
   Expenses: (Account * Value * Account) list
@@ -75,7 +75,11 @@ type OpeningTrade = {
   Settlement: Account
   Asset: Commodity
   Quantity: decimal
-  PerUnitPrice: Value
+  OpenQuantity: decimal
+  Measure: Commodity
+  PerUnitPrice: decimal
+  LastUnitPrice: (DateTime * decimal)
+  UnrealisedPnL: decimal
   LotName: string
   Reference: string option
   Expenses: (Account * Value * Account) list

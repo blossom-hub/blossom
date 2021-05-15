@@ -40,7 +40,7 @@ let navIndicatorOf commodityDecls c = isMtm commodityDecls c |> function true ->
 
 let analyseInvestments commodityDecls
                        (trades : DTrade H list) (dividends : DDividend H list)
-                       (prices : DPrice H list) (splits : DSplit H list) =
+                       (prices : Map<(Commodity*Commodity), Map<DateTime, decimal>>) (splits : DSplit H list) =
 
   // Step 1: Tag each trade event
   let f1 balances (sq, dtrade: DTrade) =
@@ -109,21 +109,31 @@ let analyseInvestments commodityDecls
                     Settlement = closingSettlement
                     CapitalGains = ocm.Closing.CapitalGains
                     Quantity = ocm.Quantity
-                    PerUnitPrice = ocm.Closing.PerUnitPrice
-                    UnadjustedPnL = pnl, snd ocm.Closing.PerUnitPrice
+                    PerUnitPrice = fst ocm.Closing.PerUnitPrice
+                    UnadjustedPnL = pnl
                     LotName = ""
                     Reference = ocm.Closing.Reference
                     Expenses =  ocm.Closing.Expenses |> List.map (fun (a, v, c) -> (a, v, match c with | Some CS -> a | Some (CV a2) -> a2 | None -> closingSettlement))
                   }
                 else None)
         let openingSettlement = Option.defaultValue dtrade.Account dtrade.Settlement
+        let totalClosingQuantity = closings |> List.sumBy (fun c -> c.Quantity)
+        let lastPrice = prices |> Map.tryFind (dtrade.Asset, snd dtrade.PerUnitPrice)
+                               |> Option.map (Map.toList >> List.maxBy fst)
+                               |> Option.defaultValue (fst (fst sqi), fst dtrade.PerUnitPrice)
+        let openQuantity = dtrade.Quantity + totalClosingQuantity
+        let unrealisedPnL = openQuantity * (snd lastPrice - fst dtrade.PerUnitPrice) * multiplierOf commodityDecls dtrade.Asset
         {
           OpeningTrade.Date = fst sqi
           Account = dtrade.Account
           Settlement = openingSettlement
           Asset = dtrade.Asset
           Quantity = dtrade.Quantity
-          PerUnitPrice = dtrade.PerUnitPrice
+          OpenQuantity = openQuantity
+          Measure = snd dtrade.PerUnitPrice
+          PerUnitPrice = fst dtrade.PerUnitPrice
+          LastUnitPrice = lastPrice
+          UnrealisedPnL = unrealisedPnL
           LotName = ""
           Reference = dtrade.Reference
           Expenses = dtrade.Expenses |> List.map (fun (a, v, c) -> (a, v, match c with | Some CS -> a | Some (CV a2) -> a2 | None -> openingSettlement))

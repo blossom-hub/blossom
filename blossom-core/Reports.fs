@@ -264,22 +264,30 @@ type private InternalLotRow = {
   Account: Account
   Closed: bool
   Asset: Commodity
+  Measure: Commodity
   Quantity: Decimal
   Long: bool
-  OpeningPrice: Value
+  OpeningPrice: decimal
   ClosingDate: SQ option
-  ClosingPrice: Value option
-  Pnl: Value option
+  ClosingPrice: decimal option
+  Pnl: decimal option
   ReturnPct: decimal option
 }
 
-let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
-  let quoteDPFor commodity = journal.CommodityDecls |> Map.tryFind commodity
-                                                    |> Option.bind (fun t -> t.QuoteDP)
-                                                    |> Option.defaultValue 3
-  let nameFor commodity = journal.CommodityDecls |> Map.tryFind commodity
-                                                 |> Option.bind (fun t -> t.Name)
-                                                 |> Option.defaultValue ""
+let filterInvestmentAnalysis (filter: Filter) (investments: OpeningTrade list) =
+
+  let dateFilter (xs: OpeningTrade list) =
+    let fil l lb r rb =
+      xs |> List.filter (fun ot -> let dt, _ = ot.Date
+                                   let q1 = (if lb then (>=) else (>)) dt l
+                                   let q2 = (if rb then (<=) else (<)) dt r
+                                   q1 && q2)
+    match filter.Timespan with
+      | None -> xs
+      | Some (None, None) -> xs
+      | Some (Some (b,dt), None) -> fil dt b DateTime.MaxValue true
+      | Some (None, Some (b,dt)) -> fil DateTime.MinValue true dt b
+      | Some (Some (lb, l), Some (rb, r)) -> fil l lb r rb
 
   let accountFilter (xs: OpeningTrade list) =
     match filter.Accounts with
@@ -293,16 +301,28 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
       | rs -> xs |> List.filter (fun ot -> let (Commodity c) = ot.Asset
                                            rs |> List.map (fun r -> regexfilter r c) |> List.any id)
 
-  let measureFilter xs =
+  let measureFilter (xs: OpeningTrade list) =
     match filter.Measures with
       | [] -> xs
-      | rs -> xs |> List.filter (fun ot -> let (Commodity measure) = snd ot.PerUnitPrice
+      | rs -> xs |> List.filter (fun ot -> let (Commodity measure) = ot.Measure
                                            rs |> List.map (fun r -> regexfilter r measure)
                                               |> List.any id)
 
   // analysis has already completed, so most work here is the filter application
-  let trades =
-    journal.InvestmentAnalysis |> accountFilter |> commodityFilter |> measureFilter
+  investments |> dateFilter
+              |> accountFilter
+              |> commodityFilter
+              |> measureFilter
+
+let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
+  let quoteDPFor commodity = journal.CommodityDecls |> Map.tryFind commodity
+                                                    |> Option.bind (fun t -> t.QuoteDP)
+                                                    |> Option.defaultValue 3
+  let nameFor commodity = journal.CommodityDecls |> Map.tryFind commodity
+                                                 |> Option.bind (fun t -> t.Name)
+                                                 |> Option.defaultValue ""
+
+  let trades = filterInvestmentAnalysis filter journal.InvestmentAnalysis
 
   // create an anon-record representing the row data before
   // transforming to the concrete type, to make it easier to track
@@ -310,8 +330,8 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
   let createRow (ot: OpeningTrade) =
     let row (ct: ClosingTrade option) =
       let rowQty = ct |> Option.map (fun c -> -c.Quantity) |> Option.defaultValue ot.Quantity
-      let retn = ct |> Option.map (fun c -> let cp = fst c.PerUnitPrice
-                                            let op = fst ot.PerUnitPrice
+      let retn = ct |> Option.map (fun c -> let cp = c.PerUnitPrice
+                                            let op = ot.PerUnitPrice
                                             let sg = if rowQty > 0M then 1M else -1M
                                             100M * sg * (cp - op) / op)
       {
@@ -319,6 +339,7 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
         Account = ot.Account
         Closed = match ct with Some _ -> true | _ -> false
         Asset = ot.Asset
+        Measure = ot.Measure
         Quantity = rowQty
         Long = rowQty > 0M
         OpeningPrice = ot.PerUnitPrice
@@ -332,24 +353,24 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
       | xs -> xs |> List.map (fun x -> row (Some x))
 
   let consolidate rows =
-    let grouped = rows |> List.groupBy (fun r -> (r.OpeningDate, r.Long, r.Account, r.Closed, r.Asset, snd r.OpeningPrice))
+    let grouped = rows |> List.groupBy (fun r -> (r.OpeningDate, r.Long, r.Account, r.Closed, r.Asset, r.Measure))
     let aggr ((date, long, acct, closed, asset, measure), rs) =
       let quantity = rs |> List.sumBy (fun r -> r.Quantity)
-      let openingPrice = rs |> List.map (fun r -> (fst r.OpeningPrice, r.Quantity)) |> weightedAverage |> Option.get
-      let closingPrice = rs |> List.choose (fun r -> match r.ClosingPrice with Some p -> Some (fst p, r.Quantity) | _ -> None)
+      let openingPrice = rs |> List.map (fun r -> (r.OpeningPrice, r.Quantity)) |> weightedAverage |> Option.get
+      let closingPrice = rs |> List.choose (fun r -> match r.ClosingPrice with Some p -> Some (p, r.Quantity) | _ -> None)
                             |> weightedAverage
-                            |> Option.map (fun w -> (w, measure))
-      let pnl = rs |> List.choose (fun r -> Option.map fst r.Pnl) |> function [] -> None | xs -> Some (List.sum xs, measure)
-      let retn = closingPrice |> Option.map (fun (cp, _) -> let sg = if long then 1M else -1M
-                                                            100M * sg * (cp - openingPrice) / openingPrice )
+      let pnl = rs |> List.choose (fun r -> r.Pnl) |> function [] -> None | xs -> Some (List.sum xs)
+      let retn = closingPrice |> Option.map (fun cp -> let sg = if long then 1M else -1M
+                                                       100M * sg * (cp - openingPrice) / openingPrice )
       {
         OpeningDate = date
         Account = acct
         Closed = closed
         Asset = asset
+        Measure = measure
         Quantity = quantity
         Long = long
-        OpeningPrice = (openingPrice, measure)
+        OpeningPrice = openingPrice
         ClosingDate = rs |> List.maxOf (fun r -> r.ClosingDate)
         ClosingPrice = closingPrice
         Pnl = pnl
@@ -383,7 +404,7 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
   let createTableRow row =
     let (Account a) = row.Account
     let (Commodity c) = row.Asset
-    let (Commodity m) = snd row.OpeningPrice
+    let (Commodity m) = row.Measure
     let age = (DateTime.Today - fst row.OpeningDate).Days
     let days = match row.ClosingDate with
                  | Some dt -> Number (decimal ((fst dt) - (fst row.OpeningDate)).Days, 0)
@@ -395,15 +416,61 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
       Text c
       Text (nameFor row.Asset)
       Number (row.Quantity, 2)
-      Number (fst row.OpeningPrice, quoteDPFor row.Asset)
+      Number (row.OpeningPrice, quoteDPFor row.Asset)
       Text m
       Number (decimal age, 0)
       row.ClosingDate |> function | Some sq -> Date (fst sq) | _ -> Empty
-      row.ClosingPrice |> function | Some o -> Number (fst o, quoteDPFor row.Asset) | _ -> Empty
-      row.Pnl |> function | Some v -> Number (fst v, quoteDPFor row.Asset) | _ -> Empty
+      row.ClosingPrice |> function | Some o -> Number (o, quoteDPFor row.Asset) | _ -> Empty
+      row.Pnl |> function | Some v -> Number (v, quoteDPFor row.Asset) | _ -> Empty
       row.ReturnPct |> function | Some v -> Number (v, 1) | _ -> Empty
       days
     ]
 
   let table = Table(cs, combined |> List.map createTableRow)
+  renderer table
+
+
+let holdingsAnalysis renderer (filter: Filter) (journal: Journal) =
+  let trades = filterInvestmentAnalysis filter journal.InvestmentAnalysis
+
+  let nameFor commodity = journal.CommodityDecls |> Map.tryFind (Commodity commodity)
+                                                 |> Option.bind (fun t -> t.Name)
+                                                 |> Option.defaultValue ""
+
+  let fn (ot: OpeningTrade list) =
+    let averageOpeningPrice = ot |> List.map (fun o -> (o.PerUnitPrice, o.OpenQuantity)) |> weightedAverage |> Option.get
+    let openQuantity = ot |> List.sumBy (fun o -> o.OpenQuantity)
+    let unrealised = ot |> List.sumBy (fun o -> o.UnrealisedPnL)
+    let lastPrice = ot |> List.head |> fun o -> snd o.LastUnitPrice
+    openQuantity, averageOpeningPrice, lastPrice, unrealised
+
+  let trades =
+    journal.InvestmentAnalysis
+    |> List.filter (fun ot -> ot.OpenQuantity <> 0M)
+    |> List.groupByApply (fun ot -> (ot.Account, ot.Asset, ot.Measure)) fn
+    |> List.sortBy fst
+
+  let cs = [
+    {Header = "Account"; Key=true}
+    {Header = "Commodity"; Key=true}
+    {Header = "Name"; Key=true}
+    {Header = "Ms"; Key=true}
+    {Header = "Position"; Key=false}
+    {Header = "Avg. Price"; Key=false}
+    {Header = "Last Price"; Key=false}
+    {Header = "Unrl. PnL"; Key=false}
+  ]
+
+  let createRow ((Account account, Commodity commodity, Commodity measure), (posn, aop, lp, upnl)) = [
+    Text account
+    Text commodity
+    Text (nameFor commodity)
+    Text measure
+    Number (posn, 3)
+    Number (aop, 3)
+    Number (lp, 3)
+    Number (upnl, 3)
+  ]
+
+  let table = Table (cs, trades |> List.map createRow)
   renderer table

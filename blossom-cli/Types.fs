@@ -19,6 +19,7 @@ type Command =
   | BalanceSeries of Filter * SeriesRequest
   // Investing
   | LotAnalysis of Filter * LotRequest
+  | HoldingsAnalysis of Filter
   // Help
   | Check of CheckRequest
   | Help

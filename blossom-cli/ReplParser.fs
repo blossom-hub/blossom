@@ -98,6 +98,13 @@ let lotAnalysis =
                  Consolidated = flagged fs 'g'}
       LotAnalysis (f, lr)
 
+let holdingsAnalysis =
+  choice [str "holdings"]
+  >>. ws
+  >>. pFlags "x"
+  .>>. pFilter
+  |>> fun (fs, f) -> HoldingsAnalysis f
+
 // Help
 let check = choice [str "check"; str ":c"] >>. ws1 >>. choice [str "assertions" >>. preturn Assertions] |>> Check
 let help = str "help" >>. preturn Help
@@ -114,7 +121,7 @@ let meta = str "meta" >>. ws1 >>.
 let applicationCommands = [quit; clear; set]
 let fileCommands = [load; reload;]
 let accountingCommands = [balances; journal; series]
-let investmentCommands = [lotAnalysis]
+let investmentCommands = [lotAnalysis; holdingsAnalysis]
 let otherCommands = [meta; check; help]
 let parse : Parser<Command> =
   let commands = [applicationCommands; fileCommands; accountingCommands; investmentCommands; otherCommands] |> List.concat
