@@ -25,7 +25,7 @@ let runBalancerChecker f g h elts =
 [<Fact>]
 let ``Balance Check 1`` () =
   let elts = [
-    Posting(account1, Some (3.4M, testCommodity), Some (CV account2), None)
+    Posting(account1, Some (3.4M, testCommodity), Some (CV account2), None, [])
   ]
   let f entry =
     let ps = entry.Postings
@@ -35,8 +35,8 @@ let ``Balance Check 1`` () =
 [<Fact>]
 let ``Balance Check 2`` () =
   let elts = [
-    Posting(account1, Some (3.4M, testCommodity), None, None)
-    Posting(account2, None, None, None)
+    Posting(account1, Some (3.4M, testCommodity), None, None, [])
+    Posting(account2, None, None, None, [])
   ]
   let f entry =
     let ps = entry.Postings
@@ -46,9 +46,9 @@ let ``Balance Check 2`` () =
 [<Fact>]
 let ``Balance Check 3`` () =
   let elts = [
-    Posting(account1, Some (3.4M, testCommodity), None, None)
-    Posting(account2, Some (3.4M, Commodity "USD"), None, None)
-    Posting(account3,None, None, None)
+    Posting(account1, Some (3.4M, testCommodity), None, None, [])
+    Posting(account2, Some (3.4M, Commodity "USD"), None, None, [])
+    Posting(account3,None, None, None, [])
   ]
   let f entry =
     let ps = entry.Postings
