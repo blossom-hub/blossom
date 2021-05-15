@@ -26,6 +26,11 @@ type private OCM = {
   Quantity: decimal
 }
 
+let lookupK kfactors asset dt =
+  kfactors |> Map.tryFind asset
+           |> Option.map (fun xs -> xs |> List.filter (fun ks -> fst ks >= dt) |> List.head |> snd)
+           |> Option.defaultValue 1M
+
 let multiplierOf commodityDecls c =
   commodityDecls |> Map.tryFind c
                  |> Option.bind (fun d -> d.Multiplier)
@@ -39,10 +44,21 @@ let isMtm commodityDecls c =
 let navIndicatorOf commodityDecls c = isMtm commodityDecls c |> function true -> 1M | false -> 0M
 
 let analyseInvestments commodityDecls
-                       (trades : DTrade H list) (dividends : DDividend H list)
-                       (prices : Map<(Commodity*Commodity), Map<DateTime, decimal>>) (splits : DSplit H list) =
+                       (trades : DTrade H list)
+                       (dividends : DDividend H list)
+                       (prices : Map<(Commodity*Commodity), Map<DateTime, decimal * decimal>>)
+                       (kfactors : Map<Commodity, (DateTime * decimal) list>) =
 
-  // Step 1: Tag each trade event
+  // Step 1: Calculate the split adjustment factors, update the trades
+  let ktrades = trades |> List.map (fun (posn, sq, flag, dtrade) -> let k = lookupK kfactors dtrade.Asset (fst sq)
+                                                                    let ktrade = {dtrade with Keff = k
+                                                                                              Quantity = k * dtrade.Quantity
+                                                                                              PerUnitPrice = first (fun p -> p/k) dtrade.PerUnitPrice}
+                                                                    (posn, sq, flag, ktrade))
+
+
+
+  // Step 2: Tag each trade event
   let f1 balances (sq, dtrade: DTrade) =
     let key = (dtrade.Account, dtrade.Asset)
     let currentBalance = balances |> Map.tryFind key
@@ -56,11 +72,14 @@ let analyseInvestments commodityDecls
                                    | _, true, true   -> Extend // (Long)
                                    | _, false, false -> Extend // (Short)
                                    | _, _, _         -> Reduce
-                        (lt, sq, dtrade), balances |> Map.add key newBalance
+                        let newBalances = match newBalance with
+                                            | 0M -> Map.remove key balances
+                                            | b  -> Map.add key b balances
+                        (lt, sq, dtrade), newBalances
 
-  let taggedTrades, _balances = trades |> List.map (snd4 &&& frh4) |> List.mapFold f1 Map.empty
+  let taggedTrades, _balances = ktrades |> List.map (snd4 &&& frh4) |> List.mapFold f1 Map.empty
 
-  // Step 2: Match up open/close style lots.
+  // Step 3: Match up open/close style lots.
   // This currently uses FIFO but later will respect the lotnames provided in the document
   // to provide directed PnL calculations.
   let openTs, closeTs = taggedTrades |> List.mapi (fun i (lt, sq, tr) -> (lt, (sq, i), tr.Quantity, tr))
@@ -87,14 +106,14 @@ let analyseInvestments commodityDecls
 
   let matched = List.mapFold f2 openTs closeTs |> snd |> List.collect fih5
 
-  // Step 3: Calculate gains per match
+  // Step 4: Calculate gains per match
   let capitalGains =
     flip List.map matched <| fun ocm -> let pm = fst ocm.Closing.PerUnitPrice - fst ocm.Opening.PerUnitPrice
                                         let multiplier = multiplierOf commodityDecls ocm.Opening.Asset
                                         let pnl = pm * Math.Abs(ocm.Quantity) * multiplier * decimal(Math.Sign(ocm.Opening.Quantity))
                                         ocm, pnl
 
-  // Step 4: Build report with matching, pnl etc.
+  // Step 5: Build report with matching, pnl etc.
   let matched2 =
     openTs |> List.map (
       fun (_lt, sqi, _q, dtrade, _) ->
@@ -109,6 +128,7 @@ let analyseInvestments commodityDecls
                     Settlement = closingSettlement
                     CapitalGains = ocm.Closing.CapitalGains
                     Quantity = ocm.Quantity
+                    Keff = ocm.Closing.Keff
                     PerUnitPrice = fst ocm.Closing.PerUnitPrice
                     UnadjustedPnL = pnl
                     LotName = ""
@@ -119,7 +139,7 @@ let analyseInvestments commodityDecls
         let openingSettlement = Option.defaultValue dtrade.Account dtrade.Settlement
         let totalClosingQuantity = closings |> List.sumBy (fun c -> c.Quantity)
         let lastPrice = prices |> Map.tryFind (dtrade.Asset, snd dtrade.PerUnitPrice)
-                               |> Option.map (Map.toList >> List.maxBy fst)
+                               |> Option.map (Map.toList >> List.maxBy fst >> second fst)
                                |> Option.defaultValue (fst (fst sqi), fst dtrade.PerUnitPrice)
         let openQuantity = dtrade.Quantity + totalClosingQuantity
         let unrealisedPnL = openQuantity * (snd lastPrice - fst dtrade.PerUnitPrice) * multiplierOf commodityDecls dtrade.Asset
@@ -129,6 +149,7 @@ let analyseInvestments commodityDecls
           Settlement = openingSettlement
           Asset = dtrade.Asset
           Quantity = dtrade.Quantity
+          Keff = dtrade.Keff
           OpenQuantity = openQuantity
           Measure = snd dtrade.PerUnitPrice
           PerUnitPrice = fst dtrade.PerUnitPrice

@@ -148,39 +148,40 @@ let journal renderer filter (request : JournalRequest) journal =
     j2.Register |> Map.toList
                 |> List.collect snd
                 |> List.collect (fun e -> e.Postings |> List.collect (fun (a,b,c) -> expandPosting a b c)
-                                                     |> List.map (fun (a,b,c) -> (e.Flagged, e.Date, e.Payee, e.Narrative, a, b, c)))
+                                                     |> List.map (fun (a,b,c) -> (e.Flagged, e.Automatic, e.Date, e.Payee, e.Narrative, a, b, c)))
 
   // re-apply specific filters to crystalise the result
   let accountFilter xs =
     match filter.Accounts with
       | [] -> xs
-      | rs -> xs |> List.filter (fun (_, _, _, _, Account acc, _, _) ->
+      | rs -> xs |> List.filter (fun (_, _, _, _, _, Account acc, _, _) ->
                                    rs |> List.map (fun r -> regexfilter r acc)
                                       |> List.any id)
 
   let commodityFilter xs =
     match filter.Commodities with
       | [] -> xs
-      | rs -> xs |> List.filter (fun (_, _, _, _, _, _, Commodity c) ->
+      | rs -> xs |> List.filter (fun (_, _, _, _, _, _, _, Commodity c) ->
                                    rs |> List.map (fun r -> regexfilter r c)
                                       |> List.any id)
 
   let measureFilter xs =
     match filter.Measures with
       | [] -> xs
-      | rs -> xs |> List.filter (fun (_, _, _, _, _, _, c) ->
+      | rs -> xs |> List.filter (fun (_, _, _, _, _, _, _, c) ->
                                   let (Commodity measure) = journal.CommodityDecls |> Map.find c |> fun d -> d.Measure
                                   rs |> List.map (fun r -> regexfilter r measure)
                                      |> List.any id)
 
   let flaggedFilter xs =
-    xs |> List.filter (fun (x, _, _, _, _, _, _) -> x)
+    xs |> List.filter (fun (x, _, _, _, _, _, _, _) -> x)
 
   let result2 = items |> iftrue (not request.Flex) (accountFilter >> commodityFilter >> measureFilter)
                       |> iftrue request.FlaggedOnly flaggedFilter
 
   let cs = [{Header = "Date"; Key=true}
             {Header = "F"; Key = true}
+            {Header = "A"; Key = true}
             {Header = "Payee"; Key = true}
             {Header = "Narrative"; Key =true}
             {Header = "Account"; Key = true}
@@ -190,8 +191,8 @@ let journal renderer filter (request : JournalRequest) journal =
   let f2s = function true -> "*" | false -> ""
   let p2s = Option.defaultValue ""
 
-  let createRow (f, d, p, n, Account a, q, Commodity c) =
-    [Date (fst d); f2s f |> Text; p2s p |> Text; Text n; Text a; Number(q, 3); Text c]
+  let createRow (f, au, d, p, n, Account a, q, Commodity c) =
+    [Date (fst d); f2s f |> Text; f2s au |> Text; p2s p |> Text; Text n; Text a; Number(q, 3); Text c]
 
   let data = result2 |> List.map createRow
   let table = Table (cs, data)
@@ -268,8 +269,10 @@ type private InternalLotRow = {
   Quantity: Decimal
   Long: bool
   OpeningPrice: decimal
+  OpeningKeff: decimal
   ClosingDate: SQ option
   ClosingPrice: decimal option
+  ClosingKeff: decimal option
   Pnl: decimal option
   ReturnPct: decimal option
 }
@@ -343,8 +346,10 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
         Quantity = rowQty
         Long = rowQty > 0M
         OpeningPrice = ot.PerUnitPrice
+        OpeningKeff = ot.Keff
         ClosingDate = ct |> Option.map (fun c -> c.Date)
         ClosingPrice = ct |> Option.map (fun c -> c.PerUnitPrice)
+        ClosingKeff = ct |> Option.map (fun c -> c.Keff)
         Pnl = ct |> Option.map (fun c -> c.UnadjustedPnL)
         ReturnPct = retn
       }
@@ -371,8 +376,10 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
         Quantity = quantity
         Long = long
         OpeningPrice = openingPrice
+        OpeningKeff = rs |> List.head |> fun r -> r.OpeningKeff
         ClosingDate = rs |> List.maxOf (fun r -> r.ClosingDate)
         ClosingPrice = closingPrice
+        ClosingKeff = None
         Pnl = pnl
         ReturnPct = retn
       }
@@ -392,10 +399,12 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
     {Header = "Name"; Key=true}
     {Header = "Quantity"; Key=false}
     {Header = "O. Price"; Key=false}
+    {Header = "O. K"; Key = false}
     {Header = "Ms"; Key=false}
     {Header = "Age"; Key=false}
     {Header = "C. Date"; Key = false}
     {Header = "C. Price"; Key = false}
+    {Header = "C. K"; Key = false}
     {Header = "Unadj. PnL"; Key = false}
     {Header = "Unadj. %PnL"; Key = false}
     {Header = "Days"; Key = false}
@@ -417,10 +426,12 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
       Text (nameFor row.Asset)
       Number (row.Quantity, 2)
       Number (row.OpeningPrice, quoteDPFor row.Asset)
+      Number (row.OpeningKeff, 1)
       Text m
       Number (decimal age, 0)
       row.ClosingDate |> function | Some sq -> Date (fst sq) | _ -> Empty
       row.ClosingPrice |> function | Some o -> Number (o, quoteDPFor row.Asset) | _ -> Empty
+      row.ClosingKeff |> function | Some k -> Number (k, 1) | _ -> Empty
       row.Pnl |> function | Some v -> Number (v, quoteDPFor row.Asset) | _ -> Empty
       row.ReturnPct |> function | Some v -> Number (v, 1) | _ -> Empty
       days
@@ -431,8 +442,6 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
 
 
 let holdingsAnalysis renderer (filter: Filter) (journal: Journal) =
-  let trades = filterInvestmentAnalysis filter journal.InvestmentAnalysis
-
   let nameFor commodity = journal.CommodityDecls |> Map.tryFind (Commodity commodity)
                                                  |> Option.bind (fun t -> t.Name)
                                                  |> Option.defaultValue ""
@@ -445,10 +454,10 @@ let holdingsAnalysis renderer (filter: Filter) (journal: Journal) =
     openQuantity, averageOpeningPrice, lastPrice, unrealised
 
   let trades =
-    journal.InvestmentAnalysis
-    |> List.filter (fun ot -> ot.OpenQuantity <> 0M)
-    |> List.groupByApply (fun ot -> (ot.Account, ot.Asset, ot.Measure)) fn
-    |> List.sortBy fst
+    filterInvestmentAnalysis filter journal.InvestmentAnalysis
+      |> List.filter (fun ot -> ot.OpenQuantity <> 0M)
+      |> List.groupByApply (fun ot -> (ot.Account, ot.Asset, ot.Measure)) fn
+      |> List.sortBy fst
 
   let cs = [
     {Header = "Account"; Key=true}

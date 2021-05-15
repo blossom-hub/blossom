@@ -48,6 +48,7 @@ let liftBasicEntry position date flagged dtransfer =
 
   let lift liftedPostings = {
     Flagged = flagged
+    Automatic = false
     Date = date
     Payee = dtransfer.Payee
     Narrative = dtransfer.Narrative
@@ -80,11 +81,14 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
       if mtm
         then [physicalTransfer] @ alot.Expenses
         else [physicalTransfer; notionalTransfer] @ alot.Expenses
+    let (Types.Commodity commodity) = alot.Asset
+    let (Types.Commodity measure) = alot.Measure
     let openingEntry = {
       Flagged = false
+      Automatic = true
       Date = alot.Date
       Payee = None
-      Narrative = ""
+      Narrative = $"Open {commodity} x{alot.Quantity} @ {alot.PerUnitPrice}"
       Tags = Set.empty
       Postings = openPostings
     }
@@ -106,9 +110,10 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
                             else [physicalTransfer2; incomeTransfer2; notionalTransfer2] @ mlot.Expenses
                          mlot.Date, {
                            Flagged = false
+                           Automatic = true
                            Date = mlot.Date
                            Payee = None
-                           Narrative = ""
+                           Narrative = $"Close {commodity} x{mlot.Quantity} @ {mlot.PerUnitPrice}"
                            Tags = Set.empty
                            Postings = closePostings
                          })
@@ -117,16 +122,22 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
 
   transfers |> Map.mergeWith (fun _ y z -> y @ z) tradingEntries
 
-let loadJournal filename =
-  // load the journal, find imports, load imports, combine, process as one
+let rec loadJournal0 trace depth filename : (FParsec.Position * RJournalElement) list =
+  if trace
+    then let indent = String.replicate depth "  "
+         printfn $"{indent}loading {filename}"
+    else ()
   let elts0 = loadRJournal filename
   let cwd = Path.GetDirectoryName filename
   let imports = elts0 |> List.choose (function (_, Import i) -> Some (match Path.IsPathRooted i with
-                                                                        | true  -> loadRJournal i
-                                                                        | false -> Path.Combine (cwd, i) |> loadRJournal )
+                                                                        | true  -> loadJournal0 trace (depth+1) i
+                                                                        | false -> Path.Combine (cwd, i) |> loadJournal0 trace (depth+1))
                                                                 | _ -> None)
                       |> List.concat
-  let elts = elts0 @ imports
+  elts0 @ imports
+
+let loadJournal trace filename =
+  let elts = loadJournal0 trace 0 filename
 
   // Now process as one combined RJournal dataset
   let items = elts |> List.choose (function (position, Item (sq, flagged, elt)) -> Some (position, sq, flagged, elt) | _ -> None)
@@ -145,16 +156,21 @@ let loadJournal filename =
   // handle each type of dated element here (aside from Comment2, these are only kept by the parser for admin purposes)
   let assertions = items |> List.choose (function (_, sq, flagged, Assertion dassertion) -> Some (fst sq, dassertion.Account, dassertion.Value) | _ -> None)
 
-  let prices0 = items |> List.choose (function (_, sq, flagged, Price dprice) -> Some ((dprice.Commodity, snd dprice.Price), [fst sq, fst dprice.Price]) | _ -> None)
+  let splits = items |> List.choose (function (_, sq, flagged, Split dsplit) -> Some (dsplit.Commodity, (fst sq, dsplit.K1, dsplit.K2)) | _ -> None)
+                     |> List.groupByApply fst (List.map snd
+                                                >> List.sortBy fst3
+                                                >> fun ks -> List.scanBack (fun (dt, k1, k2) (_, k0) -> (dt, k0/k1 * k2)) ks (DateTime.MaxValue, 1M))
+                     |> Map.ofList
 
+  // Prices are adjusted by the split factor here, which is kept for reference purposes p -> p/k
+  let prices0 = items |> List.choose (function (_, sq, flagged, Price dprice) -> Some ((dprice.Commodity, snd dprice.Price), [fst sq, fst dprice.Price]) | _ -> None)
   let prices = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
                     |> List.append prices0
-                    |> List.groupByApply fst (List.collect snd >> Map.ofList)
+                    |> List.groupByApply fst (List.collect snd)
+                    |> List.map (fun ((asset, measure), ps) -> let ps2 = ps |> List.map (fun (dt, p) -> let k= lookupK splits asset dt
+                                                                                                        (dt, (p, k)))
+                                                               (asset, measure), Map.ofList ps2)
                     |> Map.ofList
-
-  let splits = items |> List.choose (function (_, sq, flagged, Split dsplit) -> Some (dsplit.Commodity, (fst sq, dsplit.K1, dsplit.K2)) | _ -> None)
-                     |> List.groupByApply fst (List.map snd)
-                     |> Map.ofList
 
   let transfers = items |> List.choose (function | (ps, sq, flagged, Transfer dtransfer) -> Some (liftBasicEntry ps sq flagged dtransfer)
                                                  | _ -> None)
@@ -169,7 +185,7 @@ let loadJournal filename =
   let trades = items |> List.choose (function | (ps, sq, flagged, Trade dtrade) -> Some (ps, sq, flagged, dtrade)
                                               | _ -> None)
 
-  let investments = analyseInvestments commodityDecls0 trades dividends prices []
+  let investments = analyseInvestments commodityDecls0 trades dividends prices splits
   let register = integrateRegister commodityDecls0 transfers investments
 
   // collect all accounts and merge with decls
@@ -202,7 +218,7 @@ let loadJournal filename =
     InvestmentAnalysis = investments
     Register = register
     Prices = prices
-    Splits = splits
+    SplitKFactors = splits
     Assertions = assertions
   }
 

@@ -49,8 +49,8 @@ type DPrice = {
 
 type DSplit = {
   Commodity: Commodity
-  K1: int
-  K2: int
+  K1: decimal
+  K2: decimal
 }
 
 type Contra = CS | CV of Account
@@ -85,6 +85,7 @@ type DTrade = {
   CapitalGains: Account option
   Asset: Commodity
   Quantity: decimal
+  Keff: decimal
   PerUnitPrice: Value
   LotName: string list
   Reference: string option
@@ -301,7 +302,7 @@ let pElement =
   let pComment = sstr1 "comment" >>. rol false |>> Comment2
   let pAssertion = sstr1 "assert" >>. p1 pAccount .>>. pValue .>>. lcmt |>> fun ((a, v), cmt) -> Assertion {Account = a; Value = v; Comment = cmt}
   let pPrice = sstr1 "price" >>. p1 pCommodity .>>. pValue |>> fun (c, v) -> Price {Commodity = c; Price = v}
-  let pSplit = sstr1 "split" >>. tuple3 (p1 pCommodity) (p1 pint32 ) pint32 |>> fun (c, k1, k2) -> Split {Commodity = c; K1 = k1; K2 = k2}
+  let pSplit = sstr1 "split" >>. tuple3 (p1 pCommodity) (p1 pnumber ) pnumber |>> fun (c, k1, k2) -> Split {Commodity = c; K1 = k1; K2 = k2}
 
   // Composite entries
   let pTransfer =
@@ -338,6 +339,7 @@ let pElement =
                                                          CapitalGains = cg
                                                          Asset = c
                                                          Quantity = q
+                                                         Keff = 1.0M
                                                          PerUnitPrice = price
                                                          LotName = lns
                                                          Reference = reference
@@ -365,5 +367,4 @@ let pRJournal =
   spaces >>. many (getPosition .>>. choice parsers .>> skipMany newline) .>> eof
 
 let loadRJournal filename =
-  let result = runParser pRJournal UserState.Default (FromFile filename)
-  result
+  runParser pRJournal UserState.Default (FromFile filename)

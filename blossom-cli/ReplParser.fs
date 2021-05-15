@@ -43,7 +43,8 @@ let clear = str "cls" >>. preturn Clear
 let set =
   let gpv = str "performance_reporting" >>. ws1 >>. pbool |>> GPerformanceReporting
   let gfd = str "filter_debug" >>. ws1 >>. pbool |>> GFilterDebug
-  str "set" >>. opt (ws1 >>. choice [gpv; gfd]) |>> Set
+  let glt = str "load_tracing" >>. ws1 >>. pbool |>> GLoadTracing
+  str "set" >>. opt (ws1 >>. choice [gpv; gfd; glt]) |>> Set
 
 // File management
 let load = choice [str "load"; str ":l"] >>. ws1 >>. restOfLine false |>> Load

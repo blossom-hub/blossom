@@ -35,93 +35,10 @@ alias AC1 Asset:Account1
 
 #endregion
 
-; Top level comment half way through ledger
 
-2020-01-01 Me | Basic Transfer 1
-  Asset:Account1      -100 USD
-    ~Asset:Pension      30
-  Asset:Piggles         -20 USD
-  Asset:SettlementAlpha
+2020-06-01 trade Asset:InteractiveBrokers:Stock   10000 9984JP @ 10000 JPY
+  settlement      Asset:InteractiveBrokers:Cash
+  note            Good luck!
 
-; translates to
-; Asset:Account1 30 Asset:Pension
-; Asset:Account1 70 Asset:SettlementAlpha
+2020-07-02 split 9984JP 1 2
 
-;2020-01-02 Me | Split Transfer 1
-;  Income:Salary       -1000 USD
-;  Asset:Pension         200 USD
-;  Asset:BankAccount
-
-;2020-01-03 Me | Split Transfer 2
-;  Income:SalaryA       -200 USD ~Asset:Pension
-;  Income:SalaryA       -800 USD
-;  Asset:BankAccountA
-
-;2020-01-04 Me | Split Transfer 3
-;  Income:SalaryA       -1000 USD
-;  Asset:BankAccountA
-
-;2020-01-02 * SO | Basic Transfer 2
-;  Asset:Account1  100 USD ~
-
-;2020-01-03 * Basic Transfer 3
-;  Asset:Account1  100 USD ; comment
-;  Asset:Account2
-
-;2020-01-04 Basic Trade 1
-;  Asset:Account1  2 NQZ20 @ 1135 USD [a44]
-;  Expense:Trading/0x12    4 USD
-;  Asset:Account2
-
-;2020-01-04 Basic Trade 2
-;  Asset:Account1  2 ASSET @ 100 USD
-;  Asset:Settlement Trading
-
-;2020-01-05 Basic Exchanges 1
-;  Asset:Account1  145 EUR <- 100 GBP ~
-
-;2020-01-06 Basic Exchanges 2
-;  Asset:Account1  100 GBP -> 135 USD
-;  Asset:Account1  145 EUR -> 110 GBP
-;  Asset:Account2
-
-2020-02-01 assert Asset:Account2  -106 USD ;assert comment
-
-; option 1 (minimal, auto sprayout)
-; result equivalent to:
-; 2020-02-01 Dividend payment on 500 ABC
-;   Asset:SettlementAccount       1000 USD
-;   Income:DividendIncomeAccount
-2020-02-01 dividend Asset:Account1  ASSET 1.02 USD
-
-
-; DIVIDEND PROBLEM: will need to specify the quantity at the moment because of settle vs non-settle? TBC
-; option 2 (complete)
-; result equivalent to:
-; 2020-02-01 Ex-dividend payment on 500 ABC (paydate: 2020-03-01)
-;   Income:DividendIncomeAccount           -1000 USD
-;   Receivable:DividendReceivablesAccount
-;
-; 2020-03-01 Dividend payment on 500 ABC (re: 2020-02-01)
-;   Asset:SettlementAccount                 1000 USD
-;   Receivable:DividendReceivablesAccount
-
-;2020-02-01 dividend Asset:Account1  ASSET 1.03 USD
-;  paydate      2020-03-01
-;  settlement   Asset:SettlementTrading
-;  receivable   Receivable:Dividend
-
-;2019-03-25 trade Asset:InteractiveBrokers:Trading:OPT 1 144051218 @ 260 JPY
-;  settlement      Asset:InteractiveBrokers:Cash
-;  note            Good luck!
-
-;2019-03-25 trade Asset:InteractiveBrokers:Trading:OPT 1 144051218 @ 260 JPY
-;  settlement      Asset:InteractiveBrokers:Cash
-
-;2019-05-09 trade Asset:InteractiveBrokers:Trading:OPT -1 144051218 @ 205 JPY
-;  settlement      Asset:InteractiveBrokers:Cash
-;  cg              Income:CapitalGains
-
-;2019-05-10 trade Asset:InteractiveBrokers:Trading:OPT -1 144051218 @ 0 JPY
-;  settlement      Asset:InteractiveBrokers:Cash
-;  cg              Income:CapitalGains

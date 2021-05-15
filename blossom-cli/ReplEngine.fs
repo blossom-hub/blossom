@@ -15,11 +15,13 @@ type GlobalOptions =
   {
     PerformanceReporting: bool
     FilterDebug: bool
+    LoadTracing: bool
   }
   with
     static member Default = {
       PerformanceReporting = false
       FilterDebug = false
+      LoadTracing = false
     }
 
 type State =
@@ -48,10 +50,12 @@ let set state value =
                 -> {state with GlobalOptions = {state.GlobalOptions with PerformanceReporting = v}}
             | Some (GFilterDebug v)
                 -> {state with GlobalOptions = {state.GlobalOptions with FilterDebug = v}}
+            | Some (GLoadTracing v)
+                -> {state with GlobalOptions = {state.GlobalOptions with LoadTracing = v}}
 
 let load state filename =
   try
-    let parsed = loadJournal filename
+    let parsed = loadJournal state.GlobalOptions.LoadTracing filename
     Some {state with Journal = Some parsed; Filename = Some filename}
   with
     | :? FileNotFoundException as ex ->

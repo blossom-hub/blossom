@@ -62,6 +62,7 @@ type ClosingTrade = {
   Settlement: Account
   CapitalGains: Account option
   Quantity: decimal
+  Keff: decimal
   PerUnitPrice: decimal
   UnadjustedPnL: decimal
   LotName: string
@@ -76,6 +77,7 @@ type OpeningTrade = {
   Asset: Commodity
   Quantity: decimal
   OpenQuantity: decimal
+  Keff: decimal
   Measure: Commodity
   PerUnitPrice: decimal
   LastUnitPrice: (DateTime * decimal)
@@ -88,6 +90,7 @@ type OpeningTrade = {
 
 type Entry = {
   Flagged : bool
+  Automatic: bool
   Date: SQ
   Payee: string option
   Narrative: string
@@ -101,8 +104,8 @@ type Journal = {
   CommodityDecls: Map<Commodity, CommodityDecl>
   Register: Map<SQ, Entry list>
   InvestmentAnalysis: OpeningTrade list
-  Prices: Map<Commodity * Commodity, Map<DateTime, decimal>>
-  Splits: Map<Commodity, (DateTime * int * int) list>
+  Prices: Map<Commodity * Commodity, Map<DateTime, decimal * decimal>>
+  SplitKFactors: Map<Commodity, (DateTime * decimal) list>
   Assertions: (DateTime * Account * Value) list
 }
 
