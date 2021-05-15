@@ -450,7 +450,7 @@ let holdingsAnalysis renderer (filter: Filter) (journal: Journal) =
     let averageOpeningPrice = ot |> List.map (fun o -> (o.PerUnitPrice, o.OpenQuantity)) |> weightedAverage |> Option.get
     let openQuantity = ot |> List.sumBy (fun o -> o.OpenQuantity)
     let unrealised = ot |> List.sumBy (fun o -> o.UnrealisedPnL)
-    let lastPrice = ot |> List.head |> fun o -> snd o.LastUnitPrice
+    let lastPrice = ot |> List.head |> fun o -> o.LastUnitPrice
     openQuantity, averageOpeningPrice, lastPrice, unrealised
 
   let trades =
@@ -467,6 +467,7 @@ let holdingsAnalysis renderer (filter: Filter) (journal: Journal) =
     {Header = "Position"; Key=false}
     {Header = "Avg. Price"; Key=false}
     {Header = "Last Price"; Key=false}
+    {Header = "Last Price Date"; Key=false}
     {Header = "Unrl. PnL"; Key=false}
   ]
 
@@ -477,7 +478,8 @@ let holdingsAnalysis renderer (filter: Filter) (journal: Journal) =
     Text measure
     Number (posn, 3)
     Number (aop, 3)
-    Number (lp, 3)
+    Number (snd lp, 3)
+    Date (fst lp)
     Number (upnl, 3)
   ]
 

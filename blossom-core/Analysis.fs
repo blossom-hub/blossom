@@ -46,17 +46,27 @@ let navIndicatorOf commodityDecls c = isMtm commodityDecls c |> function true ->
 let analyseInvestments commodityDecls
                        (trades : DTrade H list)
                        (dividends : DDividend H list)
-                       (prices : Map<(Commodity*Commodity), Map<DateTime, decimal * decimal>>)
+                       (prices : Map<(Commodity*Commodity), Map<DateTime, decimal>>)
                        (kfactors : Map<Commodity, (DateTime * decimal) list>) =
 
-  // Step 1: Calculate the split adjustment factors, update the trades
+  // Step 1a: Calculate the split adjustment factors, update the trades
   let ktrades = trades |> List.map (fun (posn, sq, flag, dtrade) -> let k = lookupK kfactors dtrade.Asset (fst sq)
                                                                     let ktrade = {dtrade with Keff = k
                                                                                               Quantity = k * dtrade.Quantity
                                                                                               PerUnitPrice = first (fun p -> p/k) dtrade.PerUnitPrice}
                                                                     (posn, sq, flag, ktrade))
 
+  // Step 1b: Update prices with factors too; also augment prices from trades if a price is missing for a day that was traded (e.g. fill in some blanks)
+  let prices1 = trades |> List.fold (fun s (_, sq, _, dtrade) -> let key = (dtrade.Asset, snd dtrade.PerUnitPrice)
+                                                                 let history = s |> Map.tryFind key |> Option.defaultValue Map.empty
+                                                                 let price = history |> Map.tryFind (fst sq)
+                                                                 match price with
+                                                                   | None -> history |> Map.add (fst sq) (fst dtrade.PerUnitPrice)
+                                                                                     |> fun hs -> Map.add key hs s
+                                                                   | Some _ -> s
+                                                                 ) prices
 
+  let kprices = prices1 |> Map.map (fun k ts -> ts |> Map.map (fun dt p -> let k = lookupK kfactors (fst k) dt in (p/k, k)))
 
   // Step 2: Tag each trade event
   let f1 balances (sq, dtrade: DTrade) =
@@ -138,9 +148,8 @@ let analyseInvestments commodityDecls
                 else None)
         let openingSettlement = Option.defaultValue dtrade.Account dtrade.Settlement
         let totalClosingQuantity = closings |> List.sumBy (fun c -> c.Quantity)
-        let lastPrice = prices |> Map.tryFind (dtrade.Asset, snd dtrade.PerUnitPrice)
-                               |> Option.map (Map.toList >> List.maxBy fst >> second fst)
-                               |> Option.defaultValue (fst (fst sqi), fst dtrade.PerUnitPrice)
+        let lastPrice = kprices |> Map.find (dtrade.Asset, snd dtrade.PerUnitPrice)
+                                |> Map.toList |> List.maxBy fst |> second fst
         let openQuantity = dtrade.Quantity + totalClosingQuantity
         let unrealisedPnL = openQuantity * (snd lastPrice - fst dtrade.PerUnitPrice) * multiplierOf commodityDecls dtrade.Asset
         {
@@ -160,4 +169,4 @@ let analyseInvestments commodityDecls
           Expenses = dtrade.Expenses |> List.map (fun (a, v, c) -> (a, v, match c with | Some CS -> a | Some (CV a2) -> a2 | None -> openingSettlement))
           Closings = closings
         })
-  matched2
+  matched2, kprices

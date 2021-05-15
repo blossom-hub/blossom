@@ -82,7 +82,6 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
         then [physicalTransfer] @ alot.Expenses
         else [physicalTransfer; notionalTransfer] @ alot.Expenses
     let (Types.Commodity commodity) = alot.Asset
-    let (Types.Commodity measure) = alot.Measure
     let openingEntry = {
       Flagged = false
       Automatic = true
@@ -162,14 +161,10 @@ let loadJournal trace filename =
                                                 >> fun ks -> List.scanBack (fun (dt, k1, k2) (_, k0) -> (dt, k0/k1 * k2)) ks (DateTime.MaxValue, 1M))
                      |> Map.ofList
 
-  // Prices are adjusted by the split factor here, which is kept for reference purposes p -> p/k
   let prices0 = items |> List.choose (function (_, sq, flagged, Price dprice) -> Some ((dprice.Commodity, snd dprice.Price), [fst sq, fst dprice.Price]) | _ -> None)
-  let prices = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
+  let prices1 = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
                     |> List.append prices0
-                    |> List.groupByApply fst (List.collect snd)
-                    |> List.map (fun ((asset, measure), ps) -> let ps2 = ps |> List.map (fun (dt, p) -> let k= lookupK splits asset dt
-                                                                                                        (dt, (p, k)))
-                                                               (asset, measure), Map.ofList ps2)
+                    |> List.groupByApply fst (List.collect snd >> Map.ofList)
                     |> Map.ofList
 
   let transfers = items |> List.choose (function | (ps, sq, flagged, Transfer dtransfer) -> Some (liftBasicEntry ps sq flagged dtransfer)
@@ -185,7 +180,7 @@ let loadJournal trace filename =
   let trades = items |> List.choose (function | (ps, sq, flagged, Trade dtrade) -> Some (ps, sq, flagged, dtrade)
                                               | _ -> None)
 
-  let investments = analyseInvestments commodityDecls0 trades dividends prices splits
+  let investments, prices = analyseInvestments commodityDecls0 trades dividends prices1 splits
   let register = integrateRegister commodityDecls0 transfers investments
 
   // collect all accounts and merge with decls
