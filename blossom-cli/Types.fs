@@ -4,6 +4,7 @@ open Types
 
 type GlobalOptionValue =
   | GPerformanceReporting of bool
+  | GFilterDebug of bool
 
 type Command =
   // Application management

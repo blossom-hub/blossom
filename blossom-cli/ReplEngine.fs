@@ -14,10 +14,12 @@ open Reports
 type GlobalOptions =
   {
     PerformanceReporting: bool
+    FilterDebug: bool
   }
   with
     static member Default = {
       PerformanceReporting = false
+      FilterDebug = false
     }
 
 type State =
@@ -44,6 +46,8 @@ let set state value =
             | None -> printfn "%A" state.GlobalOptions; state
             | Some (GPerformanceReporting v)
                 -> {state with GlobalOptions = {state.GlobalOptions with PerformanceReporting = v}}
+            | Some (GFilterDebug v)
+                -> {state with GlobalOptions = {state.GlobalOptions with FilterDebug = v}}
 
 let load state filename =
   try
@@ -97,7 +101,9 @@ let execute state input =
 
   try
     let result = runParser parse () (FromString input)
-    printfn "=> %A" result
+    if state.GlobalOptions.FilterDebug
+      then printfn "=> %A" result
+      else ()
     let output, duration = time (fun () -> action result)
     match state.GlobalOptions.PerformanceReporting with
       | true -> printfn "=> %A elapsed." duration

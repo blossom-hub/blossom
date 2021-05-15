@@ -42,7 +42,8 @@ let quit = choice [str "quit"; str ":q"] >>. preturn Quit
 let clear = str "cls" >>. preturn Clear
 let set =
   let gpv = str "performance_reporting" >>. ws1 >>. pbool |>> GPerformanceReporting
-  str "set" >>. opt (ws1 >>. choice [gpv]) |>> Set
+  let gfd = str "filter_debug" >>. ws1 >>. pbool |>> GFilterDebug
+  str "set" >>. opt (ws1 >>. choice [gpv; gfd]) |>> Set
 
 // File management
 let load = choice [str "load"; str ":l"] >>. ws1 >>. restOfLine false |>> Load
