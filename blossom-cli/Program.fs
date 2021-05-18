@@ -67,10 +67,11 @@ let main argv =
                          let port = httpargs.GetResult Port
                          WebEngine.web input port
       | _ when isPP   -> let ppargs = results.GetResult PP
+                         let ifn = ppargs.GetResult InputFile
                          let it = ppargs.GetResult InputType
                          let ot = ppargs.GetResult OutputType
                          let ofn = ppargs.GetResult OutputFile
-                         PrettyPrint.pp it ot (Option.get input) ofn
+                         PrettyPrint.pp it ot ifn ofn
       | _ -> match input with
                | Some fn -> ReplEngine.repl1 fn
                | None    -> ReplEngine.repl ReplEngine.State.Default
