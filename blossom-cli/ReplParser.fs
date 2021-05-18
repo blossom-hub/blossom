@@ -12,6 +12,8 @@ let ws = spaces
 let ws1 = spaces1
 let str = pstring
 
+let pdate = tuple3 (pint32 .>> pchar '-') (pint32 .>> pchar '-') pint32 |>> DateTime
+
 let pbool =
   choice
     [
@@ -44,7 +46,8 @@ let set =
   let gpv = str "performance_reporting" >>. ws1 >>. pbool |>> GPerformanceReporting
   let gfd = str "filter_debug" >>. ws1 >>. pbool |>> GFilterDebug
   let glt = str "load_tracing" >>. ws1 >>. pbool |>> GLoadTracing
-  str "set" >>. opt (ws1 >>. choice [gpv; gfd; glt]) |>> Set
+  let vd  = str "valuation_date" >>. ws1 >>. (pdate <|> stringReturn "today" DateTime.Today) |>> GValuationDate
+  str "set" >>. opt (ws1 >>. choice [gpv; gfd; glt; vd]) |>> Set
 let output = str "output" >>. ws1 >>. restOfLine false |>> Output
 
 // File management

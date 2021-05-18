@@ -12,7 +12,7 @@ type FileFormat = Blossom | Beancount | Ledger | Knut
 
 let blossom2beancount inputfn outputfn  =
   // preparation
-  let journal = loadJournal true inputfn
+  let journal = loadJournal true DateTime.MaxValue inputfn
 
   // validation
   match journal.Meta.Convention with

@@ -16,12 +16,14 @@ type GlobalOptions =
     PerformanceReporting: bool
     FilterDebug: bool
     LoadTracing: bool
+    ValuationDate: DateTime
   }
   with
     static member Default = {
       PerformanceReporting = false
       FilterDebug = false
       LoadTracing = false
+      ValuationDate = DateTime.Today
     }
 
 type State =
@@ -45,19 +47,9 @@ let time action =
   let elapsed = timer.Elapsed
   result, elapsed
 
-let set state value =
-  Some <| match value with
-            | None -> printfn "%A" state.GlobalOptions; state
-            | Some (GPerformanceReporting v)
-                -> {state with GlobalOptions = {state.GlobalOptions with PerformanceReporting = v}}
-            | Some (GFilterDebug v)
-                -> {state with GlobalOptions = {state.GlobalOptions with FilterDebug = v}}
-            | Some (GLoadTracing v)
-                -> {state with GlobalOptions = {state.GlobalOptions with LoadTracing = v}}
-
 let load state filename =
   try
-    let parsed = loadJournal state.GlobalOptions.LoadTracing filename
+    let parsed = loadJournal state.GlobalOptions.LoadTracing state.GlobalOptions.ValuationDate filename
     Some {state with Journal = Some parsed; Filename = Some filename}
   with
     | :? FileNotFoundException as ex ->
@@ -69,6 +61,18 @@ let reload state =
     | Some fn -> load state fn
     | None    -> printfn "Cannot reload if no file loaded"
                  Some state
+
+let set state value =
+  match value with
+   | None -> printfn "%A" state.GlobalOptions; Some state
+   | Some (GPerformanceReporting v)
+       -> Some {state with GlobalOptions = {state.GlobalOptions with PerformanceReporting = v}}
+   | Some (GFilterDebug v)
+       -> Some {state with GlobalOptions = {state.GlobalOptions with FilterDebug = v}}
+   | Some (GLoadTracing v)
+       -> Some {state with GlobalOptions = {state.GlobalOptions with LoadTracing = v}}
+   | Some (GValuationDate v)
+       -> reload {state with GlobalOptions = {state.GlobalOptions with ValuationDate = v}}
 
 let showHelp state =
   printfn "  Filters"

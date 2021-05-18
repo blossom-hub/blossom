@@ -135,12 +135,18 @@ let rec loadJournal0 trace depth filename : (FParsec.Position * RJournalElement)
                       |> List.concat
   elts0 @ imports
 
-let loadJournal trace filename =
+let loadJournal trace valuationDate filename =
   let elts = loadJournal0 trace 0 filename
+
+  (* Valuation date filtering affects everything with a date
+     - items is easy as everything is tagged with an SQ
+     - others from elts need individual attention (as prices has the date inside)
+  *)
 
   // Now process as one combined RJournal dataset
   let items = elts |> List.choose (function (position, Item (sq, flagged, elt)) -> Some (position, sq, flagged, elt) | _ -> None)
                    |> List.sortBy snd4
+                   |> List.filter (fun quad -> (quad |> snd4 |> fst) <= valuationDate)
 
   let header = elts |> List.choose (function (_, Header h) -> Some h | _ -> None)
                     |> List.tryHead
@@ -163,9 +169,10 @@ let loadJournal trace filename =
 
   let prices0 = items |> List.choose (function (_, sq, flagged, Price dprice) -> Some ((dprice.Commodity, snd dprice.Price), [fst sq, fst dprice.Price]) | _ -> None)
   let prices1 = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
-                    |> List.append prices0
-                    |> List.groupByApply fst (List.collect snd >> Map.ofList)
-                    |> Map.ofList
+                     |> List.append prices0
+                     |> List.groupByApply fst (List.collect snd >> Map.ofList)
+                     |> Map.ofList
+                     |> Map.map (fun ts -> Map.filter (fun dt _ -> dt <= valuationDate))
 
   let transfers = items |> List.choose (function | (ps, sq, flagged, Transfer dtransfer) -> Some (liftBasicEntry ps sq flagged dtransfer)
                                                  | _ -> None)

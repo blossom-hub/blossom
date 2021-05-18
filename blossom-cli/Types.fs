@@ -1,11 +1,13 @@
 module Types
 
+open System
 open Types
 
 type GlobalOptionValue =
   | GPerformanceReporting of bool
   | GFilterDebug of bool
   | GLoadTracing of bool
+  | GValuationDate of DateTime
 
 type Command =
   // Application management
