@@ -5,7 +5,7 @@ open Types
 
 type GlobalOptionValue =
   | GPerformanceReporting of bool
-  | GFilterDebug of bool
+  | GDebug of bool
   | GLoadTracing of bool
   | GValuationDate of DateTime
 

@@ -14,14 +14,14 @@ open Reports
 type GlobalOptions =
   {
     PerformanceReporting: bool
-    FilterDebug: bool
+    Debug: bool
     LoadTracing: bool
     ValuationDate: DateTime
   }
   with
     static member Default = {
       PerformanceReporting = false
-      FilterDebug = false
+      Debug = false
       LoadTracing = false
       ValuationDate = DateTime.Today
     }
@@ -67,8 +67,8 @@ let set state value =
    | None -> printfn "%A" state.GlobalOptions; Some state
    | Some (GPerformanceReporting v)
        -> Some {state with GlobalOptions = {state.GlobalOptions with PerformanceReporting = v}}
-   | Some (GFilterDebug v)
-       -> Some {state with GlobalOptions = {state.GlobalOptions with FilterDebug = v}}
+   | Some (GDebug v)
+       -> Some {state with GlobalOptions = {state.GlobalOptions with Debug = v}}
    | Some (GLoadTracing v)
        -> Some {state with GlobalOptions = {state.GlobalOptions with LoadTracing = v}}
    | Some (GValuationDate v)
@@ -119,7 +119,7 @@ let execute state input =
 
   try
     let result = runParser parse () (FromString input)
-    if state.GlobalOptions.FilterDebug
+    if state.GlobalOptions.Debug
       then printfn "=> %A" result
       else ()
     let output, duration = time (fun () -> action result)

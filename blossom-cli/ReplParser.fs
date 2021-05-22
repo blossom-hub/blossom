@@ -34,8 +34,13 @@ let pTenor : Parser<Tenor, unit>  =
 // Command Parsing
 
 let pFlags (fs:string) =
-  (skipChar '-' >>. (many1 (anyOf fs) .>> followedBy ((skipAnyOf fs) <|> ws1 <|> eof)))
-      <|>% []
+  skipChar '-' >>. (many1 (anyOf fs)) .>> ws <|>% []
+
+let pValuationMeasure =
+  let pCommodity =
+    let first = letter <|> digit <|> anyOf "."
+    many1Chars2 first (letter <|> digit <|> anyOf ".:-()_") |>> Commodity
+  skipChar '=' >>. pCommodity
 
 let flagged xs v = List.contains v xs
 
@@ -44,7 +49,7 @@ let quit = choice [str "quit"; str ":q"] >>. preturn Quit
 let clear = str "cls" >>. preturn Clear
 let set =
   let gpv = str "performance_reporting" >>. ws1 >>. pbool |>> GPerformanceReporting
-  let gfd = str "filter_debug" >>. ws1 >>. pbool |>> GFilterDebug
+  let gfd = str "debug" >>. ws1 >>. pbool |>> GDebug
   let glt = str "load_tracing" >>. ws1 >>. pbool |>> GLoadTracing
   let vd  = str "valuation_date" >>. ws1 >>. (pdate <|> stringReturn "today" DateTime.Today) |>> GValuationDate
   str "set" >>. opt (ws1 >>. choice [gpv; gfd; glt; vd]) |>> Set
@@ -59,9 +64,11 @@ let balances =
   choice [str "balances"; str "bal"; str ":b"]
     >>. ws
     >>. pFlags "gzxv"
+    .>>. opt pValuationMeasure
     .>>. pFilter
-    |>> fun (fs, f) ->
-          let br = {GroupToTop = flagged fs 'g'
+    |>> fun ((fs, vm), f) ->
+          let br = {ValuationMeasure = vm
+                    GroupToTop = flagged fs 'g'
                     HideZeros = flagged fs 'z'
                     Flex = flagged fs 'x'}
           Balances (f, br)

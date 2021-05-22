@@ -120,6 +120,7 @@ type Filter = {
 }
 
 type BalancesRequest = {
+  ValuationMeasure: Commodity option
   GroupToTop: bool
   HideZeros: bool
   Flex: bool
