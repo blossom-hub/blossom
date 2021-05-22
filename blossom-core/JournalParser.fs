@@ -112,7 +112,6 @@ type RJournalElement =
   | Header of JournalMeta
   | Import of string
   // Declarations and defintions
-  | Alias of string * Account
   | Account of AccountDecl
   | Commodity of CommodityDecl
   // Core elements
@@ -273,8 +272,6 @@ let pHeader =
 
 let pImport = sstr1 "import" >>. rol true |>> Import
 
-let pAlias = sstr1 "alias" >>. p1 (many1Chars2 letter (letter <|> digit)) .>>. pAccount .>> newline |>> Alias
-
 let pAccountDecl =
   let subitems = [spCommodity "commodity"; spNote; spValuationMode]
   sstr1 "account" >>. pAccount .>> skipNewline .>>. increaseIndent (pSubItems subitems)
@@ -361,7 +358,7 @@ let pPrices =
 let pRJournal =
   let parsers = [
     pIndent; pStartRegion; pEndRegion; pComment1;
-    pHeader; pImport; pAlias; pAccountDecl; pCommodityDecl;
+    pHeader; pImport; pAccountDecl; pCommodityDecl;
     pItem; pPrices
   ]
   spaces >>. many (getPosition .>>. choice parsers .>> skipMany newline) .>> eof
