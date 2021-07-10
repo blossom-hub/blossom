@@ -18,9 +18,15 @@ let joinAccounts elts virt =
   match virt with | Some v -> Types.Account2 (stub, v)
                   | None -> Types.Account stub
 
-let getAccount = function | Types.Account account -> account | Types.Account2 (account, _) -> account
+let dropVirtualAccount = function | Types.Account2 (account, _) -> Types.Account account | a -> a
 
-let getVirtualAccount = function | Types.Account _ -> None | Types.Account2 (_, virt) -> Some virt
+let (|GetAccount|) = function | Types.Account account -> account | Types.Account2 (account, _) -> account
+
+let (|GetVirtualAccount|) = function | Types.Account _ -> None | Types.Account2 (_, virt) -> Some virt
+
+let (|FlattenAccount|) includeVirtual account = 
+  match account with | Types.Account account -> account
+                     | Types.Account2 (account, virt) -> if includeVirtual then account + "/" + virt else account
 
 let liftBasicEntry position date flagged dtransfer =
   (* Highest priority is an individual split pair,
@@ -231,16 +237,17 @@ let expandPosting account (qty, commodity) caccount =
   [account, qty, commodity
    caccount, -qty, commodity]
 
-let evaluateMovements register = // : Map<DateTime, (Account * decimal * Commodity) list> =
-  let expandEntry entry = entry.Postings |> List.collect (fun (a,b,c) -> expandPosting a b c)
+let evaluateMovements includeVirtual register = // : Map<DateTime, (Account * decimal * Commodity) list> =
+  let (|DV|) = if includeVirtual then id else dropVirtualAccount
+  let expandEntry entry = entry.Postings |> List.collect (fun (DV a, b, DV c) -> expandPosting a b c)
   register |> Map.map (fun _ es -> List.collect expandEntry es)
 
 let inline summateAQCs  (xs : (Account * decimal * Commodity) list) =
   xs |> List.groupByApply (fst3 &&& thd3) (List.sumBy snd3)
      |> List.map (fun ((a,b),c) -> a,c,b)
 
-let evaluateBalances journal =
-  let movements = evaluateMovements journal.Register
+let evaluateBalances includeVirtual journal =
+  let movements = evaluateMovements includeVirtual journal.Register
   let msq = (DateTime.MinValue, None)
   // Group each date first, then calculate the cumulative balances per transition
   movements |> Map.map (fun _ es -> summateAQCs es)
@@ -249,7 +256,7 @@ let evaluateBalances journal =
             |> List.tail
             |> Map.ofList
 
-let prefilter (filter: Filter) journal =
+let prefilter (filter: Filter) includeVirtual journal =
   let register = journal.Register
 
   let dateFilter sq =
@@ -280,9 +287,9 @@ let prefilter (filter: Filter) journal =
   let postingSemiFilter (es : List<Entry>) =
     let f = match filter.Accounts with
               | [] -> fun _ -> true
-              | rs -> fun (Types.Account acc, _, Types.Account ca) ->
-                        rs |> List.map (fun r -> regexfilter r acc || regexfilter r ca)
-                           |> List.any id
+              | rs -> fun (FlattenAccount includeVirtual acc, _, FlattenAccount includeVirtual ca) ->
+                                rs |> List.map (fun r -> regexfilter r acc || regexfilter r ca)
+                                   |> List.any id
 
     let h = match filter.Commodities with
               | [] -> fun _ -> true
@@ -304,5 +311,5 @@ let prefilter (filter: Filter) journal =
       | false -> []
       | true -> es |> narrativeFilter |> payeeFilter |> tagFilter |> postingSemiFilter
 
-  let register2 = register |> Map.map apply
+  let register2 = register |> Map.map apply |> Map.filter (fun _ v -> not (List.isEmpty v))
   {journal with Register = register2}

@@ -18,7 +18,7 @@ let meta renderer request journal =
   let commoditiesFromEntry entry = entry.Postings |> List.map (fun (_, (_, Commodity c), _) -> c)
 
   let accounts = journal.AccountDecls |> Map.toList
-                                      |> List.map (function (Account acc, _) -> acc)
+                                      |> List.map (function (GetAccount acc, _) -> acc)
                                       |> Set.ofList
 
   let commodities = journal.CommodityDecls |> Map.toList
@@ -64,7 +64,7 @@ let checkJournal renderer request journal =
 
   renderer <|
     match request with
-      | Assertions -> let balances = evaluateBalances journal |> Map.toList
+      | Assertions -> let balances = evaluateBalances true journal |> Map.toList
                       let assertions = journal.Assertions
                       let schedule = assertions |> List.map fst3
                       let f1 = (fun dt -> dt, balances |> List.takeWhile (fun (d,_) -> fst d <= dt) |> List.last |> snd)
@@ -77,7 +77,7 @@ let checkJournal renderer request journal =
                           | None        -> None
                       let fails = assertions |> List.choose check1
                                              |> List.sortBy (fun (dt, a, _, c, _) -> (dt,a,c))
-                                             |> List.map (fun (dt, Account a, q, Commodity c, actual) -> [Date dt; Text a; Text c; Number (q, 3); Number (actual, 3); Number (actual-q, 3)])
+                                             |> List.map (fun (dt, GetAccount a, q, Commodity c, actual) -> [Date dt; Text a; Text c; Number (q, 3); Number (actual, 3); Number (actual-q, 3)])
                       let cs = [{Header = "Date"; Key=true}
                                 {Header = "Account"; Key = true}
                                 {Header = "Commodity"; Key = true}
@@ -88,11 +88,11 @@ let checkJournal renderer request journal =
 
 let balances renderer filter (request : BalancesRequest) journal =
   // do pre-filter
-  let j2 = prefilter filter journal
+  let j2 = prefilter filter request.IncludeVirtual journal
 
   // run it
   let result =
-    evaluateBalances j2
+    evaluateBalances request.IncludeVirtual j2
       |> Map.toList
       |> List.tryLast
       |> Option.map snd
@@ -102,7 +102,7 @@ let balances renderer filter (request : BalancesRequest) journal =
   let accountFilter xs =
     match filter.Accounts with
       | [] -> xs
-      | rs -> xs |> List.filter (fun (Account acc, _, _) ->
+      | rs -> xs |> List.filter (fun (FlattenAccount request.IncludeVirtual acc, _, _) ->
                                    rs |> List.map (fun r -> regexfilter r acc)
                                       |> List.any id)
 
@@ -134,14 +134,14 @@ let balances renderer filter (request : BalancesRequest) journal =
     let d = result2 |> List.map (fun (a, q, c) -> (a, q, c))
                     |> summateAQCs
                     |> List.sortBy fst3
-                    |> List.map (fun (Account a, q, Commodity c) -> [Text a; Number (q, 3); Text c; Text (gcn (Commodity c))])
+                    |> List.map (fun (FlattenAccount request.IncludeVirtual a, q, Commodity c) -> [Text a; Number (q, 3); Text c; Text (gcn (Commodity c))])
     Table (c, d)
 
   renderer table
 
 let journal renderer filter (request : JournalRequest) journal =
   // do pre-filter
-  let j2 = prefilter filter journal
+  let j2 = prefilter filter request.IncludeVirtual journal
 
   // expand entries
   let items =
@@ -154,7 +154,7 @@ let journal renderer filter (request : JournalRequest) journal =
   let accountFilter xs =
     match filter.Accounts with
       | [] -> xs
-      | rs -> xs |> List.filter (fun (_, _, _, _, _, Account acc, _, _) ->
+      | rs -> xs |> List.filter (fun (_, _, _, _, _, FlattenAccount request.IncludeVirtual acc, _, _) ->
                                    rs |> List.map (fun r -> regexfilter r acc)
                                       |> List.any id)
 
@@ -191,7 +191,7 @@ let journal renderer filter (request : JournalRequest) journal =
   let f2s = function true -> "*" | false -> ""
   let p2s = Option.defaultValue ""
 
-  let createRow (f, au, d, p, n, Account a, q, Commodity c) =
+  let createRow (f, au, d, p, n, FlattenAccount request.IncludeVirtual a, q, Commodity c) =
     [Date (fst d); f2s f |> Text; f2s au |> Text; p2s p |> Text; Text n; Text a; Number(q, 3); Text c]
 
   let data = result2 |> List.map createRow
@@ -201,13 +201,13 @@ let journal renderer filter (request : JournalRequest) journal =
 
 let balanceSeries renderer filter (request : SeriesRequest) journal =
   // do pre-filter
-  let j2 = prefilter filter journal
+  let j2 = prefilter filter request.IncludeVirtual journal
 
   // define specific filters to crystalise the result
   let accountFilter xs =
     match filter.Accounts with
       | [] -> xs
-      | rs -> xs |> List.filter (fun (Account acc, _, _) ->
+      | rs -> xs |> List.filter (fun (FlattenAccount request.IncludeVirtual acc, _, _) ->
                                    rs |> List.map (fun r -> regexfilter r acc)
                                       |> List.any id)
 
@@ -228,7 +228,7 @@ let balanceSeries renderer filter (request : SeriesRequest) journal =
 
   let zeroFilter = List.filter (fun (_, q, _) -> q <> 0M)
 
-  let result = evaluateBalances j2 |> Map.toList
+  let result = evaluateBalances request.IncludeVirtual j2 |> Map.toList
                   |> iftrue (not request.Flex) (List.map (second (accountFilter >> commodityFilter >> measureFilter)))
                   |> iftrue request.GroupToTop (List.map (second (groupTopn 1)))
 
@@ -242,7 +242,7 @@ let balanceSeries renderer filter (request : SeriesRequest) journal =
             {Header = "Commodity"; Key = false}]
 
   let p2s = Option.defaultValue ""
-  let createRow dt (Account a, q, Commodity c) = [Date dt; Text a; Number (q, 3); Text c]
+  let createRow dt (FlattenAccount request.IncludeVirtual a, q, Commodity c) = [Date dt; Text a; Number (q, 3); Text c]
 
   match left = right with
     | true -> renderer (Table(cs, []))
@@ -277,7 +277,7 @@ type private InternalLotRow = {
   ReturnPct: decimal option
 }
 
-let filterInvestmentAnalysis (filter: Filter) (investments: OpeningTrade list) =
+let filterInvestmentAnalysis (filter: Filter) includeVirtual (investments: OpeningTrade list) =
 
   let dateFilter (xs: OpeningTrade list) =
     let fil l lb r rb =
@@ -295,7 +295,7 @@ let filterInvestmentAnalysis (filter: Filter) (investments: OpeningTrade list) =
   let accountFilter (xs: OpeningTrade list) =
     match filter.Accounts with
       | [] -> xs
-      | rs -> xs |> List.filter (fun ot -> let (Account a) = ot.Account
+      | rs -> xs |> List.filter (fun ot -> let (FlattenAccount includeVirtual a) = ot.Account
                                            rs |> List.map (fun r -> regexfilter r a) |> List.any id)
 
   let commodityFilter (xs: OpeningTrade list) =
@@ -325,7 +325,7 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
                                                  |> Option.bind (fun t -> t.Name)
                                                  |> Option.defaultValue ""
 
-  let trades = filterInvestmentAnalysis filter journal.InvestmentAnalysis
+  let trades = filterInvestmentAnalysis filter request.IncludeVirtual journal.InvestmentAnalysis
 
   // create an anon-record representing the row data before
   // transforming to the concrete type, to make it easier to track
@@ -355,7 +355,7 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
       }
     match ot.Closings with
       | [] -> [row None]
-      | xs -> xs |> List.map (fun x -> row (Some x))
+      | xs -> xs |> List.map (Some >> row)
 
   let consolidate rows =
     let grouped = rows |> List.groupBy (fun r -> (r.OpeningDate, r.Long, r.Account, r.Closed, r.Asset, r.Measure))
@@ -411,7 +411,7 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
   ]
 
   let createTableRow row =
-    let (Account a) = row.Account
+    let (FlattenAccount request.IncludeVirtual a) = row.Account
     let (Commodity c) = row.Asset
     let (Commodity m) = row.Measure
     let age = (DateTime.Today - fst row.OpeningDate).Days
@@ -441,7 +441,7 @@ let lotAnalysis renderer (filter: Filter) (request: LotRequest) journal =
   renderer table
 
 
-let holdingsAnalysis renderer (filter: Filter) (journal: Journal) =
+let holdingsAnalysis renderer (filter: Filter) includeVirtual (journal: Journal) =
   let nameFor commodity = journal.CommodityDecls |> Map.tryFind (Commodity commodity)
                                                  |> Option.bind (fun t -> t.Name)
                                                  |> Option.defaultValue ""
@@ -454,7 +454,7 @@ let holdingsAnalysis renderer (filter: Filter) (journal: Journal) =
     openQuantity, averageOpeningPrice, lastPrice, unrealised
 
   let trades =
-    filterInvestmentAnalysis filter journal.InvestmentAnalysis
+    filterInvestmentAnalysis filter includeVirtual journal.InvestmentAnalysis
       |> List.filter (fun ot -> ot.OpenQuantity <> 0M)
       |> List.groupByApply (fun ot -> (ot.Account, ot.Asset, ot.Measure)) fn
       |> List.sortBy fst
@@ -471,7 +471,7 @@ let holdingsAnalysis renderer (filter: Filter) (journal: Journal) =
     {Header = "Unrl. PnL"; Key=false}
   ]
 
-  let createRow ((Account account, Commodity commodity, Commodity measure), (posn, aop, lp, upnl)) = [
+  let createRow ((FlattenAccount includeVirtual account, Commodity commodity, Commodity measure), (posn, aop, lp, upnl)) = [
     Text account
     Text commodity
     Text (nameFor commodity)

@@ -48,7 +48,7 @@ let blossom2knut inputfn outputfn =
       let s2 = match e.Payee with | Some x -> e.Narrative | None -> ""
       let r1 = $"{dts} \"{s1} // {s2}\""
       let am2s = function (a, Commodity b) -> $"{a} {safeCommodity b}"
-      let rs2 = [for (Account a, am, Account c) in e.Postings
+      let rs2 = [for (GetAccount a, am, GetAccount c) in e.Postings
                   do $"{safeAccount a}    {safeAccount c}   {am2s am}".TrimEnd()]
       [r1] @ rs2 @ [""]
     es |> List.collect g
@@ -108,7 +108,7 @@ let blossom2beancount inputfn outputfn  =
       let s2 = match e.Payee with | Some x -> e.Narrative | None -> ""
       let r1 = $"{dts} * \"{s1}\" \"{s2}\""
       let am2s = function (a, Commodity b) -> $"{a} {safeCommodity b}"
-      let rs2 = [for (Account a,am,_) in e.Postings
+      let rs2 = [for (GetAccount a,am,_) in e.Postings
                   do $"  {safeAccount a}    {am2s am}".TrimEnd()]
       [r1] @ rs2
     es |> List.collect g

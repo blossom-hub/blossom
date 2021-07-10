@@ -124,12 +124,14 @@ type BalancesRequest = {
   GroupToTop: bool
   HideZeros: bool
   Flex: bool
+  IncludeVirtual: bool
 }
 
 type JournalRequest = {
   HideZeros: bool
   Flex: bool
   FlaggedOnly: bool
+  IncludeVirtual: bool
 }
 
 type SeriesRequest = {
@@ -138,12 +140,14 @@ type SeriesRequest = {
   Flex: bool
   Cumulative: bool
   Tenor: Tenor
+  IncludeVirtual: bool
 }
 
 type LotRequest = {
   Consolidated: bool
   OpenOnly: bool
   ClosedOnly: bool
+  IncludeVirtual: bool
 }
 
 type CheckRequest = Assertions

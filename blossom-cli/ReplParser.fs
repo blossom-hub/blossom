@@ -70,7 +70,8 @@ let balances =
           let br = {ValuationMeasure = vm
                     GroupToTop = flagged fs 'g'
                     HideZeros = flagged fs 'z'
-                    Flex = flagged fs 'x'}
+                    Flex = flagged fs 'x'
+                    IncludeVirtual = flagged fs 'v'}
           Balances (f, br)
 
 let journal =
@@ -81,7 +82,8 @@ let journal =
     |>> fun (fs, f) ->
           let fr = {HideZeros = flagged fs 'z'
                     FlaggedOnly = flagged fs 'f'
-                    Flex = flagged fs 'x'}
+                    Flex = flagged fs 'x'
+                    IncludeVirtual = flagged fs 'v'}
           Journal (f, fr)
 
 let series =
@@ -89,32 +91,34 @@ let series =
     >>. ws1
     >>. pTenor
     .>> ws
-    .>>. pFlags "gzxvc"
+    .>>. pFlags "gzxcv"
     .>>. pFilter
     |>> fun ((t, fs), f) ->
           let sr = {GroupToTop = flagged fs 'g'
                     HideZeros = flagged fs 'z'
                     Flex = flagged fs 'x'
                     Cumulative = flagged fs 'c'
-                    Tenor = t}
+                    Tenor = t
+                    IncludeVirtual = flagged fs 'v'}
           BalanceSeries (f, sr)
 
 // Investment
 let lotAnalysis =
   choice [str "lots"]
    >>. ws
-   >>. pFlags "xog"
+   >>. pFlags "xogv"
    .>>. pFilter
    |>> fun (fs, f) ->
       let lr = { ClosedOnly = flagged fs 'x'
                  OpenOnly = flagged fs 'o'
-                 Consolidated = flagged fs 'g'}
+                 Consolidated = flagged fs 'g'
+                 IncludeVirtual = flagged fs 'v'}
       LotAnalysis (f, lr)
 
 let holdingsAnalysis =
   choice [str "holdings"]
   >>. ws
-  >>. pFlags "x"
+  >>. pFlags "xv"
   .>>. pFilter
   |>> fun (fs, f) -> HoldingsAnalysis f
 

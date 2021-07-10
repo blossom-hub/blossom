@@ -112,7 +112,7 @@ let execute state input =
     | Journal (filter, request)          -> withJournal <| journal HumanReadable.renderTable filter request
     | BalanceSeries (filter, request)    -> withJournal <| balanceSeries HumanReadable.renderTable filter request
     | LotAnalysis (filter, request)      -> withJournal <| lotAnalysis HumanReadable.renderTable filter request
-    | HoldingsAnalysis filter            -> withJournal <| holdingsAnalysis HumanReadable.renderTable filter
+    | HoldingsAnalysis filter            -> withJournal <| holdingsAnalysis HumanReadable.renderTable filter true
     | Check request                      -> withJournal <| checkJournal HumanReadable.renderTable request
     | Meta request                       -> withJournal <| meta HumanReadable.renderMetaResult request
     | Help                               -> showHelp state
