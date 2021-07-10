@@ -10,7 +10,7 @@ type AccountConvention = Financial5 | Financial7
 type Comment = Comment of string
 type Commodity = Commodity of string
 type LotName = AutoLotName of string | CustomLotName of string
-type Account = Account of string
+type Account = Account of string | Account2 of string * string
 
 type Value = decimal * Commodity
 

@@ -8,16 +8,19 @@ open Definitions
 open JournalParser
 open Analysis
 
-let splitAccounts (Types.Account stub) =
-  let f (a :string) = a.Split(':') |> List.ofArray
-  f stub
+let splitAccounts account =
+  let f (a: string) = a.Split(':') |> List.ofArray
+  match account with | Types.Account ms       -> f ms, None
+                     | Types.Account2 (ms, v) -> f ms, Some v
 
-let joinAccounts elts =
-  Types.Account (elts |> String.concat ":")
+let joinAccounts elts virt =
+  let stub = String.concat ":" elts
+  match virt with | Some v -> Types.Account2 (stub, v)
+                  | None -> Types.Account stub
 
-let liftBasicEntry2 position date flagged dtransfer =
-  let postings = dtransfer.Entries |> List.choose (function Posting (a,b,c,_,e) -> Some (a,b,c,e) | _ -> None)
-  0
+let getAccount = function | Types.Account account -> account | Types.Account2 (account, _) -> account
+
+let getVirtualAccount = function | Types.Account _ -> None | Types.Account2 (_, virt) -> Some virt
 
 let liftBasicEntry position date flagged dtransfer =
   (* Highest priority is an individual split pair,

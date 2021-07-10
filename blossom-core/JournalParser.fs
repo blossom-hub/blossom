@@ -208,7 +208,9 @@ let pAccount =
                   | None    -> hierarchy
                   | Some ac -> let stub = ac |> getAccountConventionStubs |> List.map (fun x -> pstring x .>> skipChar ':') |> choice
                                pipe2 stub hierarchy (fun a b -> [a] @ b)
-  parser |>> fun xs -> Types.Account (String.concat ":" xs)
+  let pvirt = opt (skipChar '/' >>. pAccountElt)
+  pipe2 parser pvirt (fun ms v -> let main = String.concat ":" ms
+                                  match v with Some vv -> Types.Account2 (main, vv) | None -> Types.Account main)
 
 let pPosting =
   let fullContra = nSpaces1 >>? sstr "~" >>? opt pAccount

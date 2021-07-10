@@ -9,7 +9,7 @@ open Tabular
 
 // utilities
 let groupTopn n =
-  let f = splitAccounts >> List.take n >> (fun x -> joinAccounts x)
+  let f = splitAccounts >> first (List.take n) >> uncurry joinAccounts
   List.map (first3 f) >> summateAQCs
 
 let meta renderer request journal =
