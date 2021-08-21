@@ -4,29 +4,10 @@ open System
 open System.IO
 open Shared
 open Types
+open Helpers
 open Definitions
 open JournalParser
 open Analysis
-
-let splitAccounts account =
-  let f (a: string) = a.Split(':') |> List.ofArray
-  match account with | Types.Account ms       -> f ms, None
-                     | Types.Account2 (ms, v) -> f ms, Some v
-
-let joinAccounts elts virt =
-  let stub = String.concat ":" elts
-  match virt with | Some v -> Types.Account2 (stub, v)
-                  | None -> Types.Account stub
-
-let dropVirtualAccount = function | Types.Account2 (account, _) -> Types.Account account | a -> a
-
-let (|GetAccount|) = function | Types.Account account -> account | Types.Account2 (account, _) -> account
-
-let (|GetVirtualAccount|) = function | Types.Account _ -> None | Types.Account2 (_, virt) -> Some virt
-
-let (|FlattenAccount|) includeVirtual account = 
-  match account with | Types.Account account -> account
-                     | Types.Account2 (account, virt) -> if includeVirtual then account + "/" + virt else account
 
 let liftBasicEntry position date flagged dtransfer =
   (* Highest priority is an individual split pair,

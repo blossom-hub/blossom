@@ -7,6 +7,7 @@ open Journal
 open FParsec
 open Types
 open Reports
+open Helpers
 
 type FileFormat = Blossom | Beancount | Ledger | Knut
 
