@@ -101,6 +101,8 @@ Some commands support other flags, which must be specified near the start of the
 
 `-z` hide some zero rows if applicable.
 
+`-v` includes any virtual account in the account string.
+
 If an invalid flag is provided, an error will be provided.
 
 ### No filter symbol - filter accounts

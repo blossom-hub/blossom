@@ -6,6 +6,9 @@
 ### Account trees
 ``Level1:LevelTwo:Level3``
 - no spaces allowed (this is a change from earlier version)
+
+``Level1:LevelTow:Level3/VirtualAccount``
+- can have a "virtual account", which is dropped in most functions - but can be included using a flag
 ### Amounts
 
 ```
