@@ -58,7 +58,7 @@ let checkJournal renderer request journal =
   let checkAssertion asofBalances dt account quantity commodity =
     let bals = asofBalances |> Map.tryFind dt
     let actual = bals |> Option.bind (Map.tryFind (account, commodity)) |> Option.defaultValue 0M
-    match actual = quantity with
+    match abs (actual - quantity) < 0.0001M with
       | false -> Some actual
       | true  -> None
 
