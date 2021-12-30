@@ -18,14 +18,14 @@ Yes and no. It works, but it doesn't do a whole lot and is not overly optimised.
 I am personally using this to capture my accounts, starting with 2020. Here's a statistics output snapshot (`meta statistics`) showing what's inside some of files so far:
 | Item         | Combined file |
 | ------------ | --------- |
-| Range        | 2020-01-01 -> 2021-04-19 |
-| Transactions | 3,232 |
-| Postings     | 4,862 |
-| Accounts     | 173 |
-| Commodities  | 148  |
-| Payees       | 282 | 
-| Assertions   | 191 |
-| Prices       | 48,879 | 
+| Range        | 2017-02-12 -> 2021-12-28 |
+| Transactions | 4,894 |
+| Postings     | 6,935 |
+| Accounts     | 181 |
+| Commodities  | 166  |
+| Payees       | 446 |
+| Assertions   | 382 |
+| Prices       | 57,494 |
 
 
 ### Platforms
