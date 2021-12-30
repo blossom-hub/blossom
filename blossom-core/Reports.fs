@@ -3,6 +3,7 @@ module Reports
 open System
 open Analysis
 open Types
+open Helpers
 open Shared
 open Journal
 open Tabular
