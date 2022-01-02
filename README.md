@@ -13,19 +13,19 @@ Blossom is a _yet another_ plain text acount application cli similar to [Ledger-
 Yes. But then you should get a real accountant if you need to follow those rules to the letter. It tries to strike a balance between real accounting and common sense. You can raise a ticket if you like.
 
 ## Does it work yet?
-Yes and no. It works, but it doesn't do a whole lot and is not overly optimised. For "toy" inputs, it works fine, and I have successfully converted a ~2500 line input into the tool. But on the flip side, not all the features are there and the outputs are rather basic.
+Yes and no. It works, but it doesn't do a whole lot and is not overly optimised, but currently performs well and can handle relatively large files from brokers. The below snapshot might convince you (or not) about the viability.
 
 I am personally using this to capture my accounts, starting with 2020. Here's a statistics output snapshot (`meta statistics`) showing what's inside some of files so far:
 | Item         | Combined file |
 | ------------ | --------- |
-| Range        | 2020-01-01 -> 2021-04-19 |
-| Transactions | 3,232 |
-| Postings     | 4,862 |
-| Accounts     | 173 |
-| Commodities  | 148  |
-| Payees       | 282 | 
-| Assertions   | 191 |
-| Prices       | 48,879 | 
+| Range        | 2017-02-12 -> 2021-12-29 |
+| Transactions | 5,030 |
+| Postings     | 7,119 |
+| Accounts     | 181 |
+| Commodities  | 172  |
+| Payees       | 446 |
+| Assertions   | 382 |
+| Prices       | 60,733 |
 
 
 ### Platforms
