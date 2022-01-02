@@ -61,7 +61,7 @@ Print the validation results (not yet implemented).
 ```
 
 ### Meta
-View the list of accounts / commodities etc.
+View the list of accounts / commodities etc. Any text after the type of meta is likely to be used as a regex filter for that dataset.
 ```
 ] meta accounts
 ] meta commodities
