@@ -17,7 +17,8 @@ type Command =
   // File management
   | Load of string
   | Reload
-  | Output of string
+  | Switch of int option
+  | Close of int
   // Accounting
   | Balances of Filter * BalancesRequest
   | Journal of Filter * JournalRequest

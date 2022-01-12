@@ -53,11 +53,12 @@ let set =
   let glt = str "load_tracing" >>. ws1 >>. pbool |>> GLoadTracing
   let vd  = str "valuation_date" >>. ws1 >>. (pdate <|> stringReturn "today" DateTime.Today) |>> GValuationDate
   str "set" >>. opt (ws1 >>. choice [gpv; gfd; glt; vd]) |>> Set
-let output = str "output" >>. ws1 >>. restOfLine false |>> Output
 
 // File management
-let load = choice [str "load"; str ":l"] >>. ws1 >>. restOfLine false |>> Load
-let reload = choice [str "reload"; str ":r"] >>. preturn Reload
+let load = str "load" >>. ws1 >>. restOfLine false |>> Load
+let reload = str "reload" >>. preturn Reload
+let switch = str "switch" >>. opt (ws1 >>. pint32) |>> Switch 
+let close = str "close" >>. ws1 >>. pint32 |>> Close
 
 // Accounting
 let balances =
@@ -136,7 +137,7 @@ let meta = str "meta" >>. ws1 >>.
             |>> fun m -> Meta {RequestType = m; Regex = None}
 
 let applicationCommands = [quit; clear; set]
-let fileCommands = [load; reload; output]
+let fileCommands = [load; reload; switch; close]
 let accountingCommands = [balances; journal; series]
 let investmentCommands = [lotAnalysis; holdingsAnalysis]
 let otherCommands = [meta; check; help]

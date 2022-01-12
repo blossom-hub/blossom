@@ -8,6 +8,8 @@ open Renderers
 open ReplParser
 open ParserShared
 open Journal
+open Tabular
+open Shared
 
 open Reports
 
@@ -28,17 +30,15 @@ type GlobalOptions =
 
 type State =
   {
-    Filename: string option
-    Journal: Journal option
+    ActiveJournal: int option
+    Journals : Map<int, string * DateTime * Journal>
     GlobalOptions: GlobalOptions
-    LastResult: string list option
   }
   with
     static member Default = {
-      Filename = None
-      Journal = None
+      ActiveJournal = None
+      Journals = Map.empty
       GlobalOptions = GlobalOptions.Default
-      LastResult = None
     }
 
 let time action =
@@ -50,17 +50,56 @@ let time action =
 let load state filename =
   try
     let parsed = loadJournal state.GlobalOptions.LoadTracing state.GlobalOptions.ValuationDate filename
-    Some {state with Journal = Some parsed; Filename = Some filename}
+    let existingId = Map.tryPick (fun k (fn, _, _) -> if fn = filename then Some k else None) state.Journals
+    let usedId = match existingId with 
+                   | Some i -> i 
+                   | None -> state.Journals |> Map.toList |> List.map fst
+                                                          |> function | [] -> 1 | xs -> List.max xs |> fun k -> k + 1
+    Some {state with ActiveJournal = Some usedId; Journals = state.Journals |> Map.add usedId (filename, DateTime.Now, parsed)}
   with
     | :? FileNotFoundException as ex ->
            printfn "Couldn't find file %A" ex.FileName
            Some state
 
+let close state journalId =
+  if state.Journals.ContainsKey journalId
+    then let newJournals = state.Journals |> Map.remove journalId
+         let newActiveJournal = 
+           if state.ActiveJournal <> Some journalId
+             then state.ActiveJournal
+             else newJournals |> Map.toList |> function | [] -> None | xs -> List.minBy fst xs |> fst |> Some
+         printfn "Closed: %s" (state.Journals.[journalId] |> fst3)
+         Some { state with Journals = newJournals; ActiveJournal = newActiveJournal }
+    else printfn "Journal identifier not valid"
+         Some state
+
 let reload state =
-  match state.Filename with
-    | Some fn -> load state fn
-    | None    -> printfn "Cannot reload if no file loaded"
-                 Some state
+  match state.ActiveJournal with
+    | Some i -> state.Journals.[i] |> fst3 |> load state
+    | None   -> printfn "Cannot reload if no file loaded"
+                Some state
+
+let switch state journalId =
+  match journalId with 
+    | None   -> let cs = [{Header = "#"; Key = true}
+                          {Header = "A"; Key = false;}
+                          {Header = "Filename"; Key = false}
+                          {Header = "Load time"; Key = false}]
+                state.Journals |> Map.toList
+                               |> List.map (fun (k, (fn, t, _)) -> [Number (decimal k,0)
+                                                                    Text (if Some k = state.ActiveJournal then "*" else "")
+                                                                    Text fn
+                                                                    Text (t.ToString())])
+                               |> fun ds -> Table (cs, ds)
+                               |> HumanReadable.renderTable
+                               |> ignore
+                Some state 
+    | Some j -> match Map.tryFind j state.Journals with 
+                  | Some _ -> let fn = state.Journals.[j] |> fst3
+                              printfn "Switched to: %s" fn
+                              Some {state with State.ActiveJournal = Some j}
+                  | None   -> printfn "Journal identifier not valid"
+                              Some state
 
 let set state value =
   match value with
@@ -88,25 +127,19 @@ let showHelp state =
 
 let execute state input =
   let withJournal op =
-    match state.Journal with
-      | Some j -> let result = op j
-                  Some {state with LastResult = Some result}
+    match state.ActiveJournal with
+      | Some i -> state.Journals.[i] |> thd3 |> op |> ignore
       | None   -> printfn "You must load a journal first."
-                  Some state
-
-  let writeLast state filename =
-    match state.LastResult with
-      | Some xs -> File.WriteAllLines (filename, xs)
-      | None    -> printfn "No result to output"
     Some state
 
   let action = function
     | Quit                               -> None
     | Clear                              -> Console.Clear()
                                             Some state
-    | Output filename                    -> writeLast state filename
     | Set value                          -> set state value
     | Load filename                      -> load state filename
+    | Close journalId                    -> close state journalId
+    | Switch journalId                   -> switch state journalId
     | Reload                             -> reload state
     | Balances (filter, request)         -> withJournal <| balances HumanReadable.renderTable filter request
     | Journal (filter, request)          -> withJournal <| journal HumanReadable.renderTable filter request
@@ -132,7 +165,9 @@ let execute state input =
             Some state
 
 let rec repl state =
-  printf "] "
+  match state.ActiveJournal with 
+    | Some i -> printf "%d] " i
+    | None   -> printf "] "
   let input = Console.ReadLine()
   match execute state input with
     | Some state2 -> repl state2
