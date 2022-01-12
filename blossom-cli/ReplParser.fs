@@ -134,7 +134,8 @@ let meta = str "meta" >>. ws1 >>.
                     stringReturn "commodities" Commodities
                     stringReturn "payees"      Payees
                     stringReturn "tags"        Tags_]
-            |>> fun m -> Meta {RequestType = m; Regex = None}
+            .>>. opt (ws1 >>. restOfLine false)
+            |>> fun (m, r) -> Meta {RequestType = m; Regex = r}
 
 let applicationCommands = [quit; clear; set]
 let fileCommands = [load; reload; switch; close]
