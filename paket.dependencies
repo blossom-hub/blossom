@@ -4,3 +4,4 @@ storage: none
 framework: netcoreapp5.0
 nuget argu
 nuget fparsec
+nuget suave
