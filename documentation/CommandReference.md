@@ -1,17 +1,17 @@
 # Command Reference
 
-All these commands operate on the `blossom-cli` main executable command internal prompt, e.g.
+All these commands operate on the `blossom-cli` main executable command internal prompt, as per the example below. The number to the left of the prompt represents the current file being operated on, as the tool can now load multiple files at once (and process them individually). Note: This index number is excluded from many of the examples below.
 
 ```
 Welcome to Blossom v0.1
 -----------------------
-] :l my_file.dat
-] :b >2020-01-01
+] load my_file.dat
+0] :b >2020-01-01
 ```
 
 Most commands have a on letter shortform (starting with a `:`) for those who like to type less, understand more. Some take optional flags, which are provided using the syntax
 ```
-] :c -abc <other args>
+4] :c -abc <other args>
 ```
 where a,b,c and are all flags.
 
@@ -20,12 +20,13 @@ where a,b,c and are all flags.
 ## Operational commands
 ### Load and reload files
 ```
-] :l filename.dat
 ] load filename.dat
-
-] :r
 ] reload
+] switch <optional number>
+] close <identity>
 ```
+
+The `switch` command does two roles - without the index number, it prints all the loaded journals and their load times. With a number it changes the active journal to that provided one.
 
 ### Help
 A short help message is printed to remind some syntax.
