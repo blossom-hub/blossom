@@ -8,6 +8,8 @@ Blossom is a _yet another_ plain text acount application cli similar to [Ledger-
 - As it's plain text, you can store your files in whatever source control repository or document management system you like. I **don't** recommend storing them on github.com!
 - blossom only reads your data, it doesn't know how to write and won't smash up your data.
 - a small eco-system of helper utilities is in the planning (pretty-print, price import, etc - rather custom)
+- a VSCode extension is in developement, including support for a notebook.
+- will support reporting via REST services, so it is integratable into your own workflow
 
 ## But this breaks IFRS Rule 123-R!
 Yes. But then you should get a real accountant if you need to follow those rules to the letter. It tries to strike a balance between real accounting and common sense. You can raise a ticket if you like.
@@ -49,9 +51,6 @@ After the initial accounting portions which are fairly standard across pta softw
 Most of the "standard" formatting works in blossom, although there some extra helpers and formatting supported to cut down on boilerplate and monotonous copy/paste. You can see some of the format ideas at the [journal format](documentation/JournalFormat.md) page.
 
 ## Plans
-I'm currently migrating a bigger codebase from my initial implementation into this repository and upgrading several features.
-1. Migrate existing infrastructure
-1. Code up and improve original accouting
 1. Add more checks / validation
 1. Focus trading expanding features
 1. Add a [VSCode](https://code.visualstudio.com/) extension for both _editing_ and _processing_ the data.
