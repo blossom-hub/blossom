@@ -53,13 +53,13 @@ let execute (state: State) (index: int, input) =
       | None   -> Choice2Of2 "Invalid journal id"
 
   match result with 
-    | Balances (filter, request)         -> withJournal <| balances Tabular.renderText filter request
-    | Journal (filter, request)          -> withJournal <| journal Tabular.renderText filter request
-    | BalanceSeries (filter, request)    -> withJournal <| balanceSeries Tabular.renderText filter request
-    | LotAnalysis (filter, request)      -> withJournal <| lotAnalysis Tabular.renderText filter request
-    | HoldingsAnalysis filter            -> withJournal <| holdingsAnalysis Tabular.renderText filter true
-    | Check request                      -> withJournal <| checkJournal Tabular.renderText request
-    | Meta request                       -> withJournal <| meta HumanReadable.renderMetaResult request
+    | Balances (filter, request)         -> withJournal <| balances Tabular.renderJson filter request
+    | Journal (filter, request)          -> withJournal <| journal Tabular.renderJson filter request
+    | BalanceSeries (filter, request)    -> withJournal <| balanceSeries Tabular.renderJson filter request
+    | LotAnalysis (filter, request)      -> withJournal <| lotAnalysis Tabular.renderJson filter request
+    | HoldingsAnalysis filter            -> withJournal <| holdingsAnalysis Tabular.renderJson filter true
+    | Check request                      -> withJournal <| checkJournal Tabular.renderJson request
+    //| Meta request                       -> withJournal <| meta HumanReadable.renderMetaResult request
     | _ -> Choice2Of2 "Unsupported via http!"
 
 let web port =
@@ -78,8 +78,8 @@ let web port =
         pathScan "/rest/%d/execute" (fun i -> request (fun r -> let command = fst r.form.[0]
                                                                 let res = execute state (i, command) 
                                                                 match res with 
-                                                                  | Choice1Of2 a -> OK (String.concat Environment.NewLine a)
-                                                                  | Choice2Of2 b -> OK b))
-      ]      
+                                                                  | Choice1Of2 a -> OK a
+                                                                  | Choice2Of2 b -> failwith b))
+      ]
       OK "Hi there"
     ]

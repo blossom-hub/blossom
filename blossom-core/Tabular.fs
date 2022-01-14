@@ -24,7 +24,7 @@ let rec initialRender =
            | Number (v, dp) -> v.ToString("0." + String.replicate dp "0" + "##")
            | Empty          -> ""
 
-let renderText (Table (hs,data)) =
+let renderText (Table (hs, data)) =
   let elidables0 = data |> List.tryHead |> Option.map (List.map isElidable)
   let rows = data |> List.map (List.map initialRender)
   let getWidth i (xs : string list list) = xs |> List.map (fun r -> r.[i] |> String.length) |> List.max
@@ -59,5 +59,23 @@ let renderText (Table (hs,data)) =
             let lines2 = [sprintf "  (%A rows)" (List.length rs)]
             lines1 @ lines2
 
+// Since we have close control over the object, render this directly rather than
+// using Newtonsoft.Json
+let renderJson (Table (hs, data)) = 
+  let L x = "[" + x + "]"
+  let Q x = "\"" + x + "\""
+  let schema = hs |> List.map (fun cs -> $"""{{"header":{Q cs.Header}, "type":{if cs.Key then "true" else "false"}}}""")
+                  |> String.concat ","
+                  |> L
+
+  let render e = let i = initialRender e
+                 match e with | Date _ -> $"""{{"d": {Q i}}}"""
+                              | Text _ -> Q i
+                              | Empty  -> "null"
+                              | _      -> i
+
+  let rows = data |> List.map (List.map render >> String.concat "," >> L) |> String.concat "," |> L
+
+  $"""{{"schema": {schema}, "rows": {rows}}}"""
 
 
