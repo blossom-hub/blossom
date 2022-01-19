@@ -5,11 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "blossom-cli",
+            "name": "blossom-cli (debug)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build (cli)",
+            "preLaunchTask": "build (debug)",
             "program": "${workspaceFolder}/blossom-cli/bin/Debug/netcoreapp5.0/blossom-cli.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "externalTerminal"
+        },
+        {
+            "name": "blossom-cli (release)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build (release)",
+            "program": "${workspaceFolder}/blossom-cli/bin/Release/netcoreapp5.0/blossom-cli.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
