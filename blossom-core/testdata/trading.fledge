@@ -1,112 +1,106 @@
 .indent 2
 
 journal Trading Example
-  cg Income:Capital Gains
   commodity USD
   convention F7
 
 commodity 9984
   name Softbank Corp.
-  measure JPY
   dp 0
   class Equity
   externalid isin JP3436100006
 
 commodity N225H1
   name N225 MAR '21 Futures
-  measure JPY
   multiplier 1000
   dp 0
   class Future
   mtm
 
 * Long example
-2020-12-04 Purchase Softbank
-  Asset:Trading         400 9984 @ 7260 JPY [lot1]
-  Expense:Commission    100 JPY
-  Asset:Settlement      ; 2,904,100 JPY
+2020-12-04 trade Asset:Trading  400 9984 @ 7260 JPY
+  settlement     Asset:Settlement
+  expense        Expense:Commission    100 JPY
 
-assert 2020-12-04 Asset:Settlement   -2906100 JPY
+2020-12-04 assert Asset:Settlement   -2906100 JPY
 
-2020-12-07 Purchase Softbank (account 2!)
-  Asset:Trading2        600 9984 @ 7123 JPY [lot2]
-  Expense:Commission    100 JPY
-  Asset:Settlement      ; 4,273,900 JPY
+2020-12-07 trade Asset:Trading2  600 9984 @ 7123 JPY
+  settlement     Asset:Settlement
+  expense        Expense:Commission    100 JPY
 
-assert 2020-12-07 Asset:Settlement   -7180000 JPY
+2020-12-07 assert Asset:Settlement   -7180000 JPY
 
-2021-02-09 Sell Softbank
-  Asset:Trading          -200 9984 @ 9808 JPY
-  Expense:Commission      75 JPY
-  ;Income:Capital Gains   -509600 JPY
-  Asset:Settlement       ; 581525 JPY
+2021-02-09 trade Asset:Trading -200 9984 @ 9808 JPY
+  settlement     Asset:Settlement
+  cg             Income:CapitalGains
+  expense        Expense:Commission    75 JPY
 
-assert 2021-02-09 Asset:Settlement       -5218475 JPY
-assert 2021-02-09 Income:Capital Gains   -509600 JPY
+2021-02-09 assert Asset:Settlement       -5218475 JPY
+2021-02-09 assert Income:CapitalGains   -509600 JPY
 
-2021-02-23 Sell Softbank
-  Asset:Trading          -100 9984 @ 10530 JPY
-  Expense:Commission      25 JPY
-  ; Income:Capital Gains  -253700 JPY
-  Asset:Settlement
+2021-02-23 trade Asset:Trading -100 9984 @ 10530 JPY
+  settlement     Asset:Settlement
+  cg             Income:CapitalGains
+  expense        Expense:Commission    75 JPY
 
-assert 2021-02-23 Asset:Settlement       -4166700 JPY
-assert 2021-02-23 Expense:Commission      3500 JPY
-assert 2021-02-23 Income:Capital Gains   -23156600 JPY
-assert 2021-02-23 Asset:Trading           100 9984
-assert 2021-02-23 Asset:Trading2          600 9984
+2021-02-23 assert Asset:Settlement       -4166700 JPY
+2021-02-23 assert Expense:Commission      3500 JPY
+2021-02-23 assert Income:CapitalGains   -23156600 JPY
+2021-02-23 assert Asset:Trading           100 9984
+2021-02-23 assert Asset:Trading2          600 9984
 
-* Short example (because it is harder)
-2020-11-27 Sell Short Smartone
-  Asset:Trading         -10000 315 @ 4.34 HKD
-  Expense:Commission     100 HKD
-  Asset:Settlement
+; * Short example (because it is harder)
+; 2020-11-27 Sell Short Smartone
+;   Asset:Trading         -10000 315 @ 4.34 HKD
+;   Expense:Commission     100 HKD
+;   Asset:Settlement
+; 
+; assert 2020-11-27 Asset:Settlement  43300 HKD
+; assert 2020-11-27 Asset:Trading    -10000 315
+; 
+; 2021-01-11 Partial close Smartone short
+;   Asset:Trading            5000 315 @ 4.14 HKD
+;   Expense:Commission       50 HKD
+;   Asset:Settlement
+; 
+; assert 2021-01-11 Asset:Settlement       22550 HKD
+; assert 2021-01-11 Income:Capital Gains  -1000 HKD
+; assert 2021-01-11 Asset:Trading         -5000 315
+; 
+; 2021-01-12 Close rest of Smartone short
+;   Asset:Trading            5000 315 @ 4.2 HKD
+;   Expense:Commission       50 HKD
+;   Asset:Settlement
+; 
+; assert 2021-01-12 Asset:Settlement       1500 HKD
+; assert 2021-01-12 Income:Capital Gains  -1700 HKD
+; assert 2021-01-12 Asset:Trading          0 315
 
-assert 2020-11-27 Asset:Settlement  43300 HKD
-assert 2020-11-27 Asset:Trading    -10000 315
-
-2021-01-11 Partial close Smartone short
-  Asset:Trading            5000 315 @ 4.14 HKD
-  Expense:Commission       50 HKD
-  Asset:Settlement
-
-assert 2021-01-11 Asset:Settlement       22550 HKD
-assert 2021-01-11 Income:Capital Gains  -1000 HKD
-assert 2021-01-11 Asset:Trading         -5000 315
-
-2021-01-12 Close rest of Smartone short
-  Asset:Trading            5000 315 @ 4.2 HKD
-  Expense:Commission       50 HKD
-  Asset:Settlement
-
-assert 2021-01-12 Asset:Settlement       1500 HKD
-assert 2021-01-12 Income:Capital Gains  -1700 HKD
-assert 2021-01-12 Asset:Trading          0 315
-
-* Mark to market Futures example
-2020-09-04 Purchase N225 Mar 21 Futures
-  Asset:Trading         5 N225H1 @ 22960 JPY
-  Expense:Commission    2000 JPY
-  Asset:Settlement
-
-assert 2020-09-04 Asset:Settlement       -2000 JPY
-
-2021-02-17 Partial Exit N225 Futures
-  Asset:Trading         -3 N225H1 @ 30400 JPY
-  Expense:Commission    1200 JPY
-  Asset:Settlement
-  ; Income:Capital Gains    -22,320,000 JPY
-
-assert 2021-02-17 Asset:Settlement       -5219675 JPY
-assert 2021-02-17 Income:Capital Gains   -22829600 JPY
-
-2021-03-08 Close N225 Futures
-  Asset:Trading         -2 N225H1 @ 28760 JPY
-  Expense:Commission    800 JPY
-  Asset:Settlement
-  ; Income:Capital Gains    -11,600,000 JPY
-
-
-; INCORRECT!
-assert 2021-03-08 Asset:Settlement       -4167500 JPY
-assert 2021-03-08 Income:Capital Gains   -34756600 JPY
+;* Mark to market Futures example
+;2020-09-04 Purchase N225 Mar 21 Futures
+;  Asset:Trading         5 N225H1 @ 22960 JPY
+;  Expense:Commission    2000 JPY
+;  Asset:Settlement
+;
+;assert 2020-09-04 Asset:Settlement       -2000 JPY
+;
+;2021-02-17 Partial Exit N225 Futures
+;  Asset:Trading         -3 N225H1 @ 30400 JPY
+;  Expense:Commission    1200 JPY
+;  Asset:Settlement
+;  ; Income:Capital Gains    -22,320,000 JPY
+;
+;assert 2021-02-17 Asset:Settlement       -5219675 JPY
+;assert 2021-02-17 Income:Capital Gains   -22829600 JPY
+;
+;2021-03-08 Close N225 Futures
+;  Asset:Trading         -2 N225H1 @ 28760 JPY
+;  Expense:Commission    800 JPY
+;  Asset:Settlement
+;  ; Income:Capital Gains    -11,600,000 JPY
+;
+;
+;; INCORRECT!
+;assert 2021-03-08 Asset:Settlement       -4167500 JPY
+;assert 2021-03-08 Income:Capital Gains   -34756600 JPY
+;

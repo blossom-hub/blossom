@@ -31,14 +31,16 @@ commodity NQZ20
   multiplier 20
   mtm
 
-alias AC1 Asset:Account1
+; alias AC1 Asset:Account1
 
 #endregion
 
 
-2020-06-01 trade Asset:InteractiveBrokers:Stock   10000 9984JP @ 10000 JPY
-  settlement      Asset:InteractiveBrokers:Cash
+2020-06-01 trade Asset:Brokers:Stock   10000 9984JP @ 10000 JPY
+  settlement      Asset:Brokers:Cash
   note            Good luck!
 
 2020-07-02 split 9984JP 1 2
 
+prices 9984JP JPY
+  2021-04-04 5622
