@@ -72,6 +72,7 @@ type DTransfer = {
 type DDividend = {
   Account: Account
   Asset: Commodity
+  Quantity: decimal
   PerUnitValue: Value
   PayDate: DateTime option
   Settlement: Account option
@@ -314,14 +315,15 @@ let pElement =
                                    Transfer {Payee = payee; Narrative = narrative; Tags = Set.empty; Entries = entries}
 
   let pDividend =
-    let subitems = [spPaydate; spAccount "account"; spAccount "settlement"; spAccount "receivable"; spAccount "income"]
-    sstr1 "dividend" >>. tuple3 (p1 pAccount) (p1 pCommodity) pValue .>> skipNewline .>>. increaseIndent (pSubItems subitems)
-      |>> fun ((a, c, v), ss) -> let paydate = ss |> List.tryPick (function SPaydate d -> Some d | _ -> None)
-                                 let s = ss |> List.tryPick (function SAccount ("settlement", d) -> Some d | _ -> None)
-                                 let r = ss |> List.tryPick (function SAccount ("receivable", d) -> Some d | _ -> None)
-                                 let i =  ss |> List.tryPick  (function SAccount ("income", d) -> Some d | _ -> None)
-                                 Dividend {Account = a; Asset = c; PerUnitValue = v; PayDate = paydate;
-                                           Settlement = s; Receivable = r; Income = i}
+    let subitems = [spPaydate; spAccount "settlement"; spAccount "receivable"; spAccount "income"]
+    sstr1 "dividend" >>. (p1 pAccount) .>>. (p1 pValue .>> sstr1 "@" .>>. pValue) .>> skipNewline .>>. increaseIndent (pSubItems subitems)
+      |>> fun ((account, ((q, c), v)), ss) -> let paydate = ss |> List.tryPick (function SPaydate d -> Some d | _ -> None)
+                                              let s = ss |> List.tryPick (function SAccount ("settlement", d) -> Some d | _ -> None)
+                                              let r = ss |> List.tryPick (function SAccount ("receivable", d) -> Some d | _ -> None)
+                                              let i =  ss |> List.tryPick  (function SAccount ("income", d) -> Some d | _ -> None)
+                                              Dividend {Account = account; Asset = c; Quantity = q; 
+                                                        PerUnitValue = v; PayDate = paydate;
+                                                        Settlement = s; Receivable = r; Income = i}
 
   let pTrade =
     let subitems = [spLotNames; spReference; spAccount "settlement"; spAccount "cg"; spExpensePosting; spNote]

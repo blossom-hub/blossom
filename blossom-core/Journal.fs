@@ -72,12 +72,13 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
         then [physicalTransfer] @ alot.Expenses
         else [physicalTransfer; notionalTransfer] @ alot.Expenses
     let (Types.Commodity commodity) = alot.Asset
+    let lst = if alot.Quantity < 0M then " short" else ""
     let openingEntry = {
       Flagged = false
       Automatic = true
       Date = alot.Date
       Payee = None
-      Narrative = $"Open {commodity} x{alot.Quantity} @ {alot.PerUnitPrice}"
+      Narrative = $"Open{lst}: {commodity} x{abs alot.Quantity} @ {alot.PerUnitPrice}"
       Tags = Set.empty
       Postings = openPostings
     }
@@ -97,12 +98,13 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
                           if mtm
                             then [physicalTransfer2; incomeTransfer3] @ mlot.Expenses
                             else [physicalTransfer2; incomeTransfer2; notionalTransfer2] @ mlot.Expenses
+                         let lst = if mlot.Quantity < 0M then "" else " short"
                          mlot.Date, {
                            Flagged = false
                            Automatic = true
                            Date = mlot.Date
                            Payee = None
-                           Narrative = $"Close {commodity} x{mlot.Quantity} @ {mlot.PerUnitPrice}"
+                           Narrative = $"Close{lst}: {commodity} x{abs mlot.Quantity} @ {mlot.PerUnitPrice}"
                            Tags = Set.empty
                            Postings = closePostings
                          })
@@ -110,6 +112,42 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
   let tradingEntries = analysedLots |> List.collect f1 |> List.groupByApply fst (List.map snd) |> Map.ofList
 
   transfers |> Map.mergeWith (fun _ y z -> y @ z) tradingEntries
+
+let integrateDividends valuationDate dividends (register :Map<SQ, Entry list>)  =
+  // each dividend is two transfer entries: Income -> Receivable, Receivable -> Settlement
+  let mk (_, sq, flagged, (div: DDividend)) = 
+    let total = first (fun x -> -x * div.Quantity) div.PerUnitValue
+    let pd = Option.defaultValue (fst sq) div.PayDate
+    let ra = Option.defaultValue dividendsAccount div.Receivable
+    let (Types.Commodity commodity) = div.Asset
+    let leg1 = {
+      Flagged = flagged
+      Automatic = true
+      Date = sq
+      Payee = None
+      Narrative = $"""Ex-Div {commodity} (pay: {pd.ToString("yyyy-MM-dd")})"""
+      Tags = Set.singleton "div"
+      Postings = [Option.defaultValue dividendsAccount div.Income, total, ra]
+    }
+    let leg2 = {
+      Flagged = flagged
+      Automatic = true
+      Date = pd, None
+      Payee = None
+      Narrative = $"""Div Payment for {commodity} (ex: {(fst sq).ToString("yyyy-MM-dd")})"""
+      Tags = Set.singleton "div"
+      Postings = [ra, total, Option.defaultValue div.Account div.Settlement]
+    }
+    // Note that we need the valuation date so that future second legs are not included...
+    // otherwise everything will have moved out of receivable
+    if pd <= valuationDate
+      then [leg1; leg2]
+      else [leg1]
+
+  let dividendEntries = dividends |> List.collect mk |> List.groupBy (fun x -> x.Date) |> Map.ofList
+
+  register |> Map.mergeWith (fun _ y z -> y @ z) dividendEntries
+
 
 let rec loadJournal0 trace depth filename : (FParsec.Position * RJournalElement) list =
   if trace
@@ -179,6 +217,7 @@ let loadJournal trace valuationDate filename =
 
   let investments, prices = analyseInvestments commodityDecls0 trades dividends prices1 splits
   let register = integrateRegister commodityDecls0 transfers investments
+                    |> integrateDividends valuationDate dividends
 
   // collect all accounts and merge with decls
   let accountDecls =

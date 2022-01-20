@@ -3,20 +3,11 @@ module Analysis
 open System
 open Types
 open Shared
-open Definitions
 open JournalParser
 
 open FParsec
 
 type 'a H = Position * SQ * bool * 'a
-
-type DividendPayment = {
-  ExDate: DateTime
-  PayDate: DateTime
-  Account: Account
-  SettlementAccount: Account
-  IncomeAccount: Account
-}
 
 type private OCM = {
   Opening: DTrade
