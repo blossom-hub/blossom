@@ -42,11 +42,6 @@ type DAssertion = {
   Comment: string option
 }
 
-type DPrice = {
-  Commodity: Commodity
-  Price: Value
-}
-
 type DSplit = {
   Commodity: Commodity
   K1: decimal
@@ -97,7 +92,6 @@ type DTrade = {
 type RElement =
   | Comment2 of text:string
   | Assertion of DAssertion
-  | Price of DPrice
   | Split of DSplit
   | Transfer of DTransfer
   | Dividend of DDividend
@@ -301,7 +295,6 @@ let pElement =
   // Fairly simple entries
   let pComment = sstr1 "comment" >>. rol false |>> Comment2
   let pAssertion = sstr1 "assert" >>. p1 pAccount .>>. pValue .>>. lcmt |>> fun ((a, v), cmt) -> Assertion {Account = a; Value = v; Comment = cmt}
-  let pPrice = sstr1 "price" >>. p1 pCommodity .>>. pValue |>> fun (c, v) -> Price {Commodity = c; Price = v}
   let pSplit = sstr1 "split" >>. tuple3 (p1 pCommodity) (p1 pnumber ) pnumber |>> fun (c, k1, k2) -> Split {Commodity = c; K1 = k1; K2 = k2}
 
   // Composite entries
@@ -347,7 +340,7 @@ let pElement =
                                                          Expenses = expenses
                                                          Note = notes}
 
-  choice [pComment; pAssertion; pPrice; pSplit; pDividend; pTrade; pTransfer]
+  choice [pComment; pAssertion; pSplit; pDividend; pTrade; pTransfer]
 
 let pItem = tuple3 (p1 psequence)
                    ((opt (p1 (charReturn '*' true))) |>> function Some true -> true | _ -> false)
@@ -355,9 +348,16 @@ let pItem = tuple3 (p1 psequence)
               |>> Item
 
 let pPrices =
-  let subitems = (p1 pdate .>>. p0 pnumber .>> skipNewline) |> indented |> many
+  let entry = (pnumber |>> Some) <|> (sstr "..." >>. preturn None) .>> nSpaces0
+  let subitems = (p1 pdate .>>. many entry .>> skipNewline) |> indented |> many
+  let expand (dt: DateTime, vals: decimal option list) = 
+    match vals with 
+      | [x] -> [(dt, x)]
+      | xs  -> let ds = [for i in [0..List.length xs - 1] do yield dt.AddDays (float i)]
+               List.zip ds xs
+      |> List.choose (fun (a, b) -> match b with None -> None | Some x -> Some (a, x))
   sstr1 "prices" >>. p1 pCommodity .>>. pCommodity .>> skipNewline .>>. increaseIndent subitems
-    |>> fun ((c, m), xs) -> Prices (commodity = c, measure = m, xs = xs)
+    |>> fun ((c, m), xs) -> Prices (commodity = c, measure = m, xs = List.collect expand xs)
 
 let pRJournal =
   let parsers = [

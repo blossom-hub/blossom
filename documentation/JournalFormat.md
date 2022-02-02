@@ -112,10 +112,11 @@ Splits follow a similar syntax, and the amounts should be the opposite sign to t
 1. `amount1 + amount2` is directed to `three` (where `amount2` has the opposite sign already)
 
 ### Prices and [asset] splits
+Multiple values on the same line will automatically associate each price with the series of dates starting on the provided date, on a daily basis. To skip the date use `...` (e.g. for market holidays). For example, 5 prices for Monday - Friday can be put on 1 line, using the Monday date and 5 values. In the first example below, the "Wednesday" price is not provided.
 ```
 prices {commodity} {unit commodity}
-  {date} {value}
-  {date} {value}
+  {date} {value0} {value1} ... {value3} {value4}
+  {date} {value0} 
   ...
 
 {date} split {commodity} {old units} {new units}

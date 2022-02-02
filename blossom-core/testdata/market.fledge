@@ -1,12 +1,10 @@
 prices 9984JP JPY
-  2020-01-01 1000
-  2020-01-02 1001
+  2020-01-01 1000 1002
 
 prices 9984JP JPY
-  2020-01-03 1002
-  2020-01-04 1003
+  2020-01-03 1002 ... 1003
 
 2020-02-01 split 9984JP 1 3
 
-; Or can do this way
-2020-01-05 price 9984JP 1003 JPY
+; This way of price specification has been retired
+; 2020-01-05 price 9984JP 1003 JPY

@@ -195,12 +195,10 @@ let loadJournal trace valuationDate filename =
                                                 >> fun ks -> List.scanBack (fun (dt, k1, k2) (_, k0) -> (dt, k0/k1 * k2)) ks (DateTime.MaxValue, 1M))
                      |> Map.ofList
 
-  let prices0 = items |> List.choose (function (_, sq, flagged, Price dprice) -> Some ((dprice.Commodity, snd dprice.Price), [fst sq, fst dprice.Price]) | _ -> None)
-  let prices1 = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
-                     |> List.append prices0
-                     |> List.groupByApply fst (List.collect snd >> Map.ofList)
-                     |> Map.ofList
-                     |> Map.map (fun ts -> Map.filter (fun dt _ -> dt <= valuationDate))
+  let prices = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
+                    |> List.groupByApply fst (List.collect snd >> Map.ofList)
+                    |> Map.ofList
+                    |> Map.map (fun ts -> Map.filter (fun dt _ -> dt <= valuationDate))
 
   let transfers = items |> List.choose (function | (ps, sq, flagged, Transfer dtransfer) -> Some (liftBasicEntry ps sq flagged dtransfer)
                                                  | _ -> None)
@@ -215,7 +213,7 @@ let loadJournal trace valuationDate filename =
   let trades = items |> List.choose (function | (ps, sq, flagged, Trade dtrade) -> Some (ps, sq, flagged, dtrade)
                                               | _ -> None)
 
-  let investments, prices = analyseInvestments commodityDecls0 trades dividends prices1 splits
+  let investments, prices = analyseInvestments commodityDecls0 trades dividends prices splits
   let register = integrateRegister commodityDecls0 transfers investments
                     |> integrateDividends valuationDate dividends
 
