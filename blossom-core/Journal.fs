@@ -58,7 +58,7 @@ let liftBasicEntry position date flagged dtransfer =
     | _, _ -> $"Only one empty balance entry is supported. {position}" |> Choice2Of2
 
 
-let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLots =
+let integrateTrades commodityDecls globalCGA analysedLots (register: Map<SQ, Entry list>) =
   // Build up transfer entries based on the lot details occuring in the InvestmentAnalysis
   // Notionals are not transferred if the traded instrument is MTM.
   let f1 (alot: OpeningTrade) =
@@ -85,7 +85,7 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
     let closingEntries =
       alot.Closings |> List.map (fun mlot ->
                          let closingNotional = mlot.PerUnitPrice * mlot.Quantity * multiplier
-                         let capitalGainsAccount = Option.defaultValue capitalGainsAccount mlot.CapitalGains
+                         let capitalGainsAccount = Option.firstOrDefault capitalGainsAccount [mlot.CapitalGains; globalCGA]
                          // Postings
                          // 1. Return the "physical asset"
                          // 2. Return the cash notional, if not mtm
@@ -111,9 +111,54 @@ let integrateRegister commodityDecls (transfers :Map<SQ, Entry list>) analysedLo
     [alot.Date, openingEntry] @ closingEntries
   let tradingEntries = analysedLots |> List.collect f1 |> List.groupByApply fst (List.map snd) |> Map.ofList
 
-  transfers |> Map.mergeWith (fun _ y z -> y @ z) tradingEntries
+  register |> Map.mergeWith (fun _ y z -> y @ z) tradingEntries
 
-let integrateDividends valuationDate dividends (register :Map<SQ, Entry list>)  =
+let integratePriceMovements valuationDate commodityDecls globalUGA prices analysedLots (register: Map<SQ, Entry list>) =
+  let uga = Option.defaultValue unrealisedGainsAccount globalUGA
+  let f1 (openingTrade: OpeningTrade) = 
+    match prices |> Map.tryFind (openingTrade.Asset, openingTrade.Measure) with 
+      | None    -> []
+      | Some (ps: Map<DateTime, decimal * decimal>) ->
+        let multiplier = multiplierOf commodityDecls openingTrade.Asset
+        let mtm = isMtm commodityDecls openingTrade.Asset
+        let getClosing dt = openingTrade.Closings |> List.filter (fun ct -> fst ct.Date = dt) 
+                                                  |> List.sumBy (fun ct -> ct.Quantity)
+        let lastDate = if openingTrade.OpenQuantity = 0M
+                         then openingTrade.Closings |> List.maxOf (fun x -> x.Date) |> fst
+                         else valuationDate
+        let series = ps |> Map.toList
+                        |> List.filter (fun (dt, _) -> dt >= fst openingTrade.Date && dt <= lastDate)
+                        |> List.mapFold (fun (pun, pq) (dt, (pr,_k)) -> let delta_price = pr - openingTrade.PerUnitPrice
+                                                                        let close_qty = getClosing dt
+                                                                        let new_qty = pq + close_qty
+                                                                        let unrealised = new_qty * delta_price * multiplier
+                                                                        (dt, unrealised - pun), (unrealised, new_qty))
+                                        (0M, openingTrade.Quantity)
+                        |> fst
+                        |> List.choose (fun (dt, deltaUnrealPnl) -> if deltaUnrealPnl = 0M
+                                                                      then None
+                                                                      else let sq = dt, Some 9999u
+                                                                           let ac = if mtm then openingTrade.Settlement else uga
+                                                                           Some (sq, openingTrade.Asset, openingTrade.Measure, deltaUnrealPnl, ac, mtm))
+        series                                                                          
+
+  // lift and group up at the commodity level to avoid thousands of rows (i.e. reduce to 1 commod/day entry)
+  let pnlEntries = analysedLots |> List.collect f1 
+                                |> List.groupByApply (fun (dt, _, measure, _, ug, mtm) -> (dt, measure, ug, mtm)) (List.sumBy frh6)
+                                |> List.map (fun ((dt, Types.Commodity measure, ug, mtm), deltaPnl) -> dt, {
+                                        Flagged = false
+                                        Automatic = true
+                                        Date = dt
+                                        Payee = None
+                                        Narrative = if mtm then $"Mark-to-market ({measure})" else $"Aggr. Unrealised PnL ({measure})"
+                                        Tags = Set.empty
+                                        Postings = [marketAccount, (-deltaPnl, Types.Commodity measure), ug]
+                                })
+                                |> List.groupByApply fst (List.map snd) |> Map.ofList
+
+  register |> Map.mergeWith (fun _ y z -> y @ z) pnlEntries
+
+let integrateDividends valuationDate dividends (register: Map<SQ, Entry list>)  =
   // each dividend is two transfer entries: Income -> Receivable, Receivable -> Settlement
   let mk (_, sq, flagged, (div: DDividend)) = 
     let total = first (fun x -> -x * div.Quantity) div.PerUnitValue
@@ -178,7 +223,7 @@ let loadJournal trace valuationDate filename =
 
   let header = elts |> List.choose (function (_, Header h) -> Some h | _ -> None)
                     |> List.tryHead
-                    |> Option.defaultValue {Name = "Untitled"; Commodity = None; Note = None; Convention = None}
+                    |> Option.defaultValue {Name = "Untitled"; Commodity = None; Note = None; Convention = None; CapitalGains = None; UnrealisedGains = None}
 
   let accountDecls0 = elts |> List.choose (function (_, Account a) -> Some (a.Account, a) | _ -> None)
                            |> Map.ofList
@@ -195,7 +240,7 @@ let loadJournal trace valuationDate filename =
                                                 >> fun ks -> List.scanBack (fun (dt, k1, k2) (_, k0) -> (dt, k0/k1 * k2)) ks (DateTime.MaxValue, 1M))
                      |> Map.ofList
 
-  let prices = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
+  let prices0 = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
                     |> List.groupByApply fst (List.collect snd >> Map.ofList)
                     |> Map.ofList
                     |> Map.map (fun ts -> Map.filter (fun dt _ -> dt <= valuationDate))
@@ -213,9 +258,10 @@ let loadJournal trace valuationDate filename =
   let trades = items |> List.choose (function | (ps, sq, flagged, Trade dtrade) -> Some (ps, sq, flagged, dtrade)
                                               | _ -> None)
 
-  let investments, prices = analyseInvestments commodityDecls0 trades dividends prices splits
-  let register = integrateRegister commodityDecls0 transfers investments
-                    |> integrateDividends valuationDate dividends
+  let investments, prices = analyseInvestments commodityDecls0 trades dividends prices0 splits
+  let register = transfers |> integrateTrades commodityDecls0 header.CapitalGains investments
+                           |> integratePriceMovements valuationDate commodityDecls0 header.UnrealisedGains prices investments 
+                           |> integrateDividends valuationDate dividends
 
   // collect all accounts and merge with decls
   let accountDecls =

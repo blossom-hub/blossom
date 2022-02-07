@@ -258,13 +258,15 @@ let pComment1 = skipAnyOf ";*" >>. rol true |>> Comment1
 
 let pHeader =
   let getConvention = List.tryPick (function (SAccountConvention x) -> Some x | _ -> None)
-  let subitems = [spCommodity "commodity"; spNote; spConvention]
+  let subitems = [spCommodity "commodity"; spAccount "cg"; spAccount "ug"; spNote; spConvention]
   sstr1 "journal" >>. rol true .>>. increaseIndent (pSubItems subitems)
     >>= fun (t, ss) -> (updateUserState (fun u -> {u with AccountConvention = getConvention ss}) >>. preturn (t, ss))
     |>> fun (t, ss) ->
           Header {Name = t
                   Commodity = ss |> List.tryPick (function SCommodity ("commodity", x) -> Some x | _ -> None)
                   Note = ss |> List.tryPick (function SNote x -> Some x | _ -> None)
+                  CapitalGains = ss |> List.tryPick (function SAccount ("cg", d) -> Some d | _ -> None)
+                  UnrealisedGains = ss |> List.tryPick (function SAccount ("ug", d) -> Some d | _ -> None)
                   Convention = getConvention ss}
 
 let pImport = sstr1 "import" >>. rol true |>> Import

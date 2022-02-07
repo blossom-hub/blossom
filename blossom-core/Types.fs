@@ -36,6 +36,8 @@ type JournalMeta = {
   Commodity: Commodity option
   Note: string option
   Convention: AccountConvention option
+  CapitalGains: Account option
+  UnrealisedGains: Account option
 }
 
 type AccountDecl = {

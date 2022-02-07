@@ -4,6 +4,7 @@ open Types
 
 let capitalGainsAccount = Account "_CapitalGains"
 let dividendsAccount = Account "_Dividends"
+let unrealisedGainsAccount = Account "_UnrealisedGains"
 
 let marketAccount = Account "_Market"
 

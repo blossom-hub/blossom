@@ -37,6 +37,13 @@ let thd5 (_,_,c,_,_) = c
 let frh5 (_,_,_,d,_) = d
 let fih5 (_,_,_,_,e) = e
 
+let fst6 (a,_,_,_,_,_) = a
+let snd6 (_,b,_,_,_,_) = b
+let thd6 (_,_,c,_,_,_) = c
+let frh6 (_,_,_,d,_,_) = d
+let fih6 (_,_,_,_,e,_) = e
+let six6 (_,_,_,_,_,f) = f
+
 type idstring = string
 let uid () : idstring =
   let gen() =
@@ -94,6 +101,9 @@ module Set =
       then true, Set.remove v s
       else false, s
 
+
+module Option = 
+  let firstOrDefault defaultValue options = options |> List.tryPick id |> Option.defaultValue defaultValue
 
 let makeSchedule tenor (left : DateTime) (right : DateTime) =
   let go g f x = (x, false) |> List.unfold (fun (d, flag) -> if flag then None else Some (f d, (g d, d >= right)))
