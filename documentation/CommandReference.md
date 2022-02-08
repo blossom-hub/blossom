@@ -100,7 +100,7 @@ Some commands support other flags, which must be specified near the start of the
 
 `-x` as per above on most commands.
 
-`-z` hide some zero rows if applicable.
+`-z` show some zero rows (if applicable, by default in later builds zeros are hidden from view).
 
 `-v` includes any virtual account in the account string.
 
