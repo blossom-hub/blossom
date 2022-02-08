@@ -8,6 +8,7 @@ type GlobalOptionValue =
   | GDebug of bool
   | GLoadTracing of bool
   | GValuationDate of DateTime
+  | GMaxRows of int
 
 type Command =
   // Application management

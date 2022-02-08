@@ -52,7 +52,8 @@ let set =
   let gfd = str "debug" >>. ws1 >>. pbool |>> GDebug
   let glt = str "load_tracing" >>. ws1 >>. pbool |>> GLoadTracing
   let vd  = str "valuation_date" >>. ws1 >>. (pdate <|> stringReturn "today" DateTime.Today) |>> GValuationDate
-  str "set" >>. opt (ws1 >>. choice [gpv; gfd; glt; vd]) |>> Set
+  let mr = str "max_rows" >>. ws1 >>. pint32 |>> GMaxRows
+  str "set" >>. opt (ws1 >>. choice [gpv; gfd; glt; vd; mr]) |>> Set
 
 // File management
 let load = str "load" >>. ws1 >>. restOfLine false |>> Load

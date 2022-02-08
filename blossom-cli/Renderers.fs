@@ -10,6 +10,7 @@ module HumanReadable =
     xs
 
   let renderTable = renderText >> seqToLines
+  let renderTable1 n = renderText1 n >> seqToLines
 
   let renderMetaResult =
     function | Statistics s    -> [sprintf "%A" s] |> seqToLines

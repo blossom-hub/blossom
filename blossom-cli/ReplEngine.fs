@@ -19,6 +19,7 @@ type GlobalOptions =
     Debug: bool
     LoadTracing: bool
     ValuationDate: DateTime
+    MaxRows: int
   }
   with
     static member Default = {
@@ -26,6 +27,7 @@ type GlobalOptions =
       Debug = false
       LoadTracing = false
       ValuationDate = DateTime.Today
+      MaxRows = 1000
     }
 
 type State =
@@ -112,6 +114,8 @@ let set state value =
        -> Some {state with GlobalOptions = {state.GlobalOptions with LoadTracing = v}}
    | Some (GValuationDate v)
        -> reload {state with GlobalOptions = {state.GlobalOptions with ValuationDate = v}}
+   | Some (GMaxRows v)
+       -> Some {state with GlobalOptions = {state.GlobalOptions with MaxRows = v}}
 
 let showHelp state =
   printfn "  Filters"
@@ -142,7 +146,7 @@ let execute state input =
     | Switch journalId                   -> switch state journalId
     | Reload                             -> reload state
     | Balances (filter, request)         -> withJournal <| balances HumanReadable.renderTable filter request
-    | Journal (filter, request)          -> withJournal <| journal HumanReadable.renderTable filter request
+    | Journal (filter, request)          -> withJournal <| journal (HumanReadable.renderTable1 state.GlobalOptions.MaxRows) filter request
     | BalanceSeries (filter, request)    -> withJournal <| balanceSeries HumanReadable.renderTable filter request
     | LotAnalysis (filter, request)      -> withJournal <| lotAnalysis HumanReadable.renderTable filter request
     | HoldingsAnalysis filter            -> withJournal <| holdingsAnalysis HumanReadable.renderTable filter true

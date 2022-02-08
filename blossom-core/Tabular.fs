@@ -24,12 +24,17 @@ let rec initialRender =
            | Number (v, dp) -> v.ToString("0." + String.replicate dp "0" + "##")
            | Empty          -> ""
 
-let renderText (Table (hs, data)) =
+let renderText1 maxRows (Table (hs, data)) =
   let elidables0 = data |> List.tryHead |> Option.map (List.map isElidable)
   let rows = data |> List.map (List.map initialRender)
   let getWidth i (xs : string list list) = xs |> List.map (fun r -> r.[i] |> String.length) |> List.max
 
-  match rows with
+  let count = List.length rows
+  let rows1, extraRows = if maxRows = 0 || count <= maxRows 
+                           then rows, None 
+                           else rows.[0..maxRows-1], Some (List.length rows - maxRows)
+
+  match rows1 with
     | [] -> []
     | rs -> let widths = hs |> List.mapi (fun i h -> max (String.length h.Header) (getWidth i rs))
 
@@ -52,12 +57,16 @@ let renderText (Table (hs, data)) =
                                                                      | true  -> if p = r then "" else r) last row elidables
               let result = List.map2 (fun w d -> sprintf "%*s" w d) widths row'
               result, row
-            let printed, _ = rows |> List.mapFold f initialLast
+            let printed, _ = rs |> List.mapFold f initialLast
 
             let combined = [headers] @ printed
             let lines1 = combined |> List.map (String.concat "   ")
-            let lines2 = [sprintf "  (%A rows)" (List.length rs)]
+            let lines2  = match extraRows with
+                            | Some n -> [$"  (first {List.length rs} rows, {n} rows hidden)"]
+                            | None   -> [sprintf "  (%A rows)" (List.length rs)]
             lines1 @ lines2
+
+let renderText = renderText1 0
 
 // Since we have close control over the object, render this directly rather than
 // using Newtonsoft.Json
