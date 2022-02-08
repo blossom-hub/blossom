@@ -10,7 +10,7 @@ open Tabular
 
 // utilities
 let groupTopn n =
-  let f = splitAccounts >> first (List.take n) >> uncurry joinAccounts
+  let f = splitAccounts >> first (fun xs -> xs.[0..n-1]) >> uncurry joinAccounts
   List.map (first3 f) >> summateAQCs
 
 let meta renderer request journal =
@@ -125,8 +125,8 @@ let balances renderer filter (request : BalancesRequest) journal =
   let zeroFilter = List.filter (fun (_, q, _) -> q <> 0M)
 
   let result2 = result |> iftrue (not request.Flex) (accountFilter >> commodityFilter >> measureFilter)
-                       |> iftrue request.GroupToTop (groupTopn 1)
-                       |> iftrue request.HideZeros zeroFilter
+                       |> fun xs -> match request.GroupingLevel with | Some n -> groupTopn n xs | None -> xs
+                       |> iffalse request.ShowZeros zeroFilter
 
   // temporarily make a table
   let gcn c = journal.CommodityDecls |> Map.tryFind c |> Option.bind (fun t -> t.Name) |> Option.defaultValue ""
@@ -231,7 +231,7 @@ let balanceSeries renderer filter (request : SeriesRequest) journal =
 
   let result = evaluateBalances request.IncludeVirtual j2 |> Map.toList
                   |> iftrue (not request.Flex) (List.map (second (accountFilter >> commodityFilter >> measureFilter)))
-                  |> iftrue request.GroupToTop (List.map (second (groupTopn 1)))
+                  |> fun xs -> match request.GroupingLevel with | Some n -> List.map (second (groupTopn n)) xs | None -> xs
 
   let dates = result |> List.map (fst >> fst)
   let left, right = dates |> (List.min &&& List.max)

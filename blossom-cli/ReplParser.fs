@@ -33,8 +33,14 @@ let pTenor : Parser<Tenor, unit>  =
 
 // Command Parsing
 
-let pFlags (fs:string) =
-  skipChar '-' >>. (many1 (anyOf fs)) .>> ws <|>% []
+type Flag = FS of char | FG of int
+
+let flag c = pchar c |>> FS
+let flagGroup = pchar 'g' >>. pint32 |>> FG
+
+let pFlags0 flags = skipChar '-' >>. (many1 (choice flags)) .>> ws <|>% []
+let pFlags (fs: string) = fs |> Seq.map flag |> pFlags0 
+
 
 let pValuationMeasure =
   let pCommodity =
@@ -42,7 +48,8 @@ let pValuationMeasure =
     many1Chars2 first (letter <|> digit <|> anyOf ".:-()_") |>> Commodity
   skipChar '=' >>. pCommodity
 
-let flagged xs v = List.contains v xs
+let flagged xs v = List.contains (FS v) xs
+let getGroupingFlag = List.tryPick (function | FG n -> Some n | _ -> None)
 
 // Application Management
 let quit = choice [str "quit"; str ":q"] >>. preturn Quit
@@ -65,13 +72,13 @@ let close = str "close" >>. ws1 >>. pint32 |>> Close
 let balances =
   choice [str "balances"; str "bal"; str ":b"]
     >>. ws
-    >>. pFlags "gzxv"
+    >>. pFlags0 [flagGroup; flag 'z'; flag 'x'; flag 'v']
     .>>. opt pValuationMeasure
     .>>. pFilter
     |>> fun ((fs, vm), f) ->
           let br = {ValuationMeasure = vm
-                    GroupToTop = flagged fs 'g'
-                    HideZeros = flagged fs 'z'
+                    GroupingLevel = getGroupingFlag fs
+                    ShowZeros = flagged fs 'z'
                     Flex = flagged fs 'x'
                     IncludeVirtual = flagged fs 'v'}
           Balances (f, br)
@@ -82,7 +89,7 @@ let journal =
     >>. pFlags "zfxv"
     .>>. pFilter
     |>> fun (fs, f) ->
-          let fr = {HideZeros = flagged fs 'z'
+          let fr = {ShowZeros = flagged fs 'z'
                     FlaggedOnly = flagged fs 'f'
                     Flex = flagged fs 'x'
                     IncludeVirtual = flagged fs 'v'}
@@ -93,11 +100,11 @@ let series =
     >>. ws1
     >>. pTenor
     .>> ws
-    .>>. pFlags "gzxcv"
+    .>>. pFlags0 [flagGroup; flag 'z'; flag 'x'; flag 'c'; flag 'v']
     .>>. pFilter
     |>> fun ((t, fs), f) ->
-          let sr = {GroupToTop = flagged fs 'g'
-                    HideZeros = flagged fs 'z'
+          let sr = {GroupingLevel = getGroupingFlag fs
+                    ShowZeros = flagged fs 'z'
                     Flex = flagged fs 'x'
                     Cumulative = flagged fs 'c'
                     Tenor = t

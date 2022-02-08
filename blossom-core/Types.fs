@@ -123,22 +123,22 @@ type Filter = {
 
 type BalancesRequest = {
   ValuationMeasure: Commodity option
-  GroupToTop: bool
-  HideZeros: bool
+  GroupingLevel: int option
+  ShowZeros: bool
   Flex: bool
   IncludeVirtual: bool
 }
 
 type JournalRequest = {
-  HideZeros: bool
+  ShowZeros: bool
   Flex: bool
   FlaggedOnly: bool
   IncludeVirtual: bool
 }
 
 type SeriesRequest = {
-  GroupToTop: bool
-  HideZeros: bool
+  GroupingLevel: int option
+  ShowZeros: bool
   Flex: bool
   Cumulative: bool
   Tenor: Tenor

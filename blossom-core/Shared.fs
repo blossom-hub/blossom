@@ -64,6 +64,7 @@ let regexfilter p v =
     | _ -> false
 
 let iftrue b f a = if b then f a else a
+let iffalse b f a =if b then a else f a
 
 let inline weightedAverage xs =
   match xs with
