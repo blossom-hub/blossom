@@ -281,6 +281,12 @@ type private InternalLotRow = {
 let filterInvestmentAnalysis (filter: Filter) includeVirtual (investments: OpeningTrade list) =
 
   let dateFilter (xs: OpeningTrade list) =
+    let filE y m d =
+      xs |> List.filter (fun ot -> let dt, _ = ot.Date
+                                   let q1 = dt.Year = y
+                                   let q2 = match m with Some mm -> dt.Month = mm | _ -> true
+                                   let q3 = match d with Some dd -> dt.Day = dd | _ -> true
+                                   q1 && q2 && q3)
     let fil l lb r rb =
       xs |> List.filter (fun ot -> let dt, _ = ot.Date
                                    let q1 = (if lb then (>=) else (>)) dt l
@@ -288,10 +294,11 @@ let filterInvestmentAnalysis (filter: Filter) includeVirtual (investments: Openi
                                    q1 && q2)
     match filter.Timespan with
       | None -> xs
-      | Some (None, None) -> xs
-      | Some (Some (b,dt), None) -> fil dt b DateTime.MaxValue true
-      | Some (None, Some (b,dt)) -> fil DateTime.MinValue true dt b
-      | Some (Some (lb, l), Some (rb, r)) -> fil l lb r rb
+      | Some (Choice1Of2 (y,m,d)) -> filE y m d
+      | Some (Choice2Of2 (None, None)) -> xs
+      | Some (Choice2Of2 (Some (b,dt), None)) -> fil dt b DateTime.MaxValue true
+      | Some (Choice2Of2 (None, Some (b,dt))) -> fil DateTime.MinValue true dt b
+      | Some (Choice2Of2 (Some (lb, l), Some (rb, r))) -> fil l lb r rb
 
   let accountFilter (xs: OpeningTrade list) =
     match filter.Accounts with

@@ -8,15 +8,16 @@ open Types
 type Parser<'t> = Parser<'t, unit>
 
 type FilterTag =
-  | F of bool * DateTime      // from
-  | T of bool * DateTime      // to
-  | A of string               // account
-  | V of string               // virtual-account
-  | P of string               // payee
-  | N of string               // narrative
-  | C of string               // commodity
-  | M of string               // commodity measure
-  | H of string               // hastag
+  | F of bool * DateTime               // from
+  | T of bool * DateTime               // to
+  | E of int * int option * int option // exact
+  | A of string                        // account
+  | V of string                        // virtual-account
+  | P of string                        // payee
+  | N of string                        // narrative
+  | C of string                        // commodity
+  | M of string                        // commodity measure
+  | H of string                        // hastag
 
 let glse xs pred = xs |> List.choose pred
                       |> List.tryLast
@@ -26,11 +27,14 @@ let nSpaces1 = skipMany1 (skipChar ' ')
 
 let cflag c = opt (pchar c) |>> Option.isSome
 
-let pPartialDate =
+let pPartialDate0 =
   let sep = pchar '-'
   let pelt = opt (sep >>. pint32)
-  let mk y mm md = DateTime (y, Option.defaultValue 1 mm, Option.defaultValue 1 md)
-  pipe3 pint32 pelt pelt mk
+  tuple3 pint32 pelt pelt
+
+let pPartialDate =
+  let mk (y, mm, md) = DateTime (y, Option.defaultValue 1 mm, Option.defaultValue 1 md)
+  pPartialDate0 |>> mk
 
 let pFilterTags =
   let symbols = "><@=?%#"
@@ -46,6 +50,7 @@ let pFilterTags =
 
   let pFrom = pchar '>' >>. cflag '=' .>>. pPartialDate |>> F
   let pTo   = pchar '<' >>. cflag '=' .>>. pPartialDate |>> T
+  let pExact = skipString "==" >>. pPartialDate0 |>> E
   let pPayee = pchar '@' >>. text |>> P
   let pNarr = pchar '?' >>. text |>> N
   let pCommod = pchar '%' >>. text |>> C
@@ -53,14 +58,15 @@ let pFilterTags =
   let pTag = pchar '+' >>. text |>> H
   let pAcc = text |>> A
 
-  let pelt = choice [pFrom; pTo; pPayee; pNarr; pMeasure; pCommod; pTag; pAcc]
+  let pelt = choice [pExact; pFrom; pTo; pPayee; pNarr; pMeasure; pCommod; pTag; pAcc]
 
   nSpaces0 >>. sepBy pelt nSpaces1 .>> eof
 
 let pFilter : Parser<Filter> =
   let mk tags =
-    let f = glse tags (function F (e, d) -> Some (e,d) | _ -> None)
-    let t = glse tags (function T (e, d) -> Some (e,d) | _ -> None)
+    let f = glse tags (function F (e, d)  -> Some (e,d)   | _ -> None)
+    let t = glse tags (function T (e, d)  -> Some (e,d)   | _ -> None)
+    let e = glse tags (function E (y,m,d) -> Some (y,m,d) | _ -> None)
 
     let a = tags |> List.choose (function A v -> Some v | _ -> None)
     let p = tags |> List.choose (function P v -> Some v | _ -> None)
@@ -70,7 +76,10 @@ let pFilter : Parser<Filter> =
     let ts = tags |> List.choose (function H v -> Some v | _ -> None)
 
     {
-      Timespan = match (f,t) with (None, None) -> None | _ -> Some (f,t)
+      Timespan = match (f,t,e) with
+                  | (None, None, None) -> None
+                  | (_, _, Some e)     -> Some (Choice1Of2 e)
+                  | _                  -> Some (Choice2Of2 (f,t))
       Accounts = a
       Payees = p
       Narrative = n

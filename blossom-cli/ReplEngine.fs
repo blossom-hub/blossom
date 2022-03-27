@@ -53,8 +53,8 @@ let load state filename =
   try
     let parsed = loadJournal state.GlobalOptions.LoadTracing state.GlobalOptions.ValuationDate filename
     let existingId = Map.tryPick (fun k (fn, _, _) -> if fn = filename then Some k else None) state.Journals
-    let usedId = match existingId with 
-                   | Some i -> i 
+    let usedId = match existingId with
+                   | Some i -> i
                    | None -> state.Journals |> Map.toList |> List.map fst
                                                           |> function | [] -> 1 | xs -> List.max xs |> fun k -> k + 1
     Some {state with ActiveJournal = Some usedId; Journals = state.Journals |> Map.add usedId (filename, DateTime.Now, parsed)}
@@ -66,7 +66,7 @@ let load state filename =
 let close state journalId =
   if state.Journals.ContainsKey journalId
     then let newJournals = state.Journals |> Map.remove journalId
-         let newActiveJournal = 
+         let newActiveJournal =
            if state.ActiveJournal <> Some journalId
              then state.ActiveJournal
              else newJournals |> Map.toList |> function | [] -> None | xs -> List.minBy fst xs |> fst |> Some
@@ -82,7 +82,7 @@ let reload state =
                 Some state
 
 let switch state journalId =
-  match journalId with 
+  match journalId with
     | None   -> let cs = [{Header = "#"; Key = true}
                           {Header = "A"; Key = false;}
                           {Header = "Filename"; Key = false}
@@ -95,8 +95,8 @@ let switch state journalId =
                                |> fun ds -> Table (cs, ds)
                                |> HumanReadable.renderTable
                                |> ignore
-                Some state 
-    | Some j -> match Map.tryFind j state.Journals with 
+                Some state
+    | Some j -> match Map.tryFind j state.Journals with
                   | Some _ -> let fn = state.Journals.[j] |> fst3
                               printfn "Switched to: %s" fn
                               Some {state with State.ActiveJournal = Some j}
@@ -119,7 +119,7 @@ let set state value =
 
 let showHelp state =
   printfn "  Filters"
-  printfn "    date: >,>=,<, or <="
+  printfn "    date: >,>=,<,<= or =="
   printfn "    payee: @"
   printfn "    narrative: ?"
   printfn "    commodity: %%"
@@ -169,7 +169,7 @@ let execute state input =
             Some state
 
 let rec repl state =
-  match state.ActiveJournal with 
+  match state.ActiveJournal with
     | Some i -> printf "%d] " i
     | None   -> printf "] "
   let input = Console.ReadLine()

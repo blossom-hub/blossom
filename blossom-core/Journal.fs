@@ -115,13 +115,13 @@ let integrateTrades commodityDecls globalCGA analysedLots (register: Map<SQ, Ent
 
 let integratePriceMovements valuationDate commodityDecls globalUGA prices analysedLots (register: Map<SQ, Entry list>) =
   let uga = Option.defaultValue unrealisedGainsAccount globalUGA
-  let f1 (openingTrade: OpeningTrade) = 
-    match prices |> Map.tryFind (openingTrade.Asset, openingTrade.Measure) with 
+  let f1 (openingTrade: OpeningTrade) =
+    match prices |> Map.tryFind (openingTrade.Asset, openingTrade.Measure) with
       | None    -> []
       | Some (ps: Map<DateTime, decimal * decimal>) ->
         let multiplier = multiplierOf commodityDecls openingTrade.Asset
         let mtm = isMtm commodityDecls openingTrade.Asset
-        let getClosing dt = openingTrade.Closings |> List.filter (fun ct -> fst ct.Date = dt) 
+        let getClosing dt = openingTrade.Closings |> List.filter (fun ct -> fst ct.Date = dt)
                                                   |> List.sumBy (fun ct -> ct.Quantity)
         let lastDate = if openingTrade.OpenQuantity = 0M
                          then openingTrade.Closings |> List.maxOf (fun x -> x.Date) |> fst
@@ -140,10 +140,10 @@ let integratePriceMovements valuationDate commodityDecls globalUGA prices analys
                                                                       else let sq = dt, Some 9999u
                                                                            let ac = if mtm then openingTrade.Settlement else uga
                                                                            Some (sq, openingTrade.Asset, openingTrade.Measure, deltaUnrealPnl, ac, mtm))
-        series                                                                          
+        series
 
   // lift and group up at the commodity level to avoid thousands of rows (i.e. reduce to 1 commod/day entry)
-  let pnlEntries = analysedLots |> List.collect f1 
+  let pnlEntries = analysedLots |> List.collect f1
                                 |> List.groupByApply (fun (dt, _, measure, _, ug, mtm) -> (dt, measure, ug, mtm)) (List.sumBy frh6)
                                 |> List.map (fun ((dt, Types.Commodity measure, ug, mtm), deltaPnl) -> dt, {
                                         Flagged = false
@@ -160,7 +160,7 @@ let integratePriceMovements valuationDate commodityDecls globalUGA prices analys
 
 let integrateDividends valuationDate dividends (register: Map<SQ, Entry list>)  =
   // each dividend is two transfer entries: Income -> Receivable, Receivable -> Settlement
-  let mk (_, sq, flagged, (div: DDividend)) = 
+  let mk (_, sq, flagged, (div: DDividend)) =
     let total = first (fun x -> -x * div.Quantity) div.PerUnitValue
     let pd = Option.defaultValue (fst sq) div.PayDate
     let ra = Option.defaultValue dividendsAccount div.Receivable
@@ -260,7 +260,7 @@ let loadJournal trace valuationDate filename =
 
   let investments, prices = analyseInvestments commodityDecls0 trades dividends prices0 splits
   let register = transfers |> integrateTrades commodityDecls0 header.CapitalGains investments
-                           |> integratePriceMovements valuationDate commodityDecls0 header.UnrealisedGains prices investments 
+                           |> integratePriceMovements valuationDate commodityDecls0 header.UnrealisedGains prices investments
                            |> integrateDividends valuationDate dividends
 
   // collect all accounts and merge with decls
@@ -323,10 +323,17 @@ let evaluateBalances includeVirtual journal =
 let prefilter (filter: Filter) includeVirtual journal =
   let register = journal.Register
 
-  let dateFilter sq =
+  let dateFilter (sq : SQ) =
     match filter.Timespan with
       | None -> true
-      | Some (left, right) ->
+      | Some (Choice1Of2 (y,m,d)) ->
+          let dt = fst sq
+          let q1 = dt.Year = y
+          let q2 = match m with Some mm -> dt.Month = mm | _ -> true
+          let q3 = match d with Some dd -> dt.Day = dd | _ -> true
+          q1 && q2 && q3
+      | Some (Choice2Of2 (left, right)) ->
+          let q1 = match left  with | None -> true | Some (f, d0) -> (if f then (>=) else (>)) (fst sq) d0
           let q1 = match left  with | None -> true | Some (f, d0) -> (if f then (>=) else (>)) (fst sq) d0
           let q2 = match right with | None -> true | Some (f, dT) -> (if f then (<=) else (<)) (fst sq) dT
           q1 && q2

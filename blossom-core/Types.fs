@@ -112,7 +112,8 @@ type Journal = {
 }
 
 type Filter = {
-  Timespan: ((bool * DateTime) option * (bool * DateTime) option) option
+  Timespan: Choice<int * int option * int option,
+                   ((bool * DateTime) option * (bool * DateTime) option)> option
   Accounts: string list
   Payees: string list
   Narrative: string option
