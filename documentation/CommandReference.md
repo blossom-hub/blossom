@@ -26,6 +26,7 @@ where a,b,c and are all flags.
 ] close <identity>
 ```
 
+The `load` and `reload` commands also have shortcut entries of `:l` and `:r` respectively.
 The `switch` command does two roles - without the index number, it prints all the loaded journals and their load times. With a number it changes the active journal to that provided one.
 
 ### Help
@@ -33,7 +34,7 @@ A short help message is printed to remind some syntax.
 ```
 ] help
   Filters
-    date: >,>=,<, or <=
+    date: >,>=,<,<= or ==
     payee: @
     narrative: ?
     commodity: %
@@ -96,7 +97,7 @@ This flag is controlled (as seen above) using the `-x` flag on the query.
 ### Common flags
 Some commands support other flags, which must be specified near the start of the command.
 
-`-g` collapses accounts names to the top value; currently supported by balances and series.
+`-g<int>` collapses accounts names to the top <int> depth; currently supported by balances and series.
 
 `-x` as per above on most commands.
 
