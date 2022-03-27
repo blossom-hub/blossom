@@ -39,7 +39,7 @@ let flag c = pchar c |>> FS
 let flagGroup = pchar 'g' >>. pint32 |>> FG
 
 let pFlags0 flags = skipChar '-' >>. (many1 (choice flags)) .>> ws <|>% []
-let pFlags (fs: string) = fs |> Seq.map flag |> pFlags0 
+let pFlags (fs: string) = fs |> Seq.map flag |> pFlags0
 
 
 let pValuationMeasure =
@@ -63,9 +63,9 @@ let set =
   str "set" >>. opt (ws1 >>. choice [gpv; gfd; glt; vd; mr]) |>> Set
 
 // File management
-let load = str "load" >>. ws1 >>. restOfLine false |>> Load
-let reload = str "reload" >>. preturn Reload
-let switch = str "switch" >>. opt (ws1 >>. pint32) |>> Switch 
+let load = choice [str "load"; str ":l"] >>. ws1 >>. restOfLine false |>> Load
+let reload = choice [str "reload"; str ":r"] >>. preturn Reload
+let switch = str "switch" >>. opt (ws1 >>. pint32) |>> Switch
 let close = str "close" >>. ws1 >>. pint32 |>> Close
 
 // Accounting
