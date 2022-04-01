@@ -140,7 +140,7 @@ let nSpaces0 = skipMany (skipChar ' ')
 let nSpaces1 = skipMany1 (skipChar ' ')
 let rol b = restOfLine b |>> fun s -> s.TrimEnd()
 
-let lcmt = nSpaces0 >>. opt (skipChar ';' >>. rol false) .>> newline
+let lcmt = nSpaces0 >>? skipChar ';' >>. rol false
 
 let str = pstring
 let sstr = skipString
@@ -209,8 +209,8 @@ let pAccount =
 
 let pPosting =
   let fullContra = nSpaces1 >>? sstr "~" >>? opt pAccount
-  let splitContra = sstr "~" >>. tuple3 (p1 pAccount) pnumber lcmt
-  p0 pAccount .>>. opt (pValue .>>. opt fullContra) .>>. lcmt
+  let splitContra = sstr "~" >>. tuple3 (p1 pAccount) pnumber (opt lcmt) .>> newline
+  p0 pAccount .>>. opt (pValue .>>. opt fullContra) .>>. (opt lcmt) .>> newline
     .>>. increaseIndent (splitContra |> indented |> many)
     |>> fun (((a, vx), cmt), splits) -> Posting <| match vx with
                                                      | None                    -> (a, None, None, cmt, splits)
@@ -296,7 +296,7 @@ let pCommodityDecl =
 let pElement =
   // Fairly simple entries
   let pComment = sstr1 "comment" >>. rol false |>> Comment2
-  let pAssertion = sstr1 "assert" >>. p1 pAccount .>>. pValue .>>. lcmt |>> fun ((a, v), cmt) -> Assertion {Account = a; Value = v; Comment = cmt}
+  let pAssertion = sstr1 "assert" >>. p1 pAccount .>>. pValue .>>. opt lcmt .>> newline |>> fun ((a, v), cmt) -> Assertion {Account = a; Value = v; Comment = cmt}
   let pSplit = sstr1 "split" >>. tuple3 (p1 pCommodity) (p1 pnumber ) pnumber |>> fun (c, k1, k2) -> Split {Commodity = c; K1 = k1; K2 = k2}
 
   // Composite entries
@@ -304,7 +304,7 @@ let pElement =
     let spn (n:string) = n.Split([|'|'|], 2) |> List.ofArray
                                              |> function | [x] -> (None, x) | x::xs -> (Some (x.Trim()), List.head xs) | _ -> (None, n)
     let pNote = sstr1 "note" >>. rol true |>> PNote
-    let subitems = choice [pPosting; pNote; lcmt |>> (Option.get >> PComment)] |> indented |> many
+    let subitems = ((lcmt .>> newline |>> PComment) <|> (choice [pPosting; pNote;] |> indented)) |> many
     rol true .>>. increaseIndent subitems
       |>> fun (header, entries) -> let payee, narrative = spn header
                                    Transfer {Payee = payee; Narrative = narrative; Tags = Set.empty; Entries = entries}
