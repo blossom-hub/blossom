@@ -121,6 +121,7 @@ type private RSubElement =
   | SCommodityClass of CommodityClass
   | SExpensePosting of Account * Value * Contra option
   | SExternalIdent of string * string
+  | SExternalCode of string
   | SLotNames of string list
   | SMTM
   | SMultiplier of int
@@ -128,6 +129,7 @@ type private RSubElement =
   | SNote of string
   | SPaydate of DateTime
   | SReference of string
+  | SShortCode of int
   | SQuoteDP of int
   | SValuationMode of ValuationMode
 
@@ -245,6 +247,8 @@ let private spMTM = sstr "mtm" >>% SMTM
 let private spLotNames = sstr1 "lot" >>. sepBy1 pWordPlus (skipChar ',' >>. nSpaces0) |>> SLotNames
 let private spReference = sstr1 "reference" >>. pWordPlus |>> SReference
 let private spExpensePosting = sstr1 "expense" >>. pPostingM |>> SExpensePosting
+let private spShortCode = sstr1 "short" >>. pint32 |>> SShortCode
+let private spExternalCode = sstr1 "number" >>. rol false |>> SExternalCode
 
 // RJournalElement Parsers
 
@@ -272,9 +276,11 @@ let pHeader =
 let pImport = sstr1 "import" >>. rol true |>> Import
 
 let pAccountDecl =
-  let subitems = [spCommodity "commodity"; spNote; spValuationMode]
+  let subitems = [spCommodity "commodity"; spNote; spValuationMode; spShortCode; spExternalCode] 
   sstr1 "account" >>. pAccount .>> skipNewline .>>. increaseIndent (pSubItems subitems)
     |>> fun (a, ss) -> Account {Account = a
+                                ShortCode = ss |> List.tryPick (function SShortCode x -> Some x | _ -> None)
+                                Number = ss |> List.tryPick (function SExternalCode x -> Some x | _ -> None)
                                 Commodity = ss |> List.tryPick (function SCommodity ("commodity", x) -> Some x | _ -> None)
                                 Note = ss |> List.tryPick  (function SNote x -> Some x | _ -> None)
                                 ValuationMode = ss |> List.tryPick (function SValuationMode x -> Some x | _ -> None)

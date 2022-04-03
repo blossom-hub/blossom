@@ -42,6 +42,8 @@ type JournalMeta = {
 
 type AccountDecl = {
   Account: Account
+  ShortCode: int option
+  Number: string option
   ValuationMode: ValuationMode
   Commodity: Commodity option
   Note: string option

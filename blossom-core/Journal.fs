@@ -265,7 +265,7 @@ let loadJournal trace valuationDate filename =
 
   // collect all accounts and merge with decls
   let accountDecls =
-    let mk acc = {Account = acc; ValuationMode = Latest; Commodity = None; Note = None}
+    let mk acc = {Account = acc; ValuationMode = Latest; Commodity = None; Note = None; ShortCode = None; Number = None}
     register |> Map.toList
              |> List.collect (fun (_, xs) -> xs |> List.collect (fun e -> e.Postings |> List.collect (fun (a,_,c) -> [a, mk a; c, mk c])))
              |> List.distinct
