@@ -1,5 +1,5 @@
 STORAGE: NONE
-RESTRICTION: == net50
+RESTRICTION: == net6.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
     Argu (6.1.1)
@@ -11,7 +11,7 @@ NUGET
     Microsoft.NETCore.Platforms (5.0)
     Microsoft.Win32.SystemEvents (5.0)
       Microsoft.NETCore.Platforms (>= 5.0)
-    Suave (2.6.1)
+    Suave (2.6.2)
       FSharp.Core
     System.Configuration.ConfigurationManager (5.0)
       System.Security.Cryptography.ProtectedData (>= 5.0)

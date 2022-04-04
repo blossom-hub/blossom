@@ -1,7 +1,7 @@
 source https://api.nuget.org/v3/index.json
 
 storage: none
-framework: netcoreapp5.0
+framework: net6.0
 nuget argu
 nuget fparsec
 nuget suave

@@ -24,3 +24,7 @@ paket-files/
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 **/.history
+
+## VisualStudio ###
+.vs/*
+**/Properties/launchSettings.json

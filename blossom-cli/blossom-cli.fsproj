@@ -2,7 +2,7 @@
   <PropertyGroup>
     <RootNamespace>blossom_cli</RootNamespace>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\blossom-core\blossom-core.fsproj">
