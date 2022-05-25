@@ -11,6 +11,14 @@ open Helpers
 
 type FileFormat = Blossom | Beancount | Ledger | Knut
 
+let parseFileFormat (text: string) =
+  match text.ToLower() with
+    | "blossom" -> Blossom
+    | "beancount" -> Beancount
+    | "ledger" -> Ledger
+    | "knut" -> Knut
+    | _ -> failwith $"Unrecognised file format {text}"
+
 // commodities
 let safeCommodity (com : string) =
   let com1 = com.ToUpper().Replace(".", "").Replace("_", "")
