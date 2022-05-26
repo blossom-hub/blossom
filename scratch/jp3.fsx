@@ -16,8 +16,8 @@ let first f (a,b) = (f a, b)
 type L = L of line:int
 type 'a Located = L * 'a
 
-type 'a Parsed = 
-  | Success of 'a Located 
+type 'a Parsed =
+  | Success of 'a Located
   | Unrecognised of string Located
 
 // primitive parsers
@@ -55,7 +55,7 @@ type HeaderElement =
   | HI_URA of Account Parsed
   | HI_Comment of string
 
-type AccountDeclElement = 
+type AccountDeclElement =
   | AD_Number of string
   | AD_Commodity of Commodity Parsed
   | AD_Note of string
@@ -63,7 +63,7 @@ type AccountDeclElement =
   | AD_ShortCode of uint Parsed
   | AD_Comment of string
 
-type CommodityDeclElement = 
+type CommodityDeclElement =
   | CD_Name of string
   | CD_Note of string
   | CD_Measure of Commodity Parsed
@@ -75,7 +75,7 @@ type CommodityDeclElement =
   | CD_MTM
   | CD_Comment of string
 
-type SubPriceElement = 
+type SubPriceElement =
   | SP_Price of decimal Parsed
   | SP_Skipped
 
@@ -83,7 +83,7 @@ type PriceElement =
   | PI_Sequence of DateTime Parsed * SubPriceElement Parsed list
   | PI_Comment of string
 
-type DividendElement = 
+type DividendElement =
   | DE_Paydate of DateTime Parsed
   | DE_SettlementAccount of Account Parsed
   | DE_ReceivableAccount of Account Parsed
@@ -91,7 +91,7 @@ type DividendElement =
   | DE_Note of string
   | DE_Comment of string
 
-type TradeElement = 
+type TradeElement =
   | TE_LotName of string
   | TE_Reference of string
   | TE_SettlementAccount of Account Parsed
@@ -100,17 +100,17 @@ type TradeElement =
   | TE_Note of string
   | TE_Comment of string
 
-type SubTransferElement = 
+type SubTransferElement =
   | ST_Split of Account Parsed * decimal Parsed
   | ST_Comment of string
 
-type TransferElement = 
+type TransferElement =
   | TF_Note of string
   | TF_Tag of string
   | TF_Posting of Account Parsed * (decimal Parsed * Commodity Parsed * Account Parsed option) option * SubTransferElement Parsed list
   | TF_Comment of string
 
-type JournalBlock = 
+type JournalBlock =
   //
   | Indent of int
   | StartRegion of string
@@ -119,7 +119,7 @@ type JournalBlock =
   //
   | Header of string * HeaderElement Parsed list
   | Import of string * string * JournalBlock Located seq option
-  // 
+  //
   | AccountDecl of Account Parsed * AccountDeclElement Parsed list
   | CommodityDecl of Commodity Parsed * CommodityDeclElement Parsed list
   //
@@ -141,7 +141,7 @@ type SizedSplit =
   | SS_Success of string list * string option
   | SS_Fail of string list
 
-let split2 n (s: string) = 
+let split2 n (s: string) =
   let xs = s.Split(' ', n+1,StringSplitOptions.TrimEntries ||| StringSplitOptions.RemoveEmptyEntries) |> Array.toList
   let nn = List.length xs
   match true with
@@ -152,21 +152,21 @@ let split2 n (s: string) =
 
 let pop (input: string) =
   let xs = input.Split(' ', 2, StringSplitOptions.TrimEntries)
-  match Array.length xs with 
+  match Array.length xs with
     | 0 -> ("", "")
     | 1 -> (input, "")
     | 2 -> (xs[0], xs[1])
     | _ -> failwith ".net string split fatal error"
 
 let popIndent (line: string) =
-  let indent = Seq.init line.Length (fun i -> line[i]) 
-                |> Seq.takeWhile (fun c -> c = ' ') 
+  let indent = Seq.init line.Length (fun i -> line[i])
+                |> Seq.takeWhile (fun c -> c = ' ')
                 |> Seq.length
   indent, line[indent..]
 
 let getIndent ((i, line): string Located) =
-  Seq.init line.Length (fun i -> line[i]) 
-  |> Seq.takeWhile (fun c -> c = ' ') 
+  Seq.init line.Length (fun i -> line[i])
+  |> Seq.takeWhile (fun c -> c = ' ')
   |> Seq.length
 
 let chunk1Level fn (lines: string Located seq) =
@@ -197,7 +197,7 @@ let createItem cmt fn expectedIndent ((i, line) : string Located) =
 let ss i x = Some (Success (i, x))
 
 // Regex driven active recognisers
-let (|Sq|_|) (input: string) = 
+let (|Sq|_|) (input: string) =
   let m = Regex.Match(input, @"((\d{4})-(\d{2})-(\d{2}))((\/)(\d+))?$")
   if m.Success
     then try
@@ -212,9 +212,9 @@ let (|Sq|_|) (input: string) =
            | _ -> None
     else None
 
-let tryParseAccount0 (input: string) = 
+let tryParseAccount0 (input: string) =
   let m = Regex.Match(input, @"^((?:[A-Z]\w*)(?::[A-Z\d]\w*)*)(?:\/(\w+))?$")
-  if m.Success 
+  if m.Success
     then Some <| if m.Groups[2].Success then Account2 (m.Groups[1].Value, m.Groups[2].Value)
                                         else Account m.Groups[1].Value
     else None
@@ -223,7 +223,7 @@ let tryParseAccount i = function PAccount acct -> Success (i, acct) | v -> Unrec
 
 let tryParseCommodity i (input: string) =
   let m = Regex.Match(input, @"^[A-Za-z0-9][A-Za-z0-9._]*$")
-  if m.Success 
+  if m.Success
     then Success (i, Commodity input)
     else Unrecognised (i, input)
 
@@ -275,7 +275,7 @@ let createCommodityDecl =
              | i, "externalid", v -> ss i <| CD_ExternalIdent (pop v)
              | _ -> None
 
-let createDividendElement = 
+let createDividendElement =
   createItem DE_Comment <|
     function | i, "paydate", (Sq (dt, None)) -> ss i <| DE_Paydate (Success (i, dt))
              | i, "paydate", v               -> ss i <| DE_Paydate (Unrecognised (i, v))
@@ -285,7 +285,7 @@ let createDividendElement =
              | i, "note", v                  -> ss i <| DE_Note v
              | _ -> None
 
-let createTradeElement = 
+let createTradeElement =
   createItem TE_Comment <|
     function | i, "lot", v        -> ss i <| TE_LotName v
              | i, "reference", v  -> ss i <| TE_Reference v
@@ -302,23 +302,23 @@ let createPricesElement =
              | i, u, v             -> ss i <| PI_Sequence (Unrecognised (i, u), fn i v)
              | _ -> None
 
-let createTransferElement chunk = 
+let createTransferElement chunk =
   let primary, children = match chunk with | [x] -> x, None | xs -> List.head xs, Some (List.tail xs)
-  let cs = match children with 
+  let cs = match children with
              | None -> []
              | Some xs -> let indent = getIndent xs[0]
-                          xs |> List.map (fun x -> createItem ST_Comment (function | i, a, v when a[0] = '~' -> match split2 2 v with 
+                          xs |> List.map (fun x -> createItem ST_Comment (function | i, a, v when a[0] = '~' -> match split2 2 v with
                                                                                                                   | SS_Success (xs, trailing) -> ss i <| ST_Split (tryParseAccount i a[1..], tryParse i xs[0])
                                                                                                                   | SS_Fail [x]  -> ss i <| ST_Split (tryParseAccount i a[1..], tryParse i v)
                                                                                                                   | SS_Fail []   -> ss i <| ST_Split (tryParseAccount i a[1..], Unrecognised (i, v))
                                                                                                                   | _ -> None
-                                                                                   | _ -> None) 
+                                                                                   | _ -> None)
                                                                          indent x)
   let p = createItem TF_Comment (function | i, "note", v      -> ss i <| TF_Note v
                                           | i, "tag", v       -> ss i <| TF_Tag v
-                                          | i, PAccount d, v  -> match split2 2 v with 
-                                                                   | SS_Success (xs, Some trailing) -> 
-                                                                       match trailing[0] with 
+                                          | i, PAccount d, v  -> match split2 2 v with
+                                                                   | SS_Success (xs, Some trailing) ->
+                                                                       match trailing[0] with
                                                                          | '~' ->  ss i <| TF_Posting (Success (i, d), Some (tryParse i xs[0], tryParseCommodity i xs[1], Some (tryParseAccount i trailing[1..])), cs)
                                                                          | _   ->  ss i <| TF_Posting (Success (i, d), Some (tryParse i xs[0], tryParseCommodity i xs[1], None), cs)
                                                                    | SS_Success (xs, None) -> ss i <| TF_Posting (Success (i, d), Some (tryParse i xs[0], tryParseCommodity i xs[1], None), cs)
@@ -328,30 +328,30 @@ let createTransferElement chunk =
   p
 
 let go children fn =
-  match children with 
+  match children with
     | [] -> []
     | xs -> xs |> List.map (fn (getIndent xs[0]))
 
-let rec createSqElement sq (i, line) children : JournalBlock Located = 
+let rec createSqElement sq (i, line) children : JournalBlock Located =
   let directive, content = pop line
   let result =
-    match directive with 
+    match directive with
       | "*"     -> Some <| createSqElement sq (i, content) children
       | "split" -> match split2 3 content with
                      | SS_Success (xs, trailing) -> Some <| (i, Split (sq, tryParseCommodity i xs[0], tryParse i xs[1], tryParse i xs[2]))
                      | _ -> None
-      | "assert" -> match split2 3 content with 
+      | "assert" -> match split2 3 content with
                      | SS_Success (xs, trailing) -> Some <| (i, Assertion (sq, tryParseAccount i xs[0], (tryParse i xs[1], tryParseCommodity i xs[2])))
                      | _ -> None
-      | "dividend" -> match split2 6 content with 
+      | "dividend" -> match split2 6 content with
                         | SS_Success (xs, trailing) -> Some <| (i, Dividend (sq, tryParseAccount i xs[0],
                                                                             (tryParse i xs[1], tryParseCommodity i xs[2]),
                                                                             (tryParse i xs[4], tryParseCommodity i xs[5]),
                                                                             go children createDividendElement))
                         | _ -> None
       | "trade" -> match split2 6 content with
-                     | SS_Success (xs, trailing) -> Some <| (i, Trade (sq, tryParseAccount i xs[0], 
-                                                                      (tryParse i xs[1], tryParseCommodity i xs[2]), 
+                     | SS_Success (xs, trailing) -> Some <| (i, Trade (sq, tryParseAccount i xs[0],
+                                                                      (tryParse i xs[1], tryParseCommodity i xs[2]),
                                                                       (tryParse i xs[4], tryParseCommodity i xs[5]),
                                                                       go children createTradeElement))
                      | _ -> None
@@ -359,20 +359,20 @@ let rec createSqElement sq (i, line) children : JournalBlock Located =
              let header = line.Split('|', 2, StringSplitOptions.TrimEntries) |> Array.toList
              // these children may have 1 further layer of children to capture
              let cs = chunk1Level id children |> Seq.map createTransferElement |> Seq.toList
-             match header with 
+             match header with
                | [x]       -> Some <| (i, Transfer(sq, x, None, cs))
                | (x::y::_) -> Some <| (i, Transfer(sq, y, Some x, cs))
                | _         -> failwith ".net string split fatal error"
 
-  match result with 
+  match result with
     | Some r -> r
     | None   -> i, Unknown ((i, line) :: children)
 
 let rec parseJournal standalone filename : JournalBlock Located seq =
   let createBlock (source: (L * string) list) =
-    match source with 
+    match source with
       | [] -> (L -1, Empty)
-      | xs  -> 
+      | xs  ->
         let bsl = fst xs[0]
         if List.contains (snd xs[0]).[0] [';';'*'] then (bsl, Comment (trim (snd xs[0]).[1..]))
           else let ys, rest = pop (snd xs[0])
@@ -385,14 +385,14 @@ let rec parseJournal standalone filename : JournalBlock Located seq =
                       | "import"     -> let resolved = if Path.IsPathRooted rest
                                                              then rest
                                                              else Path.Combine (Path.GetDirectoryName (filename: string), rest)
-                                        if standalone 
+                                        if standalone
                                           then Import (rest, resolved, None)
                                           else Import (rest, resolved, parseJournal standalone resolved |> Some)
                       //
                       | "account"    -> AccountDecl (tryParseAccount bsl rest, go (List.tail xs) createAccountDecl)
                       | "commodity"  -> CommodityDecl (tryParseCommodity bsl rest, go (List.tail xs) createCommodityDecl)
-                      // 
-                      | "prices"     -> match split2 2 rest with 
+                      //
+                      | "prices"     -> match split2 2 rest with
                                           | SS_Success (zs, trailing) -> Prices(tryParseCommodity bsl zs[0], tryParseCommodity bsl zs[1], go (List.tail xs) createPricesElement)
                                           | _ -> Unknown xs
                       | Sq sq -> createSqElement (SQ sq) (bsl, rest) (List.tail xs) |> snd
@@ -403,13 +403,13 @@ let rec parseJournal standalone filename : JournalBlock Located seq =
 
 
 let test () =
-  parseJournal true @"D:\Code\github\blossom\blossom-core\testdata\tester.fledge" 
+  parseJournal true @"C:\Code\github\blossom\blossom-core\testdata\tester.fledge"
 
-let test1 () = 
-  parseJournal true @"D:\Code\omnishark\finance\blossom\joanne_2021.fledge"
+let test1 () =
+  parseJournal true @"C:\Code\omnishark\finance\blossom\joanne_2021.fledge"
 
 let test2 () =
-  parseJournal false @"D:\Code\omnishark\finance\blossom\journal.fledge"
+  parseJournal false @"C:\Code\omnishark\finance\blossom\journal.fledge"
 
 
 let findUnknowns xs =
@@ -417,28 +417,31 @@ let findUnknowns xs =
 
 
 let rec findUnrecognised xs =
-  xs |> Seq.collect (fun x -> 
+  xs |> Seq.collect (fun x ->
           match snd x with
-            | Empty     -> Seq.empty
-            | Comment _ -> Seq.empty
-            | Header (_, hepl) -> 
+            | Indent _
+            | StartRegion _
+            | EndRegion
+            | Comment _
+                -> Seq.empty
+            | Header (_, hepl) ->
                 hepl |> Seq.choose (function | Success (_, HI_Commodity (Unrecognised (ln, t))) -> Some (ln, t)
-                                             | Success (_, HI_Convention (Unrecognised (ln, t))) -> Some (ln, t) 
+                                             | Success (_, HI_Convention (Unrecognised (ln, t))) -> Some (ln, t)
                                              | Success (_, HI_CGA (Unrecognised (ln, t))) -> Some (ln, t)
                                              | Success (_, HI_URA (Unrecognised (ln, t))) -> Some (ln, t)
                                              | Unrecognised (ln, t) -> Some (ln, t)
                                              | _ -> None)
-            | Import (_, _, jbl) -> 
+            | Import (_, _, jbl) ->
                 match jbl with | Some jbll -> findUnrecognised jbll | _ -> []
-            | AccountDecl (acct, adepl) -> 
+            | AccountDecl (acct, adepl) ->
                 let a = match acct with Unrecognised (ln, t) -> [ln, t] | _ -> []
-                let b = adepl |> List.collect (function | Success (_, AD_Valuation (Unrecognised (ln, t))) -> [ln, t] 
+                let b = adepl |> List.collect (function | Success (_, AD_Valuation (Unrecognised (ln, t))) -> [ln, t]
                                                         | Success (_, AD_Commodity (Unrecognised (ln, t))) -> [ln, t]
                                                         | Success (_, AD_ShortCode (Unrecognised (ln, t))) -> [ln, t]
                                                         | Unrecognised (ln, t) -> [ln, t]
                                                         | _ -> [])
                 Seq.concat [a;b]
-            | CommodityDecl (_, cdepl) -> 
+            | CommodityDecl (_, cdepl) ->
                 cdepl |> Seq.choose (function | Success (_, CD_Measure (Unrecognised (ln, t))) -> Some (ln, t)
                                               | Success (_, CD_Class (Unrecognised (ln, t))) -> Some (ln, t)
                                               | Success (_, CD_DP (Unrecognised (ln, t))) -> Some (ln, t)
@@ -446,7 +449,7 @@ let rec findUnrecognised xs =
                                               | Success (_, CD_Multiplier (Unrecognised (ln, t))) -> Some (ln, t)
                                               | Unrecognised (ln, t) -> Some (ln, t)
                                               | _ -> None)
-            | Prices (c1, c2, pepl) -> 
+            | Prices (c1, c2, pepl) ->
                 let a = match c1 with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let b = match c2 with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let c = pepl |> List.collect (function | Success (_, PI_Sequence (a, qs)) -> let ys = qs |> List.choose (function | Success (_, SP_Price (Unrecognised (ln, t))) -> Some (ln, t)
@@ -456,7 +459,7 @@ let rec findUnrecognised xs =
                                                        | Unrecognised (ln, t) -> [ln, t]
                                                        | _ -> [])
                 Seq.concat [a;b;c]
-            | Transfer (_, _, _, tepl) -> 
+            | Transfer (_, _, _, tepl) ->
                 tepl |> Seq.collect (function | Success (_, TF_Posting (acct, vopt, qs)) -> let a = match acct with Unrecognised (ln, t) -> [ln, t] | _ -> []
                                                                                             let b1 = match vopt with Some (Unrecognised (ln, t), _, _) -> [ln, t] | _ -> []
                                                                                             let b2 = match vopt with Some (_, Unrecognised (ln, t), _) -> [ln, t] | _ -> []
@@ -467,41 +470,42 @@ let rec findUnrecognised xs =
                                                                                                                                  | Unrecognised (ln, t) -> [ln, t]
                                                                                                                                  | _ -> [])
                                                                                             Seq.concat [a;b1;b2;b3;c]
-                                              | Unrecognised (ln, t) -> [ln, t] 
+                                              | Unrecognised (ln, t) -> [ln, t]
                                               | _ -> [])
-            | Trade (_, acct, (qty, qc), (price,pc), tepl) -> 
+            | Trade (_, acct, (qty, qc), (price,pc), tepl) ->
                 let a = match acct with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let b = match qty with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let c = match qc with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let d = match price with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let e = match pc with Unrecognised (ln, t) -> [ln, t] | _ -> []
-                let f = tepl |> List.collect (function | Success (_, TE_SettlementAccount (Unrecognised (ln, t))) -> [ln, t] 
+                let f = tepl |> List.collect (function | Success (_, TE_SettlementAccount (Unrecognised (ln, t))) -> [ln, t]
                                                        | Success (_, TE_CGA (Unrecognised (ln, t))) -> [ln, t]
-                                                       | Unrecognised (ln, t) -> [ln, t] 
+                                                       | Unrecognised (ln, t) -> [ln, t]
                                                        | _ -> [])
                 Seq.concat [a;b;c;d;e;f]
-            | Dividend (_, acct, (qty,qc), (puv, pc), depl) -> 
+            | Dividend (_, acct, (qty,qc), (puv, pc), depl) ->
                 let a = match acct with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let b = match qty with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let c = match qc with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let d = match puv with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let e = match pc with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let f = depl |> List.collect (function | Success (_, DE_Paydate (Unrecognised (ln, t))) -> [ln, t]
-                                                       | Success (_, DE_SettlementAccount (Unrecognised (ln, t))) -> [ln, t] 
-                                                       | Success (_, DE_ReceivableAccount (Unrecognised (ln, t))) -> [ln, t] 
-                                                       | Success (_, DE_IncomeAccount (Unrecognised (ln, t))) -> [ln, t] 
-                                                       | Unrecognised (ln, t) -> [ln, t] 
+                                                       | Success (_, DE_SettlementAccount (Unrecognised (ln, t))) -> [ln, t]
+                                                       | Success (_, DE_ReceivableAccount (Unrecognised (ln, t))) -> [ln, t]
+                                                       | Success (_, DE_IncomeAccount (Unrecognised (ln, t))) -> [ln, t]
+                                                       | Unrecognised (ln, t) -> [ln, t]
                                                        | _ -> [])
                 Seq.concat [a;b;c;d;e;f]
-            | Assertion (_, acct, (qty, qc)) -> 
+            | Assertion (_, acct, (qty, qc)) ->
                 let a = match acct with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let b = match qty with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let c = match qc with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 Seq.concat [a;b;c]
-            | Split (_, c1, k1, k2) -> 
+            | Split (_, c1, k1, k2) ->
                 let a = match c1 with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let b = match k1 with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 let c = match k2 with Unrecognised (ln, t) -> [ln, t] | _ -> []
                 Seq.concat [a;b;c]
             | Unknown xs -> xs
+            | Empty      -> Seq.empty
         )
