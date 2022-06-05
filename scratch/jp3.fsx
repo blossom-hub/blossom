@@ -509,3 +509,105 @@ let rec findUnrecognised xs =
             | Unknown xs -> xs
             | Empty      -> Seq.empty
         )
+
+
+// local syntax and conversion checks
+
+type Error = Error of name:string * message:string * source:string Located
+type Warning = Warning of name:string * message:string * source:string Located
+
+type 'a Checked =
+  | Okay of 'a
+  | Errors of Error list
+
+// yey fun, classic, functions ;-)
+let merge a b = 
+  match a, b with
+    | Okay x, Okay y       -> Okay (x,y)
+    | Errors xs, Okay _    -> Errors xs
+    | Okay _, Errors ys    -> Errors ys
+    | Errors xs, Errors ys -> Errors (List.concat [xs; ys])
+
+let merge3 a b c = 
+  match merge (merge a b) c with 
+    | Okay ((x, y), z) -> Okay (x,y,z)
+    | Errors xs        -> Errors xs
+
+let merge4 a b c d = 
+  match merge (merge3 a b c) d with 
+    | Okay ((w, x, y), z) -> Okay (w,x,y,z)
+    | Errors xs           -> Errors xs
+
+let merge5 a b c d e = 
+  match merge (merge4 a b c d) e with 
+    | Okay ((v,w,x,y), z) -> Okay (v,w,x,y,z)
+    | Errors xs           -> Errors xs
+
+let merge6 a b c d e f = 
+  match merge (merge5 a b c d e) f with 
+    | Okay ((u,v,w,x,y), z) -> Okay (u,v,w,x,y,z)
+    | Errors xs             -> Errors xs
+
+let filterParsed p xs = 
+  let ys = List.choose p xs
+  match ys with
+    | [] -> None, []
+    | zs -> Some (List.head zs), List.tail zs
+
+let checkUnrecognised label elt =
+  match elt with | Unrecognised (ln, t) -> Errors [Error (label, "Unrecognised", (ln, t))]
+                 | Success (_, ac)      -> Okay ac
+
+let checkUnrecognisedOpt label elt =
+  let elt1 = Option.map (checkUnrecognised label) elt
+  match elt1 with | Some (Okay v)    -> Okay (Some v)
+                  | Some (Errors es) -> Errors es
+                  | None             -> Okay None
+
+// TODO
+let checkIsEmpty label elts : Option<List<Warning>> =
+  match elts with 
+    | []  -> None
+    | xs  -> Some []
+
+let pr1 x = Some x, []
+let pr2 es = None, es
+type 'a Result = { Item: 'a option; Errors: Error list; Warnings: Warning List}
+
+type AccountDecl0 = {
+  Account: Account
+  ShortCode: uint option
+  Number: string option
+  ValuationMode: ValuationConvention
+  Commodity: Commodity option
+  Note: string option
+}
+
+let convertAccountDecl acct adepl =
+  let number, numbers = filterParsed (function | (Success (_, AD_Number s)) -> Some s | _ -> None) adepl
+  let note, notes = filterParsed (function | (Success (_, AD_Note s)) -> Some s | _ -> None) adepl
+  let commodityP, commoditiesP = filterParsed (function | (Success (_, AD_Commodity s)) -> Some s | _ -> None) adepl
+  let shortCodeP, shortCodesP = filterParsed (function | (Success (_, AD_ShortCode s)) -> Some s | _ -> None) adepl
+  let valuationP, valuationsP = filterParsed (function | (Success (_, AD_Valuation s)) -> Some s | _ -> None) adepl
+
+  let nameC = checkUnrecognised "Account name" acct
+  let commodityC = checkUnrecognisedOpt "Account measure" commodityP 
+  let shortCodeC = checkUnrecognisedOpt "Short code" shortCodeP 
+  let valuationC = checkUnrecognisedOpt "Valuation convention" valuationP
+
+  let merged = merge4 nameC commodityC shortCodeC valuationC
+  let item, errors = 
+    match merged with
+      | Okay (name, commodity, shortCode, valuation) -> {Account = name
+                                                         ShortCode = shortCode
+                                                         Number = number
+                                                         ValuationMode = valuation |> Option.defaultValue Latest
+                                                         Commodity = commodity
+                                                         Note = note } |> pr1
+      | Errors es -> pr2 es
+
+  // TODO
+  let warnings = [
+      checkIsEmpty "Account number" numbers
+    ]
+  {Item = item; Errors = errors; Warnings = warnings |> List.choose id |> List.concat}
