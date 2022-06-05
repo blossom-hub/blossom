@@ -513,60 +513,81 @@ let rec findUnrecognised xs =
 
 // local syntax and conversion checks
 
-type Error = Error of name:string * message:string * source:string Located
-type Warning = Warning of name:string * message:string * source:string Located
+type Error = Error of name:string * message:string * source:string Located option
+type Warning = Warning of name:string * message:string * source:string Located option
 
 type 'a Checked =
   | Okay of 'a
   | Errors of Error list
 
 // yey fun, classic, functions ;-)
-let merge a b = 
+let merge a b =
   match a, b with
     | Okay x, Okay y       -> Okay (x,y)
     | Errors xs, Okay _    -> Errors xs
     | Okay _, Errors ys    -> Errors ys
     | Errors xs, Errors ys -> Errors (List.concat [xs; ys])
 
-let merge3 a b c = 
-  match merge (merge a b) c with 
+let merge3 a b c =
+  match merge (merge a b) c with
     | Okay ((x, y), z) -> Okay (x,y,z)
     | Errors xs        -> Errors xs
 
-let merge4 a b c d = 
-  match merge (merge3 a b c) d with 
+let merge4 a b c d =
+  match merge (merge3 a b c) d with
     | Okay ((w, x, y), z) -> Okay (w,x,y,z)
     | Errors xs           -> Errors xs
 
-let merge5 a b c d e = 
-  match merge (merge4 a b c d) e with 
+let merge5 a b c d e =
+  match merge (merge4 a b c d) e with
     | Okay ((v,w,x,y), z) -> Okay (v,w,x,y,z)
     | Errors xs           -> Errors xs
 
-let merge6 a b c d e f = 
-  match merge (merge5 a b c d e) f with 
+let merge6 a b c d e f =
+  match merge (merge5 a b c d e) f with
     | Okay ((u,v,w,x,y), z) -> Okay (u,v,w,x,y,z)
     | Errors xs             -> Errors xs
 
-let filterParsed p xs = 
-  let ys = List.choose p xs
-  match ys with
-    | [] -> None, []
-    | zs -> Some (List.head zs), List.tail zs
+let extract pred xs =
+  List.choose (function | (Success (_, u)) -> pred u | _ -> None) xs
 
-let checkUnrecognised label elt =
-  match elt with | Unrecognised (ln, t) -> Errors [Error (label, "Unrecognised", (ln, t))]
-                 | Success (_, ac)      -> Okay ac
+let check label =
+  function | Success (_, ac)      -> Okay ac
+           | Unrecognised (ln, t) -> Errors [Error (label, "Unrecognised", Some (ln, t))]
 
-let checkUnrecognisedOpt label elt =
-  let elt1 = Option.map (checkUnrecognised label) elt
-  match elt1 with | Some (Okay v)    -> Okay (Some v)
-                  | Some (Errors es) -> Errors es
-                  | None             -> Okay None
+let wrapCheckOption ck =
+  match ck with | Okay a    -> Okay (Some a)
+                | Errors es -> Errors es
+
+let just1 label elts =
+  match elts with
+    | []        -> Errors [Error (label, "Required", None)], []
+    | [x]       -> Okay x, []
+    | (x::xs)   -> Okay x, [Warning (label, "Expected one", None)]
+
+let just1Opt label elts =
+  match elts with
+    | []        -> Okay None, []
+    | [x]       -> Okay (Some x), []
+    | (x::xs)   -> Okay (Some x), [Warning (label, "Expected one", None)]
+
+let check1 label elts =
+  match elts with
+    | []        -> Errors [Error (label, "Required", None)], []
+    | [elt]     -> check label elt, []
+    | (elt::xs) -> check label elt, [Warning (label, "Expected one", None)]
+
+let checkN label elts = List.map (check label) elts
+
+let check1Opt label elts =
+  match elts with
+    | []        -> Okay None, []
+    | [elt]     -> check label elt |> wrapCheckOption, []
+    | (elt::xs) -> check label elt |> wrapCheckOption, [Warning (label, "Expected zero/one", None)]
 
 // TODO
 let checkIsEmpty label elts : Option<List<Warning>> =
-  match elts with 
+  match elts with
     | []  -> None
     | xs  -> Some []
 
@@ -580,34 +601,88 @@ type AccountDecl0 = {
   Number: string option
   ValuationMode: ValuationConvention
   Commodity: Commodity option
-  Note: string option
+  Note: string list
+}
+
+type CommodityDecl0 = {
+  Symbol: Commodity
+  Measure: Commodity
+  QuoteDP: uint option
+  Underlying: Commodity option
+  Name: string option
+  Klass: CommodityClass option
+  Multiplier: uint option
+  Mtm: bool
+  ExternalIdents: Map<string, string>
+  Note: string list
 }
 
 let convertAccountDecl acct adepl =
-  let number, numbers = filterParsed (function | (Success (_, AD_Number s)) -> Some s | _ -> None) adepl
-  let note, notes = filterParsed (function | (Success (_, AD_Note s)) -> Some s | _ -> None) adepl
-  let commodityP, commoditiesP = filterParsed (function | (Success (_, AD_Commodity s)) -> Some s | _ -> None) adepl
-  let shortCodeP, shortCodesP = filterParsed (function | (Success (_, AD_ShortCode s)) -> Some s | _ -> None) adepl
-  let valuationP, valuationsP = filterParsed (function | (Success (_, AD_Valuation s)) -> Some s | _ -> None) adepl
+  let numberL = extract (function | AD_Number s -> Some s | _ -> None) adepl
+  let notes = extract (function | AD_Note s -> Some s | _ -> None) adepl
+  let commodityP = extract (function | AD_Commodity s -> Some s | _ -> None) adepl
+  let shortCodeP = extract (function | AD_ShortCode s -> Some s | _ -> None) adepl
+  let valuationP = extract (function | AD_Valuation s -> Some s | _ -> None) adepl
 
-  let nameC = checkUnrecognised "Account name" acct
-  let commodityC = checkUnrecognisedOpt "Account measure" commodityP 
-  let shortCodeC = checkUnrecognisedOpt "Short code" shortCodeP 
-  let valuationC = checkUnrecognisedOpt "Valuation convention" valuationP
+  let nameC = check "Account name" acct
+  let numberC, numberW = just1Opt "Number" numberL
+  let commodityC, commodityW = check1Opt "Account measure" commodityP
+  let shortCodeC, shortCodeW = check1Opt "Short code" shortCodeP
+  let valuationC, valuationW = check1Opt "Valuation convention" valuationP
 
-  let merged = merge4 nameC commodityC shortCodeC valuationC
-  let item, errors = 
+  let merged = merge5 nameC shortCodeC numberC valuationC commodityC
+  let item, errors =
     match merged with
-      | Okay (name, commodity, shortCode, valuation) -> {Account = name
-                                                         ShortCode = shortCode
-                                                         Number = number
-                                                         ValuationMode = valuation |> Option.defaultValue Latest
-                                                         Commodity = commodity
-                                                         Note = note } |> pr1
+      | Okay (name, shortCode, number, valuation, commodity) ->
+          {Account = name
+           ShortCode = shortCode
+           Number = number
+           ValuationMode = valuation |> Option.defaultValue Latest
+           Commodity = commodity
+           Note = notes } |> pr1
       | Errors es -> pr2 es
 
-  // TODO
-  let warnings = [
-      checkIsEmpty "Account number" numbers
-    ]
-  {Item = item; Errors = errors; Warnings = warnings |> List.choose id |> List.concat}
+  let warnings = List.concat [numberW; commodityW; shortCodeW; valuationW]
+  {Item = item; Errors = errors; Warnings = warnings}
+
+let convertCommodityDecl cmdty cdepl =
+  let measureP = extract (function | CD_Measure s -> Some s | _ -> None) cdepl
+  let dpP = extract (function | CD_DP s -> Some s | _ -> None) cdepl
+  let underlyingP = extract (function | CD_Underlying s -> Some s | _ -> None) cdepl
+  let nameP = extract (function | CD_Name s -> Some s | _ -> None) cdepl
+  let klassP = extract (function | CD_Class s -> Some s | _ -> None) cdepl
+  let multiP = extract (function | CD_Multiplier s -> Some s | _ -> None) cdepl
+  let mtmP = extract (function | CD_MTM -> Some true | _ -> None) cdepl
+  let externsL = extract (function | CD_ExternalIdent (a,b) -> Some (a,b) | _ -> None) cdepl
+  let notesL = extract (function | CD_Note s -> Some s | _ -> None) cdepl
+
+  let commodityC = check "Commodity symbol" cmdty
+  let measureC, measureW = check1 "Commodity measure" measureP
+  let dpC, dpW = check1Opt "Precision" dpP
+  let underlyingC, underlyingW = check1Opt "Underlying" underlyingP
+  let nameC, nameW = just1Opt "Name" nameP
+  let klassC, klassW = check1Opt "Class" klassP
+  let multiC, multiW = check1Opt "Multiplier" multiP
+  let mtmC, mtmW = just1Opt "MTM" mtmP
+
+  let mergedA = merge4 commodityC measureC dpC underlyingC
+  let mergedB = merge4 nameC klassC multiC mtmC
+  let merged = merge mergedA mergedB
+
+  let item, errors =
+    match merged with
+      | Okay ((comdty, measure, dp, underlying), (name, klass, multi, mtm)) ->
+        { Symbol = comdty
+          Measure = measure
+          QuoteDP = dp
+          Underlying = underlying
+          Name = name
+          Klass = klass
+          Multiplier = multi
+          Mtm = Option.defaultValue false mtm
+          ExternalIdents = externsL |> Map.ofList
+          Note = notesL } |> pr1
+      | Errors es -> pr2 es
+
+  let warnings = List.concat [measureW; dpW; underlyingW; nameW; klassW; multiW; mtmW]
+  {Item = item; Errors = errors; Warnings = warnings}
