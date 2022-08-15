@@ -100,6 +100,8 @@ A transaction can be flagged for review by adding a * after the date:
 ```
 In this example, `amount` is transferred between `one` to `two`, and `amount2` and `amount3` are transferred to `five`.
 
+Top level amounts can also support conversions for consumption; a typical example might be purchasing items on a credit card whilst travelling. In this case, the syntax `13000 JPY = 100 USD` can be used for the amount. This will run the conversion through an internal account; seeing `13000 JPY` for the expense and `100 USD` on the credit card account. There are limitations if this is used.
+
 _Splits_
 Splits follow a similar syntax, and the amounts should be the opposite sign to the original amount. The measure is not required because it must match the original measure.
  ```
