@@ -13,6 +13,7 @@ type LotName = AutoLotName of string | CustomLotName of string
 type Account = Account of string | Account2 of string * string
 
 type Value = decimal * Commodity
+type XValue = Value * Value option
 
 type Tenor = Y | M | H | Q | W of DayOfWeek | D
 

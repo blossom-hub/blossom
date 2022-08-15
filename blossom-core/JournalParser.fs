@@ -51,7 +51,7 @@ type DSplit = {
 type Contra = CS | CV of Account
 
 type DTransferEntry =
-  | Posting of account:Account * value:Value option * contra:Contra option
+  | Posting of account:Account * value:XValue option * contra:Contra option
                   * comment:string option
                   * splits:(Account * decimal * string option) list
   | PComment of string
@@ -169,7 +169,8 @@ let pCommodity =
   let first = letter <|> digit <|> anyOf "."
   many1Chars2 first (letter <|> digit <|> anyOf ".:-()_") |>> Types.Commodity
 
-let pValue = pnumber .>> nSpaces1 .>>. pCommodity |>> Value
+let pValue1 = pnumber .>> nSpaces1 .>>. pCommodity |>> Value
+let pValue2 = pValue1 .>>. (opt (nSpaces0 >>? pchar '=' >>? nSpaces0 >>? pValue1)) |>> XValue
 
 let pSubItems ss = (choice ss .>> nSpaces0 .>> skipNewline) |> indented |> many
 
@@ -212,7 +213,7 @@ let pAccount =
 let pPosting =
   let fullContra = nSpaces1 >>? sstr "~" >>? opt pAccount
   let splitContra = sstr "~" >>. tuple3 (p1 pAccount) pnumber (opt lcmt) .>> newline
-  p0 pAccount .>>. opt (pValue .>>. opt fullContra) .>>. (opt lcmt) .>> newline
+  p0 pAccount .>>. opt (pValue2 .>>. opt fullContra) .>>. (opt lcmt) .>> newline
     .>>. increaseIndent (splitContra |> indented |> many)
     |>> fun (((a, vx), cmt), splits) -> Posting <| match vx with
                                                      | None                    -> (a, None, None, cmt, splits)
@@ -222,7 +223,7 @@ let pPosting =
 
 let pPostingM =
   let contra = sstr "~" >>. opt pAccount
-  p0 pAccount .>>. pValue .>>. opt (nSpaces1 >>. contra)
+  p0 pAccount .>>. pValue1 .>>. opt (nSpaces1 >>. contra)
     |>> fun ((a, v), c) -> match c with
                              | None          -> (a, v, None)
                              | Some None     -> (a, v, Some CS)
@@ -302,7 +303,7 @@ let pCommodityDecl =
 let pElement =
   // Fairly simple entries
   let pComment = sstr1 "comment" >>. rol false |>> Comment2
-  let pAssertion = sstr1 "assert" >>. p1 pAccount .>>. pValue .>>. opt lcmt .>> newline |>> fun ((a, v), cmt) -> Assertion {Account = a; Value = v; Comment = cmt}
+  let pAssertion = sstr1 "assert" >>. p1 pAccount .>>. pValue1 .>>. opt lcmt .>> newline |>> fun ((a, v), cmt) -> Assertion {Account = a; Value = v; Comment = cmt}
   let pSplit = sstr1 "split" >>. tuple3 (p1 pCommodity) (p1 pnumber ) pnumber |>> fun (c, k1, k2) -> Split {Commodity = c; K1 = k1; K2 = k2}
 
   // Composite entries
@@ -317,7 +318,7 @@ let pElement =
 
   let pDividend =
     let subitems = [spPaydate; spAccount "settlement"; spAccount "receivable"; spAccount "income"]
-    sstr1 "dividend" >>. (p1 pAccount) .>>. (p1 pValue .>> sstr1 "@" .>>. pValue) .>> skipNewline .>>. increaseIndent (pSubItems subitems)
+    sstr1 "dividend" >>. (p1 pAccount) .>>. (p1 pValue1 .>> sstr1 "@" .>>. pValue1) .>> skipNewline .>>. increaseIndent (pSubItems subitems)
       |>> fun ((account, ((q, c), v)), ss) -> let paydate = ss |> List.tryPick (function SPaydate d -> Some d | _ -> None)
                                               let s = ss |> List.tryPick (function SAccount ("settlement", d) -> Some d | _ -> None)
                                               let r = ss |> List.tryPick (function SAccount ("receivable", d) -> Some d | _ -> None)
@@ -328,7 +329,7 @@ let pElement =
 
   let pTrade =
     let subitems = [spLotNames; spReference; spAccount "settlement"; spAccount "cg"; spExpensePosting; spNote]
-    sstr1 "trade" >>. (p1 pAccount) .>>. (p1 pValue .>> sstr1 "@" .>>. pValue) .>> skipNewline .>>. increaseIndent (pSubItems subitems)
+    sstr1 "trade" >>. (p1 pAccount) .>>. (p1 pValue1 .>> sstr1 "@" .>>. pValue1) .>> skipNewline .>>. increaseIndent (pSubItems subitems)
       |>> fun ((account, ((q, c), price)), ss) -> let lns = ss |> List.tryPick (function SLotNames xs -> Some xs | _ -> None)
                                                                |> Option.defaultValue []
                                                   let reference = ss |> List.tryPick (function SReference r -> Some r | _ -> None)

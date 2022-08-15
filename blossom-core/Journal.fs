@@ -14,9 +14,25 @@ let liftBasicEntry position date flagged dtransfer =
        followed by the residual post split to a specified contra,
        followed by the residual matched with an catch account
   *)
-  let normalise (account, (q, m), contra) = if q < 0M then (contra, (-q, m), account) else (account, (q,m), contra)
+  let normalise (account, (q, m), contra) = if q < 0M then (contra, (-q, m), account) else (account, (q, m), contra)
 
   let postings = dtransfer.Entries |> List.choose (function Posting (a,b,c,_,d) -> Some (a,b,c,d) | _ -> None)
+
+
+  // TODO
+  // 100 USD = 13005 JPY means that the account transaction was in USD, but the account is in JPY
+  // these transactions don't support splits (at this time)
+  //
+  // Expense:Lunch    100 USD = 13005 JPY
+  // Income:Bob       -20 USD ~Assets:Wallet
+  // Liability:CreditCard
+  //
+  // expands to
+  // Expense:Lunch            100 USD
+  // _Conversions            -100 USD
+  // _Conversions           13005 JPY
+  // Liability:CreditCard  -13005 JPY
+  //
 
   let processSplits (account: Account) (qq: Value option) (contra: Contra option) splits =
     match splits with
@@ -28,7 +44,14 @@ let liftBasicEntry position date flagged dtransfer =
                           | 0M -> []
                           | x  -> [(account, Some (x, m), contra)]
 
-  let flatPostings = postings |> List.collect (fun (a,b,c,d) -> processSplits a b c d)
+  let clearCrossValues (account: Account) (qq : XValue option) (contra: Contra option) splits =
+    match qq, splits with 
+      | None, ss             -> processSplits account None contra ss
+      | Some (q, None), ss   -> processSplits account (Some q) contra ss
+      | Some (q, Some v), [] -> [(account, Some q, Some (CV conversionsAccount)); (conversionsAccount, Some v, None)]
+      | Some (q, Some v), ss -> failwith "NYI: Conversions with splits"
+
+  let flatPostings = postings |> List.collect (fun (a,b,c,d) -> clearCrossValues a b c d)
 
   // Split postings up into categories before linking to their contra
   let emptyPostings     = flatPostings |> List.choose (function (account, None, _)                        -> Some account | _ -> None)

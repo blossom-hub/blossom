@@ -38,11 +38,16 @@ commodity NQZ20
 #endregion
 
 
-2020-06-01 trade Asset:Brokers:Stock   10000 9984JP @ 10000 JPY
-  settlement      Asset:Brokers:Cash
-  note            Good luck!
+;2020-06-01 trade Asset:Brokers:Stock   10000 9984JP @ 10000 JPY = 999 USD
+;  settlement      Asset:Brokers:Cash
+;  note            Good luck!
 
-2020-07-02 split 9984JP 1 2
+;2020-07-02 split 9984JP 1 2
 
-prices 9984JP JPY
-  2021-04-04 5622
+;prices 9984JP JPY
+;  2021-04-04 5622
+
+2022-08-01 RW&Q | Whole hog
+  Expense:DiningOut:Dinner      100 USD = 780 HKD
+  Liability:HSBC:HK:Premier
+
