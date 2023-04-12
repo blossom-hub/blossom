@@ -7,7 +7,7 @@ type GlobalOptionValue =
   | GPerformanceReporting of bool
   | GDebug of bool
   | GLoadTracing of bool
-  | GValuationDate of DateTime
+  | GValuationDate of DateTime option
   | GMaxRows of int
 
 type Command =

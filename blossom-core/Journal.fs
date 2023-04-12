@@ -45,7 +45,7 @@ let liftBasicEntry position date flagged dtransfer =
                           | x  -> [(account, Some (x, m), contra)]
 
   let clearCrossValues (account: Account) (qq : XValue option) (contra: Contra option) splits =
-    match qq, splits with 
+    match qq, splits with
       | None, ss             -> processSplits account None contra ss
       | Some (q, None), ss   -> processSplits account (Some q) contra ss
       | Some (q, Some v), [] -> [(account, Some q, Some (CV conversionsAccount)); (conversionsAccount, Some v, None)]
@@ -148,7 +148,7 @@ let integratePriceMovements valuationDate commodityDecls globalUGA prices analys
                                                   |> List.sumBy (fun ct -> ct.Quantity)
         let lastDate = if openingTrade.OpenQuantity = 0M
                          then openingTrade.Closings |> List.maxOf (fun x -> x.Date) |> fst
-                         else valuationDate
+                         else Option.defaultValue DateTime.MaxValue valuationDate
         let series = ps |> Map.toList
                         |> List.filter (fun (dt, _) -> dt >= fst openingTrade.Date && dt <= lastDate)
                         |> List.mapFold (fun (pun, pq) (dt, (pr,_k)) -> let delta_price = pr - openingTrade.PerUnitPrice
@@ -208,7 +208,7 @@ let integrateDividends valuationDate dividends (register: Map<SQ, Entry list>)  
     }
     // Note that we need the valuation date so that future second legs are not included...
     // otherwise everything will have moved out of receivable
-    if pd <= valuationDate
+    if pd <= Option.defaultValue DateTime.MaxValue valuationDate
       then [leg1; leg2]
       else [leg1]
 
@@ -242,7 +242,7 @@ let loadJournal trace valuationDate filename =
   // Now process as one combined RJournal dataset
   let items = elts |> List.choose (function (position, Item (sq, flagged, elt)) -> Some (position, sq, flagged, elt) | _ -> None)
                    |> List.sortBy snd4
-                   |> List.filter (fun quad -> (quad |> snd4 |> fst) <= valuationDate)
+                   |> List.filter (fun quad -> (quad |> snd4 |> fst) <= Option.defaultValue DateTime.MaxValue valuationDate)
 
   let header = elts |> List.choose (function (_, Header h) -> Some h | _ -> None)
                     |> List.tryHead
@@ -266,7 +266,7 @@ let loadJournal trace valuationDate filename =
   let prices0 = elts |> List.choose (function (_, Prices (c, m, xs)) -> Some ((c, m), xs) | _ -> None)
                     |> List.groupByApply fst (List.collect snd >> Map.ofList)
                     |> Map.ofList
-                    |> Map.map (fun ts -> Map.filter (fun dt _ -> dt <= valuationDate))
+                    |> Map.map (fun ts -> Map.filter (fun dt _ -> dt <= Option.defaultValue DateTime.MaxValue valuationDate))
 
   let transfers = items |> List.choose (function | (ps, sq, flagged, Transfer dtransfer) -> Some (liftBasicEntry ps sq flagged dtransfer)
                                                  | _ -> None)

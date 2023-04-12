@@ -18,7 +18,7 @@ type GlobalOptions =
     PerformanceReporting: bool
     Debug: bool
     LoadTracing: bool
-    ValuationDate: DateTime
+    ValuationDate: DateTime option
     MaxRows: int
   }
   with
@@ -26,7 +26,7 @@ type GlobalOptions =
       PerformanceReporting = false
       Debug = false
       LoadTracing = false
-      ValuationDate = DateTime.Today
+      ValuationDate = None
       MaxRows = 1000
     }
 

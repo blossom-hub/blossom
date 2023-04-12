@@ -25,7 +25,7 @@ type State = {
     static member Default = {
       Journals = new Dictionary<int, string * Journal>()
     }
-    member this.nextId () = 
+    member this.nextId () =
       lock STATELOCK (fun () -> let keys = this.Journals.Keys
                                 if Seq.isEmpty keys then 0 else Seq.max keys |> fun k -> k + 1)
     member this.getFilename index = this.Journals.TryGetValue index |> function | true, (fn, _) -> Some fn | _ -> None
@@ -34,11 +34,11 @@ type State = {
     member this.getJournal filename = this.Journals |> Seq.tryPick (fun (KeyValue(_, (fn, j))) -> if fn = filename then Some j else None)
 
 let load (state: State) filename =
-  lock STATELOCK (fun () -> 
-    let usedId = match state.getIndex filename with 
+  lock STATELOCK (fun () ->
+    let usedId = match state.getIndex filename with
                   | None   -> state.nextId()
                   | Some i -> i
-    let journal = loadJournal false DateTime.Now filename
+    let journal = loadJournal false None filename
     state.Journals.[usedId] <- (filename, journal)
     usedId
  )
@@ -46,13 +46,13 @@ let load (state: State) filename =
 let execute (state: State) (index: int, input) =
   let result = runParser parse () (FromString input)
 
-  let withJournal op = 
+  let withJournal op =
     let journal = state.getJournal index
-    match journal with 
+    match journal with
       | Some j -> op j |> Choice1Of2
       | None   -> Choice2Of2 "Invalid journal id"
 
-  match result with 
+  match result with
     | Balances (filter, request)         -> withJournal <| balances Tabular.renderJson filter request
     | Journal (filter, request)          -> withJournal <| journal Tabular.renderJson filter request
     | BalanceSeries (filter, request)    -> withJournal <| balanceSeries Tabular.renderJson filter request
@@ -67,17 +67,17 @@ let web port =
 
   let state = State.Default
 
-  startWebServer config <| 
+  startWebServer config <|
     choose [
       GET >=> choose [
-        path "/rest" >=> OK "In peace" 
+        path "/rest" >=> OK "In peace"
         pathScan "/rest/load/%s" (load state >> string >> OK)
         pathScan "/rest/%d/filename" (fun i -> state.getFilename i |> Option.defaultValue "" |> OK)
       ]
       POST >=> choose [
         pathScan "/rest/%d/execute" (fun i -> request (fun r -> let command = fst r.form.[0]
-                                                                let res = execute state (i, command) 
-                                                                match res with 
+                                                                let res = execute state (i, command)
+                                                                match res with
                                                                   | Choice1Of2 a -> OK a
                                                                   | Choice2Of2 b -> failwith b))
       ]

@@ -25,7 +25,7 @@ let safeCommodity (com : string) =
   com1
 
 let blossom2knut inputfn outputfn =
-  let journal = loadJournal true DateTime.MaxValue inputfn
+  let journal = loadJournal true None inputfn
   match journal.Meta.Convention with
     | Some Financial5 | Some Financial7 -> true
     | _ -> failwith "Can only convert Financial5 or Financial7 journals"
@@ -75,7 +75,7 @@ let blossom2knut inputfn outputfn =
 
 let blossom2beancount inputfn outputfn  =
   // preparation
-  let journal = loadJournal true DateTime.MaxValue inputfn
+  let journal = loadJournal true None inputfn
 
   // validation
   match journal.Meta.Convention with
