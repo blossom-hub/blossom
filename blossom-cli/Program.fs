@@ -1,14 +1,16 @@
 ﻿open System
 open PrettyPrint
 
+let VERSION = "0.52"
+let VERSION_STRING = $"Blossom {VERSION}"
 [<EntryPoint>]
 let main argv =
   let cmds = ["http"; "pp"]
   match Array.toList argv with
     | (fn::[]) when not (List.contains fn cmds)
-           -> printfn "Blossom 0.5"
+           -> printfn $"{VERSION_STRING}"
               ReplEngine.repl1 fn
-    | []   -> printfn "Blossom 0.5"
+    | []   -> printfn $"{VERSION_STRING}"
               ReplEngine.repl ReplEngine.State.Default
     | (cmd::args) -> match cmd.ToLower() with
                       | "http" -> match args with

@@ -132,7 +132,8 @@ let holdingsAnalysis =
   |>> fun (fs, f) -> HoldingsAnalysis f
 
 // Help
-let check = choice [str "check"; str ":c"] >>. ws1 >>. choice [str "assertions" >>. preturn Assertions] |>> Check
+let check = choice [str "check"; str ":c"] >>. ws1 >>. choice [str "assertions" >>. preturn Assertions
+                                                               str "issues"     >>. preturn Issues] |>> Check
 let help = str "help" >>. preturn Help
 
 // Meta

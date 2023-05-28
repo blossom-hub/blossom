@@ -240,9 +240,24 @@ let loadJournal trace valuationDate filename =
   *)
 
   // Now process as one combined RJournal dataset
-  let items = elts |> List.choose (function (position, Item (sq, flagged, elt)) -> Some (position, sq, flagged, elt) | _ -> None)
-                   |> List.sortBy snd4
-                   |> List.filter (fun quad -> (quad |> snd4 |> fst) <= Option.defaultValue DateTime.MaxValue valuationDate)
+  // For the general dated entries, warnings are added if they are out of sequence (date wise only)
+  
+  let checkSq xs = 
+    let ys = xs |> List.filter (fun (_, _, _, e) -> match e with Transfer _ -> true | _ -> false)
+    let f state (loc: FParsec.Position, (dt, _),_, e)= 
+      let (sdt, zs) = Map.tryFind loc.StreamName state |> Option.defaultValue (DateTime.MinValue, [])
+      if dt < sdt then
+        Map.add loc.StreamName (sdt, (loc, dt)::zs) state
+      else 
+        Map.add loc.StreamName (dt, zs) state  
+
+    let result = List.fold f Map.empty ys
+    result |> Map.toList |> List.collect (snd >> snd >> List.rev)
+
+  let outOfSeq, items = elts |> List.choose (function (position, Item (sq, flagged, elt)) -> Some (position, sq, flagged, elt) | _ -> None)
+                             |> (checkSq &&& (   List.sortBy snd4
+                                              >> List.filter (fun quad -> (quad |> snd4 |> fst) <= Option.defaultValue DateTime.MaxValue valuationDate))
+                                )
 
   let header = elts |> List.choose (function (_, Header h) -> Some h | _ -> None)
                     |> List.tryHead
@@ -308,6 +323,9 @@ let loadJournal trace valuationDate filename =
              |> Map.merge commodityDecls0
              |> Map.map (fun _k v -> setMeasure v)
 
+  // build and collect all the issues and create their messages
+  let issues1 = outOfSeq |> List.map (fun (pos, dt) -> (Info, pos, $"Out of sequence entry {dt}"))
+
   // Avengers... assemble!
   {
     Meta = header
@@ -318,6 +336,7 @@ let loadJournal trace valuationDate filename =
     Prices = prices
     SplitKFactors = splits
     Assertions = assertions
+    Issues = issues1
   }
 
 let expandPosting account (qty, commodity) caccount =

@@ -32,6 +32,11 @@ type CommodityClass =
   | Fund
   | Other
 
+type IssueLevel = 
+  | Info
+  | Warning
+  | Error
+
 type JournalMeta = {
   Name: string
   Commodity: Commodity option
@@ -112,6 +117,7 @@ type Journal = {
   Prices: Map<Commodity * Commodity, Map<DateTime, decimal * decimal>>
   SplitKFactors: Map<Commodity, (DateTime * decimal) list>
   Assertions: (DateTime * Account * Value) list
+  Issues: (IssueLevel * FParsec.Position * string) list
 }
 
 type Filter = {
@@ -156,7 +162,7 @@ type LotRequest = {
   IncludeVirtual: bool
 }
 
-type CheckRequest = Assertions
+type CheckRequest = Assertions | Issues
 
 type MetaRequestType = Statistics | Accounts | Commodities | Payees | Tags_
 type MetaRequest = {

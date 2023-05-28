@@ -86,6 +86,12 @@ let checkJournal renderer request journal =
                                 {Header = "Actual"; Key = false}
                                 {Header = "Delta"; Key = false}]
                       Table (cs, fails)
+      | Issues -> let issues = journal.Issues |> List.map (fun (l, p, m) ->[Text (string l); Text p.StreamName; Text (p.Line.ToString()); Text m])
+                  let cs = [{Header = "Level"; Key = true}
+                            {Header = "File"; Key = false}
+                            {Header = "Line"; Key = false}
+                            {Header = "Message"; Key = false}]
+                  Table (cs, issues)
 
 let balances renderer filter (request : BalancesRequest) journal =
   // do pre-filter

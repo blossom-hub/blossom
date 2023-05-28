@@ -214,7 +214,7 @@ Displays a lot report, showing opening / closing pairs, PnL etc. This is a new r
 ```
 ] :c <type of check>
 ```
-Currently supported checks are: `assertions`
+Currently supported checks are: `assertions`, `issues`
 
 #### (Balance) Assertion checks
 This will check the balance (in the relevant commodity) is correct verus the assertion in the journal, and report the delta.
@@ -224,3 +224,6 @@ This will check the balance (in the relevant commodity) is correct verus the ass
       Date            Account   Commodity   Expected   Actual   Delta
 2020-02-01   Assets:Account 2         USD       -106     -104       2
 ```
+
+#### Issues checks
+This will display various basic issues found that may affect the journal quality, e.g. out of date order transactions (output varies).
