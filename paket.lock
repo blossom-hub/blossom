@@ -1,30 +1,9 @@
 STORAGE: NONE
-RESTRICTION: == net6.0
+RESTRICTION: == net9.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    Argu (6.1.1)
-      FSharp.Core (>= 4.3.2)
-      System.Configuration.ConfigurationManager (>= 4.4)
     FParsec (1.1.1)
       FSharp.Core (>= 4.3.4)
-    FSharp.Core (5.0)
-    Microsoft.NETCore.Platforms (5.0)
-    Microsoft.Win32.SystemEvents (5.0)
-      Microsoft.NETCore.Platforms (>= 5.0)
+    FSharp.Core (9.0.201)
     Suave (2.6.2)
       FSharp.Core
-    System.Configuration.ConfigurationManager (5.0)
-      System.Security.Cryptography.ProtectedData (>= 5.0)
-      System.Security.Permissions (>= 5.0)
-    System.Drawing.Common (5.0)
-      Microsoft.Win32.SystemEvents (>= 5.0)
-    System.Security.AccessControl (5.0)
-      Microsoft.NETCore.Platforms (>= 5.0)
-      System.Security.Principal.Windows (>= 5.0)
-    System.Security.Cryptography.ProtectedData (5.0)
-    System.Security.Permissions (5.0)
-      System.Security.AccessControl (>= 5.0)
-      System.Windows.Extensions (>= 5.0)
-    System.Security.Principal.Windows (5.0)
-    System.Windows.Extensions (5.0)
-      System.Drawing.Common (>= 5.0)
