@@ -2,7 +2,7 @@
   <PropertyGroup>
     <RootNamespace>blossom_cli</RootNamespace>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\blossom-core\blossom-core.fsproj">
@@ -19,6 +19,10 @@
     <Compile Include="LspEngine.fs" />
     <Compile Include="PrettyPrint.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" Version="10.0.102" />
+    <PackageReference Include="Suave" Version="3.2.3" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
